@@ -105,3 +105,15 @@ Planned features
 
 * Support for chained jobs
 * Tools for archiving data
+
+Nonfeatures
+-----------
+
+bashtools strives to keep it simple. As such, bashtools does not try to
+replicate/absorb features from other existing tools. In particular, bashtools
+will never
+
+* build your code or any dependencies
+* execute remote commands
+* manage groups of simulations
+* sync code or do version control

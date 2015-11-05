@@ -65,7 +65,7 @@ Trying to create a segment with nonexistent parent ID ``{}''!\
         msg = "Created segment {}".format(segment)
         if iold >= 0:
             oldsegment = str(iold).zfill(4)
-            parent = "output-" + oldsegment 
+            parent = "output-" + oldsegment
             msg += " with parent {}".format(oldsegment)
             os.symlink("../" + parent, rundir + "/parent")
             open(rundir + "/PREVIOUS", "w").write(str(iold).zfill(4) + "\n")
