@@ -116,4 +116,4 @@ will never
 * build your code or any dependencies
 * execute remote commands
 * manage groups of simulations
-* sync code or do version control
+* sync code or do versioning control

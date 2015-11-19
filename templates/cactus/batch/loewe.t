@@ -7,8 +7,8 @@
 #SBATCH --job-name=@SIMULATION_NAME@-@SEGMENT@
 #SBATCH --mem-per-cpu=2600
 #SBATCH --mail-type=ALL
-#SBATCH --output=@RUNDIR@/output.out
-#SBATCH --error=@RUNDIR@/error.err
+#SBATCH --output=@RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH --error=@RUNDIR@/@SIMULATION_NAME@.err
 
 echo "Preparing:"
 set -x                          # Output commands
