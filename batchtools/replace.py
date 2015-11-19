@@ -20,7 +20,9 @@ class Pattern:
 
 # Default rules
 __patterns__ = [
-    ('EXECUTABLE', None, "Name of the executable to use"),
+    ('BATCHSCRIPT', "batch.sub", "Name of the batch sript"),
+    ('EXECUTABLE', "../BATCH/exec", "Name of the executable to use" + " \
+                                    (relative path from the RUNDIR)"),
     ('HOME', os.environ['HOME'], "User home directory"),
     ('NUM_PROCS', "", "Total number of processes"),
     ('NUM_THREADS', "", "Number of threads per process"),

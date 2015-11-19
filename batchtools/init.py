@@ -58,8 +58,6 @@ Initializes the current directory structure.
         shutil.copy(exe,     "BATCH/exec")
         shutil.copy(parfile, "BATCH/parfile.t")
 
-        replace.update_rule('EXECUTABLE', simpath + "/BATCH/exec")
-
         s = open(batch, "r").read() + "\n"
         s += open(parfile, "r").read()
         keys = sorted(list(set([k for k in re.findall(r'@(\w+)@', s)])))
