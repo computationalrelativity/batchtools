@@ -21,8 +21,8 @@ class Pattern:
 # Default rules
 __patterns__ = [
     ('BATCHSCRIPT', "batch.sub", "Name of the batch sript"),
-    ('EXECUTABLE', "../BATCH/exec", "Name of the executable to use" + " \
-                                    (relative path from the RUNDIR)"),
+    ('EXECUTABLE', "../BATCH/exec",
+        "Name of the executable to use (relative path from the RUNDIR)"),
     ('HOME', os.environ['HOME'], "User home directory"),
     ('NUM_PROCS', "", "Total number of processes"),
     ('NUM_THREADS', "", "Number of threads per process"),
@@ -77,7 +77,8 @@ def read_rules(fname):
 def write_rules():
     """ Writes all of the available replacement rules in a string """
     s = ""
-    for p in patterns.itervalues():
+    rules = sorted(list(patterns.itervalues()), key=lambda x: x.key)
+    for p in rules:
         if p.subst is not None:
             s += str(p) + "\n"
     return s

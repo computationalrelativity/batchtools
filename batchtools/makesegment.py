@@ -53,6 +53,9 @@ Trying to create a segment with nonexistent parent ID ``{}''!\
 """.format(str(iold).zfill(4))
                 print(s)
                 exit(1)
+        segment = str(inew).zfill(4)
+        rundir  = "output-" + segment
+
         replace.read_rules("BATCH/CONFIG")
         replace.update_rule("RUNDIR", os.path.abspath(".") + "/" + rundir)
         replace.update_rule("SEGMENT", segment)
@@ -63,8 +66,6 @@ Trying to create a segment with nonexistent parent ID ``{}''!\
         par = open("BATCH/parfile.t", "r").read()
         par = replace.apply_rules(par)
 
-        segment = str(inew).zfill(4)
-        rundir  = "output-" + segment
         os.mkdir(rundir)
         msg = "Created segment {}".format(segment)
         if iold >= 0:
