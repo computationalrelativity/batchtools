@@ -21,9 +21,11 @@ class Pattern:
 # Default rules
 __patterns__ = [
     ('BATCHSCRIPT', "batch.sub", "Name of the batch sript"),
+    ('EMAIL', "", "Email to be used for messagges"),
     ('EXECUTABLE', "../BATCH/exec",
         "Name of the executable to use (relative path from the RUNDIR)"),
     ('HOME', os.environ['HOME'], "User home directory"),
+    ('NODES', "", "Total number of nodes"),
     ('NUM_PROCS', "", "Total number of processes"),
     ('NUM_THREADS', "", "Number of threads per process"),
     ('PARFILE', "parfile.par", "Name of the parfile to use"),

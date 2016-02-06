@@ -49,12 +49,12 @@ F77_PROFILE_FLAGS =
 F90_PROFILE_FLAGS =
 
 OPENMP           = yes
-CPP_OPENMP_FLAGS = -openmp
+CPP_OPENMP_FLAGS = -fopenmp
 FPP_OPENMP_FLAGS = -D_OPENMP
-C_OPENMP_FLAGS   = -openmp
-CXX_OPENMP_FLAGS = -openmp
-F77_OPENMP_FLAGS = -openmp
-F90_OPENMP_FLAGS = -openmp
+C_OPENMP_FLAGS   = -fopenmp
+CXX_OPENMP_FLAGS = -fopenmp
+F77_OPENMP_FLAGS = -fopenmp
+F90_OPENMP_FLAGS = -fopenmp
 
 WARN           = yes
 CPP_WARN_FLAGS = -Wall -Wno-unknown-pragmas
@@ -64,12 +64,13 @@ CXX_WARN_FLAGS = -Wall -Wno-unknown-pragmas
 F77_WARN_FLAGS = -Wall
 F90_WARN_FLAGS = -Wall
 
-MPI_DIR = /usr/local/openmpi/1.8.6
+MPI_DIR = /opt/local
+#MPI_DIR = /usr/local/openmpi/1.10.1
 
 BLAS_DIR  = /System/Library/Frameworks/vecLib.framework
 BLAS_LIBS =
 
-BOOST_DIR = /usr/local/boost/1.57.0
+BOOST_DIR = /usr/local/boost/1.60.0
 
 FFTW_DIR  = /opt/local
 FFTW_LIBS = drfftw dfftw m
@@ -77,7 +78,8 @@ FFTW3_DIR = /opt/local
 
 GSL_DIR = /opt/local
 
-HDF5_DIR  = /usr/local/hdf5/1.8.14
+HDF5_DIR  = /opt/local
+#HDF5_DIR  = /usr/local/hdf5/1.8.16
 LIBSZ_DIR = /opt/local
 LIBJPEG_DIR = /opt/local
 
@@ -91,7 +93,7 @@ LAPACK_LIBS =
 #PETSC_ARCH = arch-darwin-c-debug
 #PETSC_ARCH_LIBS = petsc HYPRE
 
-PTHREADS = yes
+#PTHREADS = yes
 
 SSL_DIR = /opt/local
 ZLIB_DIR = /opt/local
