@@ -17,9 +17,11 @@ set -e                          # Abort on errors
 cd @RUNDIR@
 
 module purge
+module load unstable
 module load slurm/2.6.3
-module load intel/compiler/64/14.0.3
-module load mpi/mvapich2/intel-14.0.3/2.0
+module load intel/compiler/64/15.0.0
+module load mpi/mvapich2/intel-15.0.0/2.0
+module load hdf5/intel-15.0.0/1.8.14
 
 echo "Checking:"
 pwd
