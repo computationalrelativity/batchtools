@@ -16,7 +16,7 @@ class Pattern:
             s += self.subst
         return s
     def replace(self, txt):
-        return re.sub("@{}@".format(self.key), self.subst, txt)
+        return re.sub("@{0}@".format(self.key), self.subst, txt)
 
 # Default rules
 __patterns__ = [
@@ -54,7 +54,7 @@ def add_rule(key, subst, desc=None):
     if not patterns.has_key(key):
         patterns[key] = Pattern(key, subst, desc)
     else:
-        raise ValueError("Rule for {} already exists!".format(key))
+        raise ValueError("Rule for {0} already exists!".format(key))
 
 def set_rule(key, subst, desc=None):
     """ Update or create a replacement rule """

@@ -67,11 +67,11 @@ Trying to create a segment with nonexistent parent ID ``{}''!\
         par = replace.apply_rules(par)
 
         os.mkdir(rundir)
-        msg = "Created segment {}".format(segment)
+        msg = "Created segment {0}".format(segment)
         if iold >= 0:
             oldsegment = str(iold).zfill(4)
             parent = "output-" + oldsegment
-            msg += " with parent {}".format(oldsegment)
+            msg += " with parent {0}".format(oldsegment)
             os.symlink("../" + parent, rundir + "/parent")
             open(rundir + "/PREVIOUS", "w").write(str(iold).zfill(4) + "\n")
         open(rundir + "/batch.sub", "w").write(batch)
