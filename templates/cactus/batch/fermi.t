@@ -4,7 +4,6 @@
 # @ job_type = bluegene
 # @ wall_clock_limit = @WALLTIME@
 # @ bg_size = @NODES@
-# @ class = parallel
 # @ account_no = @ALLOCATION@
 # @ queue
 # @ notify_user = @EMAIL@
