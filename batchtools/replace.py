@@ -29,6 +29,7 @@ __patterns__ = [
     ('NUM_PROCS', "", "Total number of processes"),
     ('NUM_THREADS', "", "Number of threads per process"),
     ('PARFILE', "parfile.par", "Name of the parfile to use"),
+    ('PPN', "", "Number of CPUs per node"),
     ('PROC_PER_NODE', "", "Number of processes per node"),
     ('RUNDIR', None, "Work directory for each segment"),
     ('SEGMENT', None, "Segment ID"),
