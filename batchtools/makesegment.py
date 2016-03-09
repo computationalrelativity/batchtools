@@ -18,7 +18,8 @@ class MakeSegment(command.Abstract):
     helpstr = """\
 Usage: batchtools makesegment [newid [parentid]]
 
-Creates a new segment for the current simulation.
+Creates a new segment for the current simulation. If parentid is negative, then
+this creates a new initial segment.
 """
 
     def get_segment_list(self):
@@ -34,9 +35,19 @@ The current directory seems not to be initialized. Did you forget to run
             exit(1)
         segments = self.get_segment_list()
         if len(args) > 0:
-            inew = int(args[0])
+            try:
+                inew = int(args[0])
+            except ValueError:
+                print("Invalid segment ID: \"{0}\"".format(args[0]))
+                print(MakeSegment.helpstr)
+                exit(1)
             if len(args) > 1:
-                iold = int(args[1])
+                try:
+                    iold = int(args[1])
+                except ValueError:
+                    print("Invalid segment ID: \"{0}\"".format(args[0]))
+                    print(MakeSegment.helpstr)
+                    exit(1)
             else:
                 iold = inew - 1
         else:
