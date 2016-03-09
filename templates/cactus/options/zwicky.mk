@@ -98,5 +98,3 @@ PETSC_LAPACK_EXTRA_LIB_DIRS = /usr/local/Intel-12/composer_xe_2011_sp1.11.339/mk
 PETSC_LAPACK_EXTRA_LIBS     = iomp5 guide   pthread
 PETSC_MPI_EXTRA_LIB_DIRS    = /usr/lib64
 PETSC_MPI_EXTRA_LIBS        = pthread
-
-PTHREADS = yes

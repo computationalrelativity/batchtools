@@ -37,8 +37,7 @@ env | sort > ENVIRONMENT
 
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
-bind='@(@NUM_THREADS@ > 6 ? "--bind-to-none --num-cores 12" : "--bind-to-socket")@'
-time $OPENMPI_DIR/bin/mpirun $bind -np @NUM_PROCS@ -cpus-per-proc @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@
+time $OPENMPI_DIR/bin/mpirun --bind-to-socket -np @NUM_PROCS@ -cpus-per-proc @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@
 
 echo "Stopping:"
 date
