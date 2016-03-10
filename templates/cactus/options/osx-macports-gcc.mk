@@ -93,7 +93,7 @@ LAPACK_LIBS =
 #PETSC_ARCH = arch-darwin-c-debug
 #PETSC_ARCH_LIBS = petsc HYPRE
 
-#PTHREADS = yes
+PTHREADS_DIR = NO_BUILD
 
 SSL_DIR = /opt/local
 ZLIB_DIR = /opt/local

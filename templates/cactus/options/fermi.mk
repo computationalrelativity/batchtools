@@ -96,4 +96,4 @@ ZLIB_DIR     = /cineca/prod/libraries/zlib/1.2.7/bgq-gnu--4.4.6
 
 LIBDIRS = /cineca/prod/libraries/szip/2.1/bgq-gnu--4.4.6/lib
 
-PTHREADS = yes
+PTHREADS_DIR = NO_BUILD
