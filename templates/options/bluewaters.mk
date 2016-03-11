@@ -87,7 +87,8 @@ FFTW3_DIR = /opt/fftw/3.3.4.6/interlagos
 
 GSL_DIR = /sw/xe/gsl/1.15/cnl4.1_gnu4.7.2
 
-HDF5_DIR = /opt/cray/hdf5/1.8.14/GNU/49
+HDF5_DIR = BUILD
+HDF5_ENABLE_FORTRAN = yes
 
 HWLOC_DIR        = BUILD
 HWLOC_EXTRA_LIBS = numa
