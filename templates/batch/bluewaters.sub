@@ -1,6 +1,5 @@
 #! /bin/bash
 #PBS -A @ALLOCATION@
-#PBS -q normal:xe
 #PBS -r n
 #PBS -l walltime=@WALLTIME@
 #PBS -l nodes=@NODES@:ppn=@PPN@:xe
