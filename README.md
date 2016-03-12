@@ -69,7 +69,7 @@ This should have created a new segment:
 It is now possible to submit the simulation with (for instance)
 
 ~~~
-    $ cd output-0000 && slurm batch.sub
+    $ batchtools submit --slurm 0
 ~~~
 
 Checkpointing/recovery

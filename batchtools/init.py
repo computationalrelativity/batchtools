@@ -18,7 +18,8 @@ class Init(command.Abstract):
     helpstr = """\
 Usage: batchtools init -b|--batch BATCH -e|--exe EXE -p|--parfile PARFILE
 
-Initializes the current directory structure.
+Initializes the current directory structure. Please edit the BATCH/CONFIG file
+to configure the simulation, before creating segments.\
 """
     def run(self, args):
         batch   = None

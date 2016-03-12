@@ -5,3 +5,4 @@ from batchtools.command import *
 from batchtools.help import *
 from batchtools.init import *
 from batchtools.makesegment import *
+from batchtools.submit import *

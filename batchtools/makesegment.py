@@ -1,9 +1,9 @@
 import command
 import batchtools
 import batchtools.replace as replace
+from batchtools.utils import get_segment_list
 
 import datetime
-from glob import glob
 import os
 import shutil
 import sys
@@ -20,11 +20,9 @@ Usage: batchtools makesegment [newid [parentid]]
 
 Creates a new segment for the current simulation. If parentid is negative, then
 this creates a new initial segment.
+
+NOTE: The output of this command depends on the contents of ./BATCH/CONFIG.\
 """
-
-    def get_segment_list(self):
-        return [int(x[-4:]) for x in glob("output-????")]
-
     def run(self, args):
         if not os.path.exists("BATCH"):
             s = """\
@@ -33,26 +31,24 @@ The current directory seems not to be initialized. Did you forget to run
 """
             print(s)
             exit(1)
-        segments = self.get_segment_list()
+        segments = get_segment_list()
         if len(args) > 0:
             try:
                 inew = int(args[0])
             except ValueError:
                 print("Invalid segment ID: \"{0}\"".format(args[0]))
-                print(MakeSegment.helpstr)
                 exit(1)
             if len(args) > 1:
                 try:
                     iold = int(args[1])
                 except ValueError:
                     print("Invalid segment ID: \"{0}\"".format(args[0]))
-                    print(MakeSegment.helpstr)
                     exit(1)
             else:
                 iold = inew - 1
         else:
             if segments != []:
-                inew = max(self.get_segment_list()) + 1
+                inew = max(segments) + 1
                 iold = inew - 1
             else:
                 inew = 0
