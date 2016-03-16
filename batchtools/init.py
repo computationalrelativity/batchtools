@@ -34,25 +34,23 @@ to configure the simulation, before creating segments.\
                 elif t == "-p" or t == "--parfile":
                     parfile = args[i+1]
         except IndexError:
-            print("Unable to parse the options!")
-            exit(1)
+            sys.exit("Unable to parse the options!")
         if batch is None or not os.path.isfile(batch):
-            print("You need to specify the batch script to use")
-            print(Init.helpstr)
+            sys.stderr.write("You need to specify the batch script to use\n")
+            sys.stderr.write(Init.helpstr + "\n")
             exit(1)
         if exe is None or not os.path.isfile(exe):
-            print("You need to specify the executable to use")
-            print(Init.helpstr)
+            sys.stderr.write("You need to specify the executable to use\n")
+            sys.stderr.write(Init.helpstr + "\n")
             exit(1)
         if parfile is None or not os.path.isfile(parfile):
-            print("You need to specify the parfile to use")
-            print(Init.helpstr)
+            sys.stderr.write("You need to specify the parfile to use\n")
+            sys.stderr.write(Init.helpstr + "\n")
             exit(1)
 
         simpath = os.path.abspath(".")
         if os.path.exists("BATCH"):
-            print("The current folder seems to have already been initialized")
-            exit(1)
+            sys.exit("The current folder seems to have already been initialized")
         os.mkdir("BATCH")
 
         shutil.copy(batch,   "BATCH/batch.t")

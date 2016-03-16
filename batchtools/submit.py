@@ -3,9 +3,23 @@ import batchtools
 from batchtools.utils import get_segment_list
 
 import datetime
-import subprocess
+import re
+import subprocess as sp
 import os
 import sys
+
+class DummyBatch:
+    cmd  = "echo"
+    expr = "(.+?)\n"
+class LoadLevel:
+    cmd  = "llsubmit"
+    expr = "submit: The job \"(.+?)\" has been submitted.\n"
+class PBS:
+    cmd  = "qsub"
+    expr = "(.+?)\n"
+class SLURM:
+    cmd  = "sbatch"
+    expr = "(.+?)\n"
 
 class SubmitJob(command.Abstract):
     """
@@ -32,43 +46,54 @@ BATCH is used to specify the queueing system. Supported options are
 The current directory seems not to be initialized. Did you forget to run
 \'batchtools init\'?\
 """
-            print(s)
-            exit(1)
+            sys.exit(s)
 
         if len(args) < 2:
-            print(SubmitJob.helpstr)
-            exit(1)
+            sys.exit(SubmitJob.helpstr)
 
-        cmd = None
-        if args[0] == "--loadlevel":
-            cmd = "llsubmit"
-        elif args[0] == "--pbs":
-            cmd = "qsub"
-        elif args[0] == "--slurm":
-            cmd = "sbatch"
-        if cmd is None:
-            print("Invalid or not supported queueing system: \"{0}\"".format(
-                args[1]))
-            exit(1)
+        try:
+            queue = {
+                # Undocumented debugging option
+                "--dummy"     : DummyBatch,
+                "--loadlevel" : LoadLevel,
+                "--pbs"       : PBS,
+                "--slurm"     : SLURM,
+            }[args[0]]
+        except KeyError:
+            sys.exit("Invalid or not supported queueing system: \"{0}\"".format(
+                args[0]))
 
         try:
             sid = int(args[1])
             if sid not in get_segment_list():
                 raise ValueError
         except ValueError:
-            print("Invalid segment ID: \"{0}\".".format(args[1]))
-            exit(1)
+            sys.exit("Invalid segment ID: \"{0}\".".format(args[1]))
         segment = str(sid).zfill(4)
 
         path = "./output-" + segment
         if os.path.isfile(path + "/JOBID"):
-            print("Job ID file already exist: \"{0}/JOBID\".".format(path))
+            sys.exit("Job ID file already exist: \"{0}/JOBID\".".format(path))
+
+        cmd = queue.cmd + " batch.sub"
+        p = sp.Popen(cmd, shell=True, cwd=path, stdout=sp.PIPE, stderr=sp.PIPE)
+        stdout, stderr = p.communicate()
+        if p.returncode != 0:
+            sys.stderr.write("Submission failed: \"{0}\" returned non-zero exit "
+                    "status \"{1}\"\n".format(cmd, p.returncode))
+            sys.stdout.write(stdout)
+            sys.stderr.write(stderr)
             exit(1)
+        msg = "Submitted segment: {0}".format(segment)
 
-        cmd = "cd " + path + ";" + cmd + " batch.sub > JOBID"
-        os.system(cmd)
+        match = re.match(queue.expr, stdout)
+        if match is not None:
+            jobid = match.group(1)
+            msg +=  "\nJob ID: {0}".format(jobid)
+            open(path + "/JOBID", "w").write(jobid + "\n")
+        else:
+            msg += "\nCould not parse job ID from string \"{0}\"".format(stdout)
 
-        msg = "Submitted segment {0}".format(segment)
         print(msg)
         logfile = open("BATCH/log", "a")
         logfile.write(datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p"))

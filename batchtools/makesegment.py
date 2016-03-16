@@ -29,21 +29,18 @@ NOTE: The output of this command depends on the contents of ./BATCH/CONFIG.\
 The current directory seems not to be initialized. Did you forget to run
 \'batchtools init\'?\
 """
-            print(s)
-            exit(1)
+            sys.exit(s)
         segments = get_segment_list()
         if len(args) > 0:
             try:
                 inew = int(args[0])
             except ValueError:
-                print("Invalid segment ID: \"{0}\"".format(args[0]))
-                exit(1)
+                sys.exit("Invalid segment ID: \"{0}\"".format(args[0]))
             if len(args) > 1:
                 try:
                     iold = int(args[1])
                 except ValueError:
-                    print("Invalid segment ID: \"{0}\"".format(args[0]))
-                    exit(1)
+                    sys.exit("Invalid segment ID: \"{0}\"".format(args[0]))
             else:
                 iold = inew - 1
         else:
@@ -58,8 +55,7 @@ The current directory seems not to be initialized. Did you forget to run
                 s = """\
 Trying to create a segment with nonexistent parent ID ``{}''!\
 """.format(str(iold).zfill(4))
-                print(s)
-                exit(1)
+                sys.exit(s)
         segment = str(inew).zfill(4)
         rundir  = "output-" + segment
 
@@ -74,7 +70,7 @@ Trying to create a segment with nonexistent parent ID ``{}''!\
         par = replace.apply_rules(par)
 
         os.mkdir(rundir)
-        msg = "Created segment {0}".format(segment)
+        msg = "Created segment: {0}".format(segment)
         if iold >= 0:
             oldsegment = str(iold).zfill(4)
             parent = "output-" + oldsegment
