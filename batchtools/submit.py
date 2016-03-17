@@ -13,7 +13,7 @@ class DummyBatch:
     expr = "(.+?)\n"
 class LoadLevel:
     cmd  = "llsubmit"
-    expr = "submit: The job \"(.+?)\" has been submitted.\n"
+    expr = "llsubmit: The job \"(.+?)\" has been submitted."
 class PBS:
     cmd  = "qsub"
     expr = "(.+?)\n"
