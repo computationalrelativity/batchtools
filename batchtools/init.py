@@ -18,8 +18,7 @@ class Init(command.Abstract):
     helpstr = """\
 Usage: batchtools init -b|--batch BATCH -e|--exe EXE -p|--parfile PARFILE
 
-Initializes the current directory structure. Please edit the BATCH/CONFIG file
-to configure the simulation, before creating segments.\
+Initializes the current directory structure.\
 """
     def run(self, args):
         batch   = None
@@ -35,18 +34,18 @@ to configure the simulation, before creating segments.\
                     parfile = args[i+1]
         except IndexError:
             sys.exit("Unable to parse the options!")
-        if batch is None or not os.path.isfile(batch):
-            sys.stderr.write("You need to specify the batch script to use\n")
-            sys.stderr.write(Init.helpstr + "\n")
-            exit(1)
-        if exe is None or not os.path.isfile(exe):
-            sys.stderr.write("You need to specify the executable to use\n")
-            sys.stderr.write(Init.helpstr + "\n")
-            exit(1)
-        if parfile is None or not os.path.isfile(parfile):
-            sys.stderr.write("You need to specify the parfile to use\n")
-            sys.stderr.write(Init.helpstr + "\n")
-            exit(1)
+        if batch is None:
+            sys.exit("You need to specify the batch script to use.")
+        if not os.path.isfile(batch):
+            sys.exit("Batchfile \"{0}\" not found.".format(batch))
+        if exe is None:
+            sys.exit("You need to specify the executable to use.")
+        if not os.path.isfile(exe):
+            sys.exit("Exeecutable file \"{0}\" not found.".format(exe))
+        if parfile is None:
+            sys.exit("You need to specify the parameter file to use.")
+        if not os.path.isfile(parfile):
+            sys.exit("Parameter file \"{0}\" not found.".format(parfile))
 
         simpath = os.path.abspath(".")
         if os.path.exists("BATCH"):
@@ -69,6 +68,7 @@ to configure the simulation, before creating segments.\
         s  = "BATCHSCRIPT : " + batch + "\n"
         s += "EXECUTABLE  : " + os.path.abspath(exe) + "\n"
         s += "PARFILE     : " + os.path.abspath(parfile) + "\n"
+        s += "\nPlease edit the BATCH/CONFIG file to configure the simulation.\n"
         print(s),
 
         logfile = open("BATCH/log", "w")
