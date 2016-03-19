@@ -42,7 +42,12 @@ with specialized versions of the batch script and of the parfile. These are
 created by substituting patterns marked as `@PATTERN@` using the rules
 specified in the BATCH/CONFIG file in the simulation directory. Please take a
 moment to edit that file before creating the first segment of your new
-simulation. 
+simulation.
+
+A special field in the CONFIG file is `BATCHSYSTEM`. Its value is used by the
+batchtools submit subcommand to handle the interaction with the queueing
+system. Note that using batchtools to also submit jobs is optional and you do
+not need to set this variable if you intend to manually submit your jobs.
 
 Besides the rules specified in that file batchtools also expands the following
 variables:
@@ -69,7 +74,7 @@ This should have created a new segment:
 It is now possible to submit the simulation with (for instance)
 
 ~~~
-    $ batchtools submit --slurm 0
+    $ batchtools submit
 ~~~
 
 Checkpointing/recovery
@@ -87,7 +92,7 @@ can create and link segments in any order with the makesegment command. For
 instance:
 
 ~~~
-    $ batchtools makesegment 10 5
+    $ batchtools makesegment --id 10 --parent 5
 ~~~
 
 will create a new segment 0010 and set its parent to 0005. The user is

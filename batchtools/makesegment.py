@@ -1,7 +1,7 @@
 import command
 import batchtools
 import batchtools.replace as replace
-from batchtools.utils import get_segment_list
+from batchtools.utils import get_segment_list, print_segment_id
 
 import datetime
 import os
@@ -16,7 +16,7 @@ class MakeSegment(command.Abstract):
     name    = "makesegment"
     desc    = "Creates a new segment for the current simulation"
     helpstr = """\
-Usage: batchtools makesegment [newid [parentid]]
+Usage: batchtools makesegment [-i|--id newid] [-p|--parent parentid]
 
 Creates a new segment for the current simulation. If parentid is negative, then
 this creates a new initial segment.
@@ -30,33 +30,30 @@ The current directory seems not to be initialized. Did you forget to run
 \'batchtools init\'?\
 """
             sys.exit(s)
+        iold = None
+        inew = None
+        try:
+            for i, t in enumerate(args):
+                if t == "-i" or t == "--id":
+                    inew = int(args[i+1])
+                elif t == "-p" or t == "--parent":
+                    iold = int(args[i+1])
+        except IndexError:
+            sys.exit("Unable to parse the options!")
+        except ValueError as e:
+            sys.stderr.write("Unable to parse the options!\n")
+            sys.stderr.write(e)
+            exit(1)
+
         segments = get_segment_list()
-        if len(args) > 0:
-            try:
-                inew = int(args[0])
-            except ValueError:
-                sys.exit("Invalid segment ID: \"{0}\"".format(args[0]))
-            if len(args) > 1:
-                try:
-                    iold = int(args[1])
-                except ValueError:
-                    sys.exit("Invalid segment ID: \"{0}\"".format(args[0]))
-            else:
-                iold = inew - 1
-        else:
-            if segments != []:
-                inew = max(segments) + 1
-                iold = inew - 1
-            else:
-                inew = 0
-                iold = -1
-        if iold >= 0:
-            if not iold in segments:
-                s = """\
-Trying to create a segment with nonexistent parent ID ``{}''!\
-""".format(str(iold).zfill(4))
-                sys.exit(s)
-        segment = str(inew).zfill(4)
+        if inew is None:
+            inew = max(segments) + 1
+        if iold is None:
+            iold = inew - 1
+        if iold >= 0 and iold not in segments:
+            sys.exit("Unvalid parent ID: {0}".format(iold))
+
+        segment = print_segment_id(inew)
         rundir  = "output-" + segment
 
         replace.read_rules("BATCH/CONFIG")
@@ -72,7 +69,7 @@ Trying to create a segment with nonexistent parent ID ``{}''!\
         os.mkdir(rundir)
         msg = "Created segment: {0}".format(segment)
         if iold >= 0:
-            oldsegment = str(iold).zfill(4)
+            oldsegment = print_segment_id(iold)
             parent = "output-" + oldsegment
             msg += " with parent {0}".format(oldsegment)
             os.symlink("../" + parent, rundir + "/parent")

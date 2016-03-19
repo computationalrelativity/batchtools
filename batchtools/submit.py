@@ -1,6 +1,7 @@
 import command
 import batchtools
-from batchtools.utils import get_segment_list
+import batchtools.replace as replace
+from batchtools.utils import get_segment_list, print_segment_id
 
 import datetime
 import re
@@ -8,16 +9,24 @@ import subprocess as sp
 import os
 import sys
 
-class DummyBatch:
+""" Abstract class for a queueing system """
+class QueueingSystem(object):
+    pass
+
+class DummyBatch(QueueingSystem):
+    name = "dummy"
     cmd  = "echo"
     expr = "(.+)"
-class LoadLevel:
+class LoadLevel(QueueingSystem):
+    name = "loadlevel"
     cmd  = "llsubmit"
     expr = "llsubmit: The job \"(.+?)\" has been submitted."
-class PBS:
+class PBS(QueueingSystem):
+    name = "pbs"
     cmd  = "qsub"
     expr = "(.+)"
-class SLURM:
+class SLURM(QueueingSystem):
+    name = "slurm"
     cmd  = "sbatch"
     expr = "Submitted batch job (\d+)"
 
@@ -28,17 +37,12 @@ class SubmitJob(command.Abstract):
     name    = "submit"
     desc    = "Submits a job to the queueing system"
     helpstr = """\
-Usage: batchtools submit BATCH ID
+Usage: batchtools submit [ID]
 
 Submits a job to the queueing system and writes the job ID into the file
 output-ID/JOBID. If the JOBID file already exist, the command will abort.
 
-ID should be a valid segment ID.
-
-BATCH is used to specify the queueing system. Supported options are
-    --loadlevel : for the LoadLevel queueing system (uses llsubmit)
-    --pbs       : for the PBS queueing system (uses qsub)
-    --slurm     : for the SLURM queueing system (uses sbatch)\
+If ID is not specified then the largest available segment ID is used.
 """
     def run(self, args):
         if not os.path.exists("BATCH"):
@@ -48,29 +52,32 @@ The current directory seems not to be initialized. Did you forget to run
 """
             sys.exit(s)
 
-        if len(args) < 2:
-            sys.exit(SubmitJob.helpstr)
-
         try:
-            queue = {
-                # Undocumented debugging option
-                "--dummy"     : DummyBatch,
-                "--loadlevel" : LoadLevel,
-                "--pbs"       : PBS,
-                "--slurm"     : SLURM,
-            }[args[0]]
-        except KeyError:
-            sys.exit("Invalid or not supported queueing system: \"{0}\"".format(
-                args[0]))
-
-        try:
-            sid = int(args[1])
+            sid = int(args[0])
             if sid not in get_segment_list():
-                raise ValueError
-        except ValueError:
-            sys.exit("Invalid segment ID: \"{0}\".".format(args[1]))
-        segment = str(sid).zfill(4)
+                sys.exit("Invalid segment ID: \"{0}\".".format(sid))
+        except IndexError:
+            sid = max(get_segment_list())
 
+        replace.read_rules("BATCH/CONFIG")
+        try:
+            qtype = replace.get_rule("BATCHSYSTEM").subst
+        except KeyError:
+            qtype = ""
+        if qtype == "":
+            sys.exit("You need to set the BATCHSYSTEM option in BATCH/CONFIG")
+
+        qtypes = {x.name: x for x in QueueingSystem.__subclasses__()}
+        try:
+            queue = qtypes[qtype.lower()]
+        except KeyError:
+            sys.stderr.write("Unknown queueing system: \"{0}\".\n".format(qtype))
+            sys.stderr.write("Valid values are:\n")
+            for k in qtypes.iterkeys():
+                sys.stderr.write(" "*4 + k + "\n")
+            exit(1)
+
+        segment = print_segment_id(sid)
         path = "./output-" + segment
         if os.path.isfile(path + "/JOBID"):
             sys.exit("Job ID file already exist: \"{0}/JOBID\".".format(path))

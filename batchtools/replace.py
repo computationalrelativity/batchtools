@@ -20,8 +20,9 @@ class Pattern:
 
 # Default rules
 __patterns__ = [
-    ('BATCHSCRIPT', "batch.sub", "Name of the batch sript"),
-    ('EMAIL', "", "Email to be used for messagges"),
+    ('BATCHSYSTEM', "", "Name of the batch queueing system"),
+    ('BATCHSCRIPT', "batch.sub", "Name of the batch script"),
+    ('EMAIL', "", "Email to be used for messages"),
     ('EXECUTABLE', "../BATCH/exec",
         "Name of the executable to use (relative path from the RUNDIR)"),
     ('HOME', os.environ['HOME'], "User home directory"),
@@ -56,6 +57,10 @@ def add_rule(key, subst, desc=None):
         patterns[key] = Pattern(key, subst, desc)
     else:
         raise ValueError("Rule for {0} already exists!".format(key))
+
+def get_rule(key):
+    """ Get a replacement rule """
+    return patterns[key]
 
 def set_rule(key, subst, desc=None):
     """ Update or create a replacement rule """
