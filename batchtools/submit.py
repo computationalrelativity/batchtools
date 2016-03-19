@@ -10,16 +10,16 @@ import sys
 
 class DummyBatch:
     cmd  = "echo"
-    expr = "(.+?)\n"
+    expr = "(.+)"
 class LoadLevel:
     cmd  = "llsubmit"
     expr = "llsubmit: The job \"(.+?)\" has been submitted."
 class PBS:
     cmd  = "qsub"
-    expr = "(.+?)\n"
+    expr = "(.+)"
 class SLURM:
     cmd  = "sbatch"
-    expr = "(.+?)\n"
+    expr = "Submitted batch job (\d+)"
 
 class SubmitJob(command.Abstract):
     """
@@ -86,13 +86,17 @@ The current directory seems not to be initialized. Did you forget to run
             exit(1)
         msg = "Submitted segment: {0}".format(segment)
 
-        match = re.match(queue.expr, stdout)
-        if match is not None:
-            jobid = match.group(1)
-            msg +=  "\nJob ID: {0}".format(jobid)
-            open(path + "/JOBID", "w").write(jobid + "\n")
-        else:
-            msg += "\nCould not parse job ID from string \"{0}\"".format(stdout)
+        jobid = None
+        for l in stdout.splitlines():
+            match = re.match(queue.expr, l)
+            if match is not None:
+                jobid = match.group(1)
+                msg +=  "\nJob ID: {0}".format(jobid)
+                open(path + "/JOBID", "w").write(jobid + "\n")
+                break
+        if jobid is None:
+            msg += "\nCould not parse job ID from submit output:\n"
+            msg += stdout
 
         print(msg)
         logfile = open("BATCH/log", "a")
