@@ -35,7 +35,8 @@ batch script
 The batch script can be any text file. Some examples are included in batchtools
 in the `templates` folder.
 
-In general, batchtools supports most of simfactory submit-/run-scripts.
+Most of simfactory submit-/run-scripts can be adapted to be used with
+batchtools in a very simple way.
 
 When batchtools creates a new segment of the simulation it will populate it
 with specialized versions of the batch script and of the parfile. These are
