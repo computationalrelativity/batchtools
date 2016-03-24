@@ -57,7 +57,11 @@ The current directory seems not to be initialized. Did you forget to run
             if sid not in get_segment_list():
                 sys.exit("Invalid segment ID: \"{0}\".".format(sid))
         except IndexError:
-            sid = max(get_segment_list())
+            segments = get_segment_list()
+            if len(segments) > 0:
+                sid = max(segments)
+            else:
+                sys.exit("Cannot submit simulation: no segments found.")
 
         replace.read_rules("BATCH/CONFIG")
         try:
@@ -67,11 +71,12 @@ The current directory seems not to be initialized. Did you forget to run
         if qtype == "":
             sys.exit("You need to set the BATCHSYSTEM option in BATCH/CONFIG")
 
-        qtypes = {x.name: x for x in QueueingSystem.__subclasses__()}
+        qtypes = dict([(x.name, x) for x in QueueingSystem.__subclasses__()])
         try:
             queue = qtypes[qtype.lower()]
         except KeyError:
-            sys.stderr.write("Unknown queueing system: \"{0}\".\n".format(qtype))
+            sys.stderr.write("Unknown queueing system: "
+                    "\"{0}\".\n".format(qtype))
             sys.stderr.write("Valid values are:\n")
             for k in qtypes.iterkeys():
                 sys.stderr.write(" "*4 + k + "\n")

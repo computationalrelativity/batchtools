@@ -47,16 +47,16 @@ simulation.
 
 A special field in the CONFIG file is `BATCHSYSTEM`. Its value is used by the
 batchtools submit subcommand to handle the interaction with the queueing
-system. Note that using batchtools to also submit jobs is optional and you do
-not need to set this variable if you intend to manually submit your jobs.
+system. Note that using batchtools to submit jobs is optional and you do not
+need to set this variable if you intend to submit your jobs manually.
 
-Besides the rules specified in that file batchtools also expands the following
+Besides the rules specified in that file, batchtools also expands the following
 variables:
 ~~~
     @RUNDIR@        work directory of each segment
     @SEGMENT@       segment ID
 ~~~
-More "magic" variables might be added in the future if really needed.
+More "magic" variables might be added in the future, if really needed.
 
 Having edited the BATCH/CONFIG file, it is now possible to create a new segment
 of the simulation with

@@ -35,6 +35,7 @@ __patterns__ = [
     ('RUNDIR', None, "Work directory for each segment"),
     ('SEGMENT', None, "Segment ID"),
     ('SIMULATION_NAME', "", "Name of the simulation"),
+    ('WALLTIME', "", "Walltime HH:MM:SS"),
 ]
 patterns = {}
 for p in __patterns__:

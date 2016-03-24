@@ -47,7 +47,10 @@ The current directory seems not to be initialized. Did you forget to run
 
         segments = get_segment_list()
         if inew is None:
-            inew = max(segments) + 1
+            if len(segments) == 0:
+                inew = 0
+            else:
+                inew = max(segments) + 1
         if iold is None:
             iold = inew - 1
         if iold >= 0 and iold not in segments:
