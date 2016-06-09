@@ -28,7 +28,7 @@ Initializes the current directory structure.\
             for i, t in enumerate(args):
                 if t == "-b" or t == "--batch":
                     batch = args[i+1]
-                elif t == "-e" or t == "--exe":
+                elif t == "-e" or t == "--exe" or t == "--exec":
                     exe = args[i+1]
                 elif t == "-p" or t == "--parfile":
                     parfile = args[i+1]
