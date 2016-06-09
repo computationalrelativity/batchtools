@@ -16,7 +16,7 @@ class MakeSegment(command.Abstract):
     name    = "makesegment"
     desc    = "Creates a new segment for the current simulation"
     helpstr = """\
-Usage: batchtools makesegment [-i|--id newid] [-p|--parent parentid]
+Usage: batchtools makesegment [-i|--id newid] [-p|--parent parentid|--no-parent]
 
 Creates a new segment for the current simulation. If parentid is negative, then
 this creates a new initial segment.
@@ -30,12 +30,15 @@ The current directory seems not to be initialized. Did you forget to run
 \'batchtools init\'?\
 """
             sys.exit(s)
+        noparent = False
         iold = None
         inew = None
         try:
             for i, t in enumerate(args):
                 if t == "-i" or t == "--id":
                     inew = int(args[i+1])
+                elif t == "--no-parent" or t == "--no-parents":
+                    noparent = True
                 elif t == "-p" or t == "--parent":
                     iold = int(args[i+1])
         except IndexError:
@@ -44,6 +47,12 @@ The current directory seems not to be initialized. Did you forget to run
             sys.stderr.write("Unable to parse the options!\n")
             sys.stderr.write(e)
             exit(1)
+
+        if noparent:
+            if iold is None:
+                iold = -1
+            else:
+                sys.exit("You cannot specify both --no-parent and --parent")
 
         segments = get_segment_list()
         if inew is None:
