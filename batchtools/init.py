@@ -25,13 +25,16 @@ Initializes the current directory structure.\
         exe     = None
         parfile = None
         try:
-            for i, t in enumerate(args):
+            while len(args) > 0:
+                t = args.pop(0)
                 if t == "-b" or t == "--batch":
-                    batch = args[i+1]
+                    batch = args.pop(0)
                 elif t == "-e" or t == "--exe" or t == "--exec":
-                    exe = args[i+1]
+                    exe = args.pop(0)
                 elif t == "-p" or t == "--parfile":
-                    parfile = args[i+1]
+                    parfile = args.pop(0)
+                else:
+                    sys.exit("Unkown command: \"{0}\"!".format(t))
         except IndexError:
             sys.exit("Unable to parse the options!")
         if batch is None:

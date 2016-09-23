@@ -34,13 +34,16 @@ The current directory seems not to be initialized. Did you forget to run
         iold = None
         inew = None
         try:
-            for i, t in enumerate(args):
+            while len(args) > 0:
+                t = args.pop(0)
                 if t == "-i" or t == "--id":
-                    inew = int(args[i+1])
+                    inew = int(args.pop(0))
                 elif t == "--no-parent" or t == "--no-parents":
                     noparent = True
                 elif t == "-p" or t == "--parent":
-                    iold = int(args[i+1])
+                    iold = int(args.pop(0))
+                else:
+                    sys.exit("Unkown command: \"{0}\"!".format(t))
         except IndexError:
             sys.exit("Unable to parse the options!")
         except ValueError as e:
