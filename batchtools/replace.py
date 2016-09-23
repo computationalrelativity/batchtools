@@ -29,6 +29,7 @@ __patterns__ = [
     ('NODES', "", "Total number of nodes"),
     ('NUM_PROCS', "", "Total number of processes"),
     ('NUM_THREADS', "", "Number of threads per process"),
+    ('INCLUDE', "../BATCH/include", "Path to extra simulation files"),
     ('PARFILE', "parfile.par", "Name of the parfile to use"),
     ('PPN', "", "Number of CPUs per node"),
     ('PROC_PER_NODE', "", "Number of processes per node"),
