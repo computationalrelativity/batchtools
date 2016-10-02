@@ -36,6 +36,7 @@ __patterns__ = [
     ('RUNDIR', None, "Work directory for each segment"),
     ('SEGMENT', None, "Segment ID"),
     ('SIMULATION_NAME', "", "Name of the simulation"),
+    ('THREADS', "", "Total number of threads"),
     ('WALLTIME', "", "Walltime HH:MM:SS"),
 ]
 patterns = {}
