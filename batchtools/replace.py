@@ -38,10 +38,12 @@ __patterns__ = [
     ('SIMULATION_NAME', "", "Name of the simulation"),
     ('THREADS', "", "Total number of threads"),
     ('WALLTIME', "", "Walltime HH:MM:SS"),
+    ('WALLTIME_HOURS', "", "Walltime in hours HH"),
 ]
 patterns = {}
+defaults = {}
 for p in __patterns__:
-    patterns[p[0]] = Pattern(*p)
+    defaults[p[0]] = Pattern(*p)
 
 def exists(key):
     return patterns.has_key(key)
@@ -57,7 +59,10 @@ def apply_rules(txt):
 def add_rule(key, subst, desc=None):
     """ Add a new preplacement rule """
     if not patterns.has_key(key):
-        patterns[key] = Pattern(key, subst, desc)
+        if defaults.has_key(key):
+            patterns[key] = defaults[key]
+        else:
+            patterns[key] = Pattern(key, subst, desc)
     else:
         raise ValueError("Rule for {0} already exists!".format(key))
 
