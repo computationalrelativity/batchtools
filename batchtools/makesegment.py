@@ -72,8 +72,8 @@ The current directory seems not to be initialized. Did you forget to run
         rundir  = "output-" + segment
 
         replace.read_rules("BATCH/CONFIG")
-        replace.update_rule("RUNDIR", os.path.abspath(".") + "/" + rundir)
-        replace.update_rule("SEGMENT", segment)
+        replace.set_rule("RUNDIR", os.path.abspath(".") + "/" + rundir)
+        replace.set_rule("SEGMENT", segment)
 
         batch = open("BATCH/batch.t", "r").read()
         batch = replace.apply_rules(batch)
