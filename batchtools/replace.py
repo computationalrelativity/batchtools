@@ -20,6 +20,7 @@ class Pattern:
 
 # Default rules
 __patterns__ = [
+    ('ALLOCATION', "", "Allocation to use when submitting a job"),
     ('BATCHSYSTEM', "", "Name of the batch queueing system"),
     ('BATCHSCRIPT', "batch.sub", "Name of the batch script"),
     ('EMAIL', "", "Email to be used for messages"),
@@ -44,6 +45,7 @@ patterns = {}
 defaults = {}
 for p in __patterns__:
     defaults[p[0]] = Pattern(*p)
+patterns['BATCHSYSTEM'] = defaults['BATCHSYSTEM']
 
 def exists(key):
     return patterns.has_key(key)
