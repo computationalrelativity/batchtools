@@ -1,15 +1,15 @@
 #! /bin/bash
-#@ -N @SIMULATION_NAME@
-#@ -r n
-#@ -pe orte @THREADS@
-#@ -l h_rt=@WALLTIME@
-#@ -l exclusive=true
-#@ -V
-#@ -R y
-#@ -m abe
-#@ -M @EMAIL@ 
-#@ -o @RUNDIR@/@SIMULATION_NAME@.out
-#@ -e @RUNDIR@/@SIMULATION_NAME@.err
+#$ -N @SIMULATION_NAME@
+#$ -r n
+#$ -pe orte @NUM_PROCS@
+#$ -l h_rt=@WALLTIME@
+#$ -l exclusive=true
+#$ -V
+#$ -R y
+#$ -m abe
+#$ -M @EMAIL@ 
+#$ -o @RUNDIR@/@SIMULATION_NAME@.out
+#$ -e @RUNDIR@/@SIMULATION_NAME@.err
 
 echo "Preparing:"
 set -x                          # Output commands
@@ -25,15 +25,15 @@ cat "$PE_HOSTFILE" > NODES || true
 
 echo "Environment:"
 export CACTUS_NUM_PROCS=@NUM_PROCS@
-export CACTUS_NUM_THREADS=@NUM_THREADS@
+export CACTUS_NUM_THREADS=1
 export GMON_OUT_PREFIX=gmon.out
-export OMP_NUM_THREADS=@NUM_THREADS@
-export OPENMPI_DIR=/usr/local/openmpi-1.8.4/intel/x86_64
+export OMP_NUM_THREADS=1
+export OPENMPI_DIR=/usr/local/openmpi-1.8.4/intel-15.0.2/x86_64
 env | sort > ENVIRONMENT
 
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
-time $OPENMPI_DIR/bin/mpirun --bind-to-socket -N @PROC_PER_NODE@ -cpus-per-proc @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@
+time $OPENMPI_DIR/bin/mpirun @EXECUTABLE@ -L 3 @PARFILE@
 
 echo "Stopping:"
 date

@@ -28,7 +28,7 @@ class PBS(QueueingSystem):
 class SGE(QueueingSystem):
     name = "sge"
     cmd  = "qsub"
-    expr = "Your job (\d\+) \(\".+\"\) has been submitted."
+    expr = "Your job (\d+) \(\".+\"\) has been submitted"
 class SLURM(QueueingSystem):
     name = "slurm"
     cmd  = "sbatch"
