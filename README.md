@@ -53,6 +53,7 @@ need to set this variable if you intend to submit your jobs manually.
 Besides the rules specified in that file, batchtools also expands the following
 variables:
 ~~~
+    @HOME@          user home directory
     @RUNDIR@        work directory of each segment
     @SEGMENT@       segment ID
 ~~~
