@@ -13,14 +13,14 @@ echo "Preparing:"
 set -x                          # Output commands
 set -e                          # Abort on errors
 
+module load hdf5/1.8.16
+
 cd @RUNDIR@
 
 echo "Checking:"
 pwd
 hostname
 date
-
-export SPACK_DIR=/work/00507/eschnett/stampede-knl/src/spack-view
 
 echo "Environment:"
 export CACTUS_NUM_PROCS=@NUM_PROCS@
@@ -35,15 +35,8 @@ export PTHREAD_MAX_TASKS=500
 env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
-${SPACK_DIR}/bin/ompi_info
-
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
-# NOTE: ibrun depends on environment settings; make sure this (i.e.
-# the loaded modules) corresponds to the MPI selection in the option
-# list
-export PATH=${SPACK_DIR}/bin:$PATH
-export TACC_MPI_GETMODE="openmpi_ssh"
 
 time ibrun @EXECUTABLE@ -L 3 @PARFILE@
 

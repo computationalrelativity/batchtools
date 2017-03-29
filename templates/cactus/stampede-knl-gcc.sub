@@ -1,0 +1,46 @@
+#! /bin/bash
+#SBATCH -A @ALLOCATION@
+#SBATCH -p normal
+#SBATCH -t @WALLTIME@
+#SBATCH -N @NODES@ -n @NUM_PROCS@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+module load gcc/6.3.0
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export CACTUS_SET_THREAD_BINDINGS=1
+export CXX_MAX_TASKS=500
+export GMON_OUT_PREFIX=gmon.out
+export OMP_MAX_TASKS=500
+export OMP_NUM_THREADS=@NUM_THREADS@
+export OMP_STACKSIZE=8192       # kByte
+export PTHREAD_MAX_TASKS=500
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+
+time ibrun @EXECUTABLE@ -L 3 @PARFILE@
+
+echo "Stopping:"
+date
+
+echo "Done."
