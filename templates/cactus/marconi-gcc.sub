@@ -44,7 +44,7 @@ env | sort > ENVIRONMENT
 
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
-mpirun -n @NUM_PROCS@ -N @PROC_PER_NODE@ @EXECUTABLE@ -L 3 @PARFILE@
+mpirun @EXECUTABLE@ -L 3 @PARFILE@
 echo "Stopping:"
 date
 
