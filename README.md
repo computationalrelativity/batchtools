@@ -1,7 +1,7 @@
 batchtools
 ==========
 
-A sane and robust alternative to simfactory
+A sane and robust alternative to [simfactory](http://simfactory.org/)
 
 batchtools has been designed to be a set of *simple* tools useful to deal with
 HPC simulations. batchtools only makes minimal assumptions about the user
@@ -29,7 +29,9 @@ Initialize a simulation by choosing a parfile, an executable, and a template
 batch script
 
 ~~~
-    $ batchtools init --batch loewe.slurm.t --parfile someparfile.par --exe cactus
+    $ batchtools init --batch loewe.slurm.t \
+                      --parfile someparfile.par \
+                      --exe cactus
 ~~~
 
 The batch script can be any text file. Some examples are included in batchtools
@@ -52,11 +54,13 @@ need to set this variable if you intend to submit your jobs manually.
 
 Besides the rules specified in that file, batchtools also expands the following
 variables:
+
 ~~~
     @HOME@          user home directory
     @RUNDIR@        work directory of each segment
     @SEGMENT@       segment ID
 ~~~
+
 More "magic" variables might be added in the future, if really needed.
 
 Having edited the BATCH/CONFIG file, it is now possible to create a new segment
@@ -85,8 +89,8 @@ Checkpointing/recovery
 batchtools will not attempt to mess with your checkpoint files, so restarting
 your simulations from a checkpoint requires a little bit of extra work.
 However, to simplify this task, batchtools creates a number of symbolic links
-between the different segments. Each segment has one symbolic link: "parent".
-This points to the "previous" segment.
+between the different segments. Each segment has one symbolic link: `parent`.
+This points to the `previous` segment.
 
 Note that previous segments need not to come immediately before the current
 segment in the enumeration, although this is the default behavior. The user
@@ -98,7 +102,7 @@ instance:
 ~~~
 
 will create a new segment 0010 and set its parent to 0005. The user is
-encouraged to setup his code to recover from the data in the "parent/"
+encouraged to setup his code to recover from the data in the `parent/`
 directory. For instance, in Cactus, this can be achieved with the following
 parfile options:
 
