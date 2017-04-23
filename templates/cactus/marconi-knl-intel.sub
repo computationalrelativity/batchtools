@@ -1,0 +1,61 @@
+#! /bin/bash
+#PBS -A @ALLOCATION@
+#PBS -q knlroute
+#PBS -r n
+#PBS -l walltime=@WALLTIME@
+#PBS -l select=@NODES@:ncpus=@PPN@:mpiprocs=@PROC_PER_NODE@:mem=64GB
+#PBS -N @SIMULATION_NAME@
+#PBS -m abe
+#PBS -o @RUNDIR@/@SIMULATION_NAME@.out
+#PBS -e @RUNDIR@/@SIMULATION_NAME@.err
+
+
+# be sure they are the same as the *.env
+module purge
+module load env-knl
+module load profile/base
+module load profile/advanced
+module load profile/knl
+module load intel/pe-xe-2017--binary
+module load intelmpi/2017--binary
+module load boost/1.61.0--intelmpi--2017--binary
+module load mkl/2017--binary
+module load szip/2.1--gnu--6.1.0 
+module load fftw/3.3.4--intelmpi--2017--binary   
+module load zlib/1.2.8--gnu--6.1.0
+module load hdf5/1.8.17--intelmpi--2017--binary
+module load hwloc/1.11.3--gnu--6.1.0
+
+# ?
+##export PATH=/cineca/prod/opt/compilers/intel/pe-xe-2016/binary/impi/5.1.3.210/bin64:$PATH
+
+
+
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+cat ${PBS_NODEFILE} > NODES
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+export OMP_NUM_THREADS=@NUM_THREADS@
+export ATP_ENABLED=1
+env | sort > ENVIRONMENT
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+mpirun -n @NUM_PROCS@ -ppn @PROC_PER_NODE@ @EXECUTABLE@ -L 3 @PARFILE@
+echo "Stopping:"
+date
+
+echo "Done."
