@@ -46,6 +46,7 @@ defaults = {}
 for p in __patterns__:
     defaults[p[0]] = Pattern(*p)
 patterns['BATCHSYSTEM'] = defaults['BATCHSYSTEM']
+patterns['HOME'] = defaults['HOME']
 
 def exists(key):
     return patterns.has_key(key)

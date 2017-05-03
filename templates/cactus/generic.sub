@@ -1,0 +1,31 @@
+#! /bin/bash
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+export KMP_AFFINITY=norespect,compact # verbose
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+time  mpirun -np @NUM_PROCS@ -v @EXECUTABLE@ -L 3 @PARFILE@ \
+    1> @SIMULATION_NAME@.out \
+    2> @SIMULATION_NAME@.err
+
+echo "Stopping:"
+date
+
+echo "Done."

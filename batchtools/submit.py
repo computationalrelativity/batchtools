@@ -13,25 +13,29 @@ import sys
 class QueueingSystem(object):
     pass
 
+class AtBatch(QueueingSystem):
+    name = "at"
+    cmd  = "at -f {batch} \"now\" 2>&1"
+    expr = "job (\d+) at (.+)"
 class DummyBatch(QueueingSystem):
     name = "dummy"
-    cmd  = "echo"
+    cmd  = "echo {batch}"
     expr = "(.+)"
 class LoadLevel(QueueingSystem):
     name = "loadlevel"
-    cmd  = "llsubmit"
+    cmd  = "llsubmit {batch}"
     expr = "llsubmit: The job \"(.+?)\" has been submitted."
 class PBS(QueueingSystem):
     name = "pbs"
-    cmd  = "qsub"
+    cmd  = "qsub {batch}"
     expr = "(.+)"
 class SGE(QueueingSystem):
     name = "sge"
-    cmd  = "qsub"
+    cmd  = "qsub {batch}"
     expr = "Your job (\d+) \(\".+\"\) has been submitted"
 class SLURM(QueueingSystem):
     name = "slurm"
-    cmd  = "sbatch"
+    cmd  = "sbatch {batch}"
     expr = "Submitted batch job (\d+)"
 
 class SubmitJob(command.Abstract):
@@ -91,7 +95,7 @@ The current directory seems not to be initialized. Did you forget to run
         if os.path.isfile(path + "/JOBID"):
             sys.exit("Job ID file already exist: \"{0}/JOBID\".".format(path))
 
-        cmd = queue.cmd + " batch.sub"
+        cmd = queue.cmd.format(batch="batch.sub")
         p = sp.Popen(cmd, shell=True, cwd=path, stdout=sp.PIPE, stderr=sp.PIPE)
         stdout, stderr = p.communicate()
         if p.returncode != 0:
