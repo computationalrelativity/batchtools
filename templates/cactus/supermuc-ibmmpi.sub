@@ -1,0 +1,58 @@
+#! /bin/bash
+#@ job_type = parallel
+#@ checkpoint = no
+#@ restart = no
+#@ wall_clock_limit = @WALLTIME@
+#@ node = @NODES@
+#@ tasks_per_node = @PROC_PER_NODE@
+#@ node_usage = not_shared
+#@ network.MPI = sn_all,not_shared,us
+#@ job_name = @SIMULATION_NAME@
+#@ notify_user = @EMAIL@
+#@ notification = always
+#@ shell = /bin/bash
+#@ initialdir = @RUNDIR@
+#@ input = /dev/null
+#@ output = @RUNDIR@/@SIMULATION_NAME@.out
+#@ error = @RUNDIR@/@SIMULATION_NAME@.err
+#@ energy_policy_tag = Cactus
+#@ minimize_time_to_solution = yes
+#@ queue
+
+echo "Preparing:"
+set -x                          # Output commands
+#set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+pwd
+hostname
+date
+
+source /etc/profile
+source /etc/profile.d/modules.sh
+
+echo "Environment:"
+
+export LOADLEVELER_VERSION=$LOADL_ACTIVE
+export MP_SINGLE_THREAD=no
+export OMP_NUM_THREADS=@NUM_THREADS@
+export MP_TASK_AFFINITY=core:$OMP_NUM_THREADS
+
+env | sort > SIMFACTORY/ENVIRONMENT
+
+echo "Starting:"
+
+export CACTUS_STARTTIME=$(date +%s)
+
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+
+export MP_DEBUG_NOTIMEOUT=yes
+#/usr/bin/poe @EXECUTABLE@ -L 3 @PARFILE@
+mpiexec -n @NUM_PROCS@ @EXECUTABLE@ -L 3 @PARFILE@
+
+echo "Stopping:"
+date
+
+echo "Done."
