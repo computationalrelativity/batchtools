@@ -14,13 +14,11 @@ set -e                          # Abort on errors
 
 cd @RUNDIR@
 
-module load intel/12.1.5.339
-
+module load gcc/4.9.2
+module load openmpi/1.10.2
 module load fftw3/3.2.2
-module load git/1.7.9.4
-module load gsl/1.15-gcc
-module load openmpi/1.4.3-gcc-dynamic
-
+module load git/2.5.3
+module load gsl/1.16
 echo "Checking:"
 pwd
 hostname
@@ -32,12 +30,12 @@ export CACTUS_NUM_PROCS=@NUM_PROCS@
 export CACTUS_NUM_THREADS=@NUM_THREADS@
 export GMON_OUT_PREFIX=gmon.out
 export OMP_NUM_THREADS=@NUM_THREADS@
-export OPENMPI_DIR=/usr/local/openmpi-1.4.3-gcc-dynamic
+export OPENMPI_DIR=/usr/local/OpenMPI/1.10.2
 env | sort > ENVIRONMENT
 
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
-time $OPENMPI_DIR/bin/mpirun --bind-to-socket -np @NUM_PROCS@ -cpus-per-proc @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@
+time $OPENMPI_DIR/bin/mpirun -np @NUM_PROCS@ -cpus-per-proc @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@
 
 echo "Stopping:"
 date
