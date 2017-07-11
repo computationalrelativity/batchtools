@@ -1,0 +1,52 @@
+#! /bin/bash
+#SBATCH -A @ALLOCATION@
+#SBATCH -p RM 
+#SBATCH -t @WALLTIME@
+#SBATCH --nodes @NODES@
+#SBATCH --ntasks @NUM_PROCS@
+#SBATCH --cpus-per-task @NUM_THREADS@
+#SBATCH --export=ALL
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+module purge
+module load psc_path/1.1
+module load slurm/17.02.5
+module load intel/compilers
+module load mpi/intel_mpi
+module load icc/16.0.3
+module load boost/1.63.0_py2.7.11
+module load fftw3/3.3.4
+module load hdf5/1.8.16_intel
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+time mpirun \
+    -print-rank-map \
+    -n $SLURM_NTASKS \
+    @EXECUTABLE@ -L 3 @PARFILE@
+
+echo "Stopping:"
+date
+
+echo "Done."
