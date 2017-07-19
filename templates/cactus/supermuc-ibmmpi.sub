@@ -2,6 +2,7 @@
 #@ job_type = parallel
 #@ checkpoint = no
 #@ restart = no
+#@ class = @CLASS@
 #@ wall_clock_limit = @WALLTIME@
 #@ node = @NODES@
 #@ tasks_per_node = @PROC_PER_NODE@
@@ -39,7 +40,7 @@ export MP_SINGLE_THREAD=no
 export OMP_NUM_THREADS=@NUM_THREADS@
 export MP_TASK_AFFINITY=core:$OMP_NUM_THREADS
 
-env | sort > SIMFACTORY/ENVIRONMENT
+env | sort > ENVIRONMENT
 
 echo "Starting:"
 
