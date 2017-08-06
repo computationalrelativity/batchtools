@@ -1,0 +1,44 @@
+#! /bin/bash
+#SBATCH -t @WALLTIME@
+#SBATCH -N @NODES@ -n @NUM_PROCS@ -c @NUM_THREADS@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+source /etc/profile
+module purge
+module load fftw/gcc/3.3.4
+module load intel/17.0/64/17.0.2.174
+module load openmpi/intel-17.0/1.10.2/64
+module load hdf5/intel-17.0/openmpi-1.10.2/1.10.0
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+export KMP_AFFINITY=norespect,compact # verbose
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+time srun -N @NODES@ -n @NUM_PROCS@ -c @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@
+
+echo "Stopping:"
+date
+
+echo "Done."
