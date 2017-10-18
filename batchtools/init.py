@@ -81,7 +81,7 @@ Initializes the current directory structure.\
 
         open("BATCH/CONFIG", "w").write(replace.write_rules())
 
-        s  = "BATCHSCRIPT : " + batch + "\n"
+        s  = "BATCHSCRIPT : " + os.path.abspath(batch) + "\n"
         s += "EXECUTABLE  : " + os.path.abspath(exe) + "\n"
         s += "PARFILE     : " + os.path.abspath(parfile) + "\n"
         for f in include:
