@@ -56,6 +56,7 @@ Besides the rules specified in that file, batchtools also expands the following
 variables:
 
 ~~~
+    @EXECUTABLE@    path to the code executable
     @HOME@          user home directory
     @RUNDIR@        work directory of each segment
     @SEGMENT@       segment ID
@@ -90,7 +91,7 @@ batchtools will not attempt to mess with your checkpoint files, so restarting
 your simulations from a checkpoint requires a little bit of extra work.
 However, to simplify this task, batchtools creates a number of symbolic links
 between the different segments. Each segment has one symbolic link: `parent`.
-This points to the `previous` segment.
+This points to the `PREVIOUS` segment.
 
 Note that previous segments need not to come immediately before the current
 segment in the enumeration, although this is the default behavior. The user
