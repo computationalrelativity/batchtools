@@ -38,7 +38,7 @@ echo "Checking:"
 pwd
 hostname
 date
-cat ${SLURM_JOB_NODELIST} > NODES
+#cat ${SLURM_JOB_NODELIST} > NODES
 
 echo "Environment:"
 export CACTUS_NUM_PROCS=@NUM_PROCS@
