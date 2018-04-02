@@ -41,6 +41,8 @@ export OMP_NUM_THREADS=@NUM_THREADS@
 env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
+ln -s /scratch/$USER/$SLURM_JOB_ID scratch
+
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
 # NOTE: ibrun depends on environment settings; make sure this (i.e.
