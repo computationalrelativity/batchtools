@@ -12,7 +12,7 @@ batchtools strictly adheres to the principle of least astonishment.
 Usage
 -----
 
-Add batchtools/bin to your PATH
+Add batchtools/bin to your `PATH`
 
 ~~~
     $ export PATH=$PATH:/path/to/batchtools/bin
@@ -21,7 +21,7 @@ Add batchtools/bin to your PATH
 Create a simulation directory somewhere
 
 ~~~
-    $ mkdir /path/to/my/new/simulation
+    $ mkdir -p /path/to/my/new/simulation
     $ cd /path/to/my/new/simulations
 ~~~
 
@@ -34,20 +34,29 @@ batch script
                       --exe cactus
 ~~~
 
+This will create a folder `BATCH`
+
+~~~
+    $ ls BATCH
+    batch.t exec parfile.t
+~~~
+
+It is possible to also include additional input files during initialization
+using the `--include` option. These will be installed in the `BATCH/include`
+folder.
+
 The batch script can be any text file. Some examples are included in batchtools
-in the `templates` folder.
+in the `templates` folder. Most of simfactory submit-/run-scripts can be
+adapted to be used with batchtools in a very simple way.
 
-Most of simfactory submit-/run-scripts can be adapted to be used with
-batchtools in a very simple way.
-
-When batchtools creates a new segment of the simulation it will populate it
+When batchtools creates a new segment of a simulation it will populate it
 with specialized versions of the batch script and of the parfile. These are
 created by substituting patterns marked as `@PATTERN@` using the rules
-specified in the BATCH/CONFIG file in the simulation directory. Please take a
+specified in the `BATCH/CONFIG` file in the simulation directory. Please take a
 moment to edit that file before creating the first segment of your new
 simulation.
 
-A special field in the CONFIG file is `BATCHSYSTEM`. Its value is used by the
+A special field in the `CONFIG` file is `BATCHSYSTEM`. Its value is used by the
 batchtools submit subcommand to handle the interaction with the queueing
 system. Note that using batchtools to submit jobs is optional and you do not
 need to set this variable if you intend to submit your jobs manually.
@@ -56,15 +65,16 @@ Besides the rules specified in that file, batchtools also expands the following
 variables:
 
 ~~~
-    @EXECUTABLE@    path to the code executable
-    @HOME@          user home directory
-    @RUNDIR@        work directory of each segment
-    @SEGMENT@       segment ID
+    @CHAINED_JOB_ID@    job ID of parent segment
+    @EXECUTABLE@        path to the code executable
+    @HOME@              user home directory
+    @RUNDIR@            work directory of each segment
+    @SEGMENT@           segment ID
 ~~~
 
 More "magic" variables might be added in the future, if really needed.
 
-Having edited the BATCH/CONFIG file, it is now possible to create a new segment
+Having edited the `BATCH/CONFIG` file, it is now possible to create a new segment
 of the simulation with
 
 ~~~
@@ -78,11 +88,25 @@ This should have created a new segment:
     batch.sub parfile.par
 ~~~
 
-It is now possible to submit the simulation with (for instance)
+It is now possible to submit the simulation with
 
 ~~~
     $ batchtools submit
 ~~~
+
+The job ID will be written in the output-0000 directory:
+
+~~~
+    $ ls output-0000
+    JOBID batch.sub parfile.par
+
+    $ cat output-0000/JOBID
+    1234
+~~~
+
+Note that submitting your jobs with batchtools is recommended, but not
+required. However, using `batchtools submit` (or manually creating the JOBID
+file) is required to be able to chains of dependent job/segments.
 
 Checkpointing/recovery
 ----------------------
@@ -91,7 +115,8 @@ batchtools will not attempt to mess with your checkpoint files, so restarting
 your simulations from a checkpoint requires a little bit of extra work.
 However, to simplify this task, batchtools creates a number of symbolic links
 between the different segments. Each segment has one symbolic link: `parent`.
-This points to the `PREVIOUS` segment.
+This points to the segment ID written in the `PREVIOUS` file in the new
+`output-XXXX` directory.
 
 Note that previous segments need not to come immediately before the current
 segment in the enumeration, although this is the default behavior. The user
@@ -112,11 +137,32 @@ parfile options:
     IOUtil::recover_dir			= "./parent/checkpoint"
 ~~~
 
-Planned features
-----------------
+Chained jobs
+------------
 
-* Support for chained jobs
-* Tools for archiving data
+batchtools can also be used to prepare and submit chained jobs using standard
+queue system dependency options. To enable chained dependencies between
+simulation segments it is necessary to include the proper instructions in the
+batch script template. Job dependencies should be enclosed between `@(` and
+`)@` tokens, and they should use the special `@CHAINED_JOB_ID@` pattern as
+placeholder for the parent job ID. For example, for SLURM this can be achieved
+by adding the line
+
+~~~
+    @(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+~~~
+
+at the beginning of the batch script. This line is removed from the batch script
+generated by `batchtools makesegment` unless this command is run as
+
+~~~
+    $ batchtools makesegment --chained
+~~~
+
+In this case the tokens `@(` and `)@` are removed and `@CHAINED_JOB_ID@` is
+expanded using the job ID from the parent segment. Note that this works only if
+`batchtools submit` has been used to submit the parent segment before creating
+the daughter segment.
 
 Nonfeatures
 -----------

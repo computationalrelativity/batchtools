@@ -1,13 +1,18 @@
 #! /bin/bash
-#SBATCH -A @ALLOCATION@
-#SBATCH -p normal
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
 #SBATCH -t @WALLTIME@
-#SBATCH -N @NODES@ -n @NUM_PROCS@
+#SBATCH -N @NODES@ -n @NUM_PROCS@ -c @NUM_THREADS@
 #SBATCH -J @SIMULATION_NAME@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=@EMAIL@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+source /etc/profile
+module purge
+module load hdf5/gcc/1.8.16
+module load fftw/gcc/3.3.4
+module load openmpi/gcc/1.10.2/64
 
 echo "Preparing:"
 set -x                          # Output commands
@@ -23,7 +28,6 @@ date
 echo "Environment:"
 export CACTUS_NUM_PROCS=@NUM_PROCS@
 export CACTUS_NUM_THREADS=@NUM_THREADS@
-export CACTUS_SET_THREAD_BINDINGS=1
 export GMON_OUT_PREFIX=gmon.out
 export KMP_AFFINITY=norespect,compact # verbose
 export OMP_NUM_THREADS=@NUM_THREADS@
@@ -32,12 +36,7 @@ echo ${SLURM_NODELIST} > NODES
 
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
-# NOTE: ibrun depends on environment settings; make sure this (i.e.
-# the loaded modules) corresponds to the MPI selection in the option
-# list
-export PATH=/work/03043/dradice/OpenMPI/install-OMPI-1.10-i15/bin:$PATH
-export TACC_MPI_GETMODE="openmpi_ssh"
-time ibrun tacc_affinity @EXECUTABLE@ -L 3 @PARFILE@
+time srun -N @NODES@ -n @NUM_PROCS@ -c @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@
 
 echo "Stopping:"
 date
