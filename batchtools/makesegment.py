@@ -17,11 +17,13 @@ class MakeSegment(command.Abstract):
     desc    = "Creates a new segment for the current simulation"
     helpstr = """\
 Usage: batchtools makesegment [-i|--id newid] [-p|--parent parentid|--no-parent]
+                              [-c|--chain|--chained]
 
 Creates a new segment for the current simulation. If parentid is negative, then
 this creates a new initial segment.
 
 NOTE: The output of this command depends on the contents of ./BATCH/CONFIG.\
+NOTE: Please refer to the README for how to create chained jobs
 """
     def run(self, args):
         if not os.path.exists("BATCH"):
@@ -33,6 +35,7 @@ The current directory seems not to be initialized. Did you forget to run
         noparent = False
         iold = None
         inew = None
+        chained = False
         try:
             while len(args) > 0:
                 t = args.pop(0)
@@ -42,6 +45,8 @@ The current directory seems not to be initialized. Did you forget to run
                     noparent = True
                 elif t == "-p" or t == "--parent":
                     iold = int(args.pop(0))
+                elif t == "-c" or t == "--chain" or t == "--chained":
+                    chained = True
                 else:
                     sys.exit("Unkown command: \"{0}\"!".format(t))
         except IndexError:
@@ -68,6 +73,15 @@ The current directory seems not to be initialized. Did you forget to run
         if iold >= 0 and iold not in segments:
             sys.exit("Unvalid parent ID: {0}".format(iold))
 
+        if chained:
+            if iold is None or iold < 0:
+                sys.exit("Chained segments need valid parents")
+            parent = "output-" + print_segment_id(iold)
+            if not os.path.isfile(parent + "/JOBID"):
+                sys.exit("Requested chaned segment, "
+                    "but {}/JOBID not found".format(parent))
+            jobid = open(parent + "/JOBID", "r").read().strip()
+
         segment = print_segment_id(inew)
         rundir  = "output-" + segment
 
@@ -76,6 +90,11 @@ The current directory seems not to be initialized. Did you forget to run
         replace.set_rule("SEGMENT", segment)
 
         batch = open("BATCH/batch.t", "r").read()
+        if chained:
+            batch = batch.replace("@(", "").replace(")@", "")
+            replace.set_rule("CHAINED_JOB_ID", jobid)
+        else:
+            batch = re.sub("@\(.+\)@", "", batch.replace(")@\n", ")@"))
         batch = replace.apply_rules(batch)
 
         par = open("BATCH/parfile.t", "r").read()

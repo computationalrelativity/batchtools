@@ -1,4 +1,5 @@
 #! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
 #SBATCH -t @WALLTIME@
 #SBATCH -N @NODES@ -n @NUM_PROCS@ -c @NUM_THREADS@
 #SBATCH -J @SIMULATION_NAME@

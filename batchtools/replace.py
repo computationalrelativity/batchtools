@@ -23,6 +23,7 @@ __patterns__ = [
     ('ALLOCATION', "", "Allocation to use when submitting a job"),
     ('BATCHSYSTEM', "", "Name of the batch queueing system"),
     ('BATCHSCRIPT', "batch.sub", "Name of the batch script"),
+    ('CHAINED_JOB_ID', None, "Job ID of parent segment"),
     ('EMAIL', "", "Email to be used for messages"),
     ('EXECUTABLE', "../BATCH/exec",
         "Name of the executable to use (relative path from the RUNDIR)"),
@@ -101,4 +102,3 @@ def write_rules():
         if p.subst is not None:
             s += str(p) + "\n"
     return s
-

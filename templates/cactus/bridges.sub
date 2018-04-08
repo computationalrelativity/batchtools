@@ -1,4 +1,5 @@
 #! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
 #SBATCH -A @ALLOCATION@
 #SBATCH -p RM 
 #SBATCH -t @WALLTIME@
