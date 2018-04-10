@@ -48,7 +48,7 @@ The current directory seems not to be initialized. Did you forget to run
                 elif t == "-c" or t == "--chain" or t == "--chained":
                     chained = True
                 else:
-                    sys.exit("Unkown command: \"{0}\"!".format(t))
+                    sys.exit("Unknown command: \"{0}\"!".format(t))
         except IndexError:
             sys.exit("Unable to parse the options!")
         except ValueError as e:

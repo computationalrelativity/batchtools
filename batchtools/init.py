@@ -38,7 +38,7 @@ Initializes the current directory structure.\
                 elif t == "-p" or t == "--parfile":
                     parfile = args.pop(0)
                 else:
-                    sys.exit("Unkown command: \"{0}\"!".format(t))
+                    sys.exit("Unknown command: \"{0}\"!".format(t))
         except IndexError:
             sys.exit("Unable to parse the options!")
         if batch is None:
