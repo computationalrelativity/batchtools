@@ -17,26 +17,37 @@ class AtBatch(QueueingSystem):
     name = "at"
     cmd  = "at -f {batch} \"now\" 2>&1"
     expr = "job (\d+) at (.+)"
+    perm = False
+class Cobalt(QueueingSystem):
+    name = "cobalt"
+    cmd  = "qsub {batch}"
+    expr = "(.+)"
+    perm = True
 class DummyBatch(QueueingSystem):
     name = "dummy"
     cmd  = "echo {batch}"
     expr = "(.+)"
+    perm = False
 class LoadLevel(QueueingSystem):
     name = "loadlevel"
     cmd  = "llsubmit {batch}"
     expr = "llsubmit: The job \"(.+?)\" has been submitted."
+    perm = False
 class PBS(QueueingSystem):
     name = "pbs"
     cmd  = "qsub {batch}"
     expr = "(.+)"
+    perm = False
 class SGE(QueueingSystem):
     name = "sge"
     cmd  = "qsub {batch}"
     expr = "Your job (\d+) \(\".+\"\) has been submitted"
+    perm = False
 class SLURM(QueueingSystem):
     name = "slurm"
     cmd  = "sbatch {batch}"
     expr = "Submitted batch job (\d+)"
+    perm = False
 
 class SubmitJob(command.Abstract):
     """
@@ -94,6 +105,10 @@ The current directory seems not to be initialized. Did you forget to run
         path = "./output-" + segment
         if os.path.isfile(path + "/JOBID"):
             sys.exit("Job ID file already exist: \"{0}/JOBID\".".format(path))
+
+        # make batch.sub executable if required by queueing system
+        if queue.perm:
+            os.chmod(path + "/batch.sub", 0755)
 
         cmd = queue.cmd.format(batch="batch.sub")
         p = sp.Popen(cmd, shell=True, cwd=path, stdout=sp.PIPE, stderr=sp.PIPE)
