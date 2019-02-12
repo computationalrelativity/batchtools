@@ -25,6 +25,11 @@ date
 # TODO: This does not work
 cat ${PBS_NODES} > NODES
 
+# Broad cast input data (initial conditions, EOS tables, etc)
+for fname in ../BATCH/include/*; do
+  sbcast ${fname} /tmp/$(basename ${fname})
+done
+
 echo "Environment:"
 export CACTUS_NUM_PROCS=@NUM_PROCS@
 export CACTUS_NUM_THREADS=@NUM_THREADS@
