@@ -1,0 +1,49 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH --partition=general
+#SBATCH -A @ALLOCATION@
+#SBATCH -t @WALLTIME@
+#SBATCH --nodes=@NODES@ -n @NUM_PROCS@
+#SBATCH --export=ALL
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+module load hwloc/2.0.1
+module load hdf5/1.10.2-intel-impi-threadsafe
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+export KMP_AFFINITY=norespect,compact # verbose
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+ln -s /scratch/$USER/$SLURM_JOB_ID scratch
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+
+export MP_DEBUG_NOTIMEOUT=yes
+
+time mpiexec -n @NUM_PROCS@ -v @EXECUTABLE@ -L 3 @PARFILE@
+
+echo "Stopping:"
+date
+
+echo "Done."
