@@ -1,7 +1,7 @@
 #! /bin/bash
 @(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
 #SBATCH -A @ALLOCATION@
-#SBATCH -p @QUEUE@
+#SBATCH -q @QUEUE@
 #SBATCH -t @WALLTIME@
 #SBATCH -N @NODES@ -n @NUM_PROCS@
 #SBATCH -J @SIMULATION_NAME@
@@ -9,6 +9,8 @@
 #SBATCH --mail-user=@EMAIL@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH --constraint=haswell
+#SBATCH --license=SCRATCH,project
 
 echo "Preparing:"
 set -x                          # Output commands
@@ -26,6 +28,11 @@ date
 cat ${PBS_NODES} > NODES
 
 # Broad cast input data (initial conditions, EOS tables, etc)
+# Make sure you have the following files (or equivalent):
+# . SFHo_09-Feb-2019.pizza
+# . SFHo_hydro_29-Jun-2015.h5
+# . SFHo_weak_29-Jun-2015.h5
+# . resu.d
 for fname in ../BATCH/include/*; do
   sbcast ${fname} /tmp/$(basename ${fname})
 done
