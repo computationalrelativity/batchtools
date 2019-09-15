@@ -14,13 +14,13 @@ echo "Preparing:"
 set -x                          # Output commands
 set -e                          # Abort on errors
 
-module load intel/18.0.0
-module load impi/18.0.0
-module load boost/1.65
+cd @RUNDIR@
+
+module load intel/18.0.2
+module load boost/1.68
+module load impi/18.0.2
 module load gsl/2.3
 module load hdf5/1.8.16
-
-cd @RUNDIR@
 
 echo "Checking:"
 pwd
