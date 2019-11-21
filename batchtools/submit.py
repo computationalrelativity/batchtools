@@ -18,6 +18,11 @@ class AtBatch(QueueingSystem):
     cmd  = "at -f {batch} \"now\" 2>&1"
     expr = "job (\d+) at (.+)"
     perm = False
+class Bridge(QueueingSystem):
+    name = "bridge"
+    cmd  = "ccc_msub {batch}"
+    expr = "Submitted Batch Session (.+)"
+    perm = False
 class Cobalt(QueueingSystem):
     name = "cobalt"
     cmd  = "qsub {batch}"
