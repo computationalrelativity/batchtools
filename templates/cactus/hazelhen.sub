@@ -1,0 +1,40 @@
+#! /bin/bash
+@(#PBS -W depend=afterok:@CHAINED_JOB_ID@)@
+#PBS -l walltime=@WALLTIME@
+#PBS -l nodes=@NODES@:ppn=@PPN@
+#PBS -N @SIMULATION_NAME@
+
+module unload PrgEnv-cray PrgEnv-gnu PrgEnv-intel PrgEnv-pathscale PrgEnv-pgi
+module load PrgEnv-gnu
+module load tools/boost/1.66.0
+module load cray-hdf5
+module load cray-fftw/3.3.8.2
+module load atp
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+cat ${PBS_NODEFILE} > NODES
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+export OMP_NUM_THREADS=@NUM_THREADS@
+export ATP_ENABLED=1
+env | sort > ENVIRONMENT
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+aprun -cc numa_node -n @NUM_PROCS@ -N @PROC_PER_NODE@ -d @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@ > out.txt 2>&1 
+echo "Stopping:"
+date
+
+echo "Done."
