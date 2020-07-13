@@ -1,6 +1,6 @@
 #! /bin/bash
 @(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
-#SBATCH --partition=general
+#SBATCH --partition=@PARTITION@
 #SBATCH -A @ALLOCATION@
 #SBATCH -t @WALLTIME@
 #SBATCH --nodes=@NODES@ -n @NUM_PROCS@
