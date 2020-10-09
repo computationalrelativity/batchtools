@@ -42,7 +42,7 @@ ln -s /scratch/$USER/$SLURM_JOB_ID scratch
 
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
-time srun --mpi=pmi2 --cpus-per-task=@NUM_THREADS@ --ntasks=@PROC_PER_NODE@ ../BATCH/exec -L 3 @PARFILE@
+time srun --mpi=pmi2 --cpus-per-task=@NUM_THREADS@ --ntasks=@NUM_PROCS@ ../BATCH/exec -L 3 @PARFILE@
 
 echo "Stopping:"
 date
