@@ -1,0 +1,50 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -t @WALLTIME@
+#SBATCH --account=@ALLOCATION@
+#SBATCH --partition=compute
+#SBATCH --nodes=@NODES@ 
+#SBATCH --ntasks-per-node=@PPN@
+#SBATCH --export=ALL
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+module load gcc/10.2.0
+module load openmpi/4.0.4
+module load hdf5_18/1.8.21
+module load hwloc/1.11.11
+module load fftw/3.3.8
+module load slurm
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+ln -s /scratch/$USER/$SLURM_JOB_ID scratch
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+time srun --mpi=pmi2 --cpus-per-task=@NUM_THREADS@ --ntasks=@PROC_PER_NODE@ ../BATCH/exec -L 3 @PARFILE@
+
+echo "Stopping:"
+date
+
+echo "Done."
