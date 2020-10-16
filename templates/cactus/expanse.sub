@@ -4,6 +4,7 @@
 #SBATCH --account=@ALLOCATION@
 #SBATCH --partition=compute
 #SBATCH --nodes=@NODES@ 
+#SBATCH --ntasks-per-node=@PPN@
 #SBATCH --export=ALL
 #SBATCH -J @SIMULATION_NAME@
 #SBATCH --mail-type=ALL
