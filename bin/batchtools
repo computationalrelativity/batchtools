@@ -10,7 +10,7 @@ if len(sys.argv) < 2:
     batchtools.comdict['help'].run([])
     exit(0)
 
-if batchtools.comdict.has_key(sys.argv[1]):
+if sys.argv[1] in batchtools.comdict:
     batchtools.comdict[sys.argv[1]].run(sys.argv[2:])
 else:
     sys.exit("batchtools: unknown command \'" + sys.argv[1] + "\'")

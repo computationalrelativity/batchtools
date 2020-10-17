@@ -31,6 +31,7 @@ __patterns__ = [
     ('NODES', "", "Total number of nodes"),
     ('NUM_PROCS', "", "Total number of processes"),
     ('NUM_THREADS', "", "Number of threads per process"),
+    ('NUM_CPU_TASK',"","Number of CPUs per MPI task"),
     ('INCLUDE', "../BATCH/include", "Path to extra simulation files"),
     ('PARFILE', "parfile.par", "Name of the parfile to use"),
     ('PPN', "", "Number of CPUs per node"),
@@ -50,20 +51,20 @@ patterns['BATCHSYSTEM'] = defaults['BATCHSYSTEM']
 patterns['HOME'] = defaults['HOME']
 
 def exists(key):
-    return patterns.has_key(key)
+    return key in patterns
 
 def apply_rules(txt):
     """ Apply all of the rules to the input """
     s = txt
-    for p in patterns.itervalues():
+    for p in list(patterns.values()):
         if p.subst is not None and re.match(r'\s*$', p.subst) is None:
             s = p.replace(s)
     return s
 
 def add_rule(key, subst, desc=None):
     """ Add a new preplacement rule """
-    if not patterns.has_key(key):
-        if defaults.has_key(key):
+    if key not in patterns:
+        if key in defaults:
             patterns[key] = defaults[key]
         else:
             patterns[key] = Pattern(key, subst, desc)
@@ -76,7 +77,7 @@ def get_rule(key):
 
 def set_rule(key, subst, desc=None):
     """ Update or create a replacement rule """
-    if desc is None and patterns.has_key(key):
+    if desc is None and key in patterns:
         desc = patterns[key].desc
     patterns[key] = Pattern(key, subst, desc)
 
@@ -97,7 +98,7 @@ def read_rules(fname):
 def write_rules():
     """ Writes all of the available replacement rules in a string """
     s = ""
-    rules = sorted(list(patterns.itervalues()), key=lambda x: x.key)
+    rules = sorted(list(patterns.values()), key=lambda x: x.key)
     for p in rules:
         if p.subst is not None:
             s += str(p) + "\n"

@@ -1,13 +1,14 @@
-import abc
+import abc, six
+
+#imported six for python 2 and 3 compatability
 
 """ Dictionary of commands """
 comdict = {}
-
+@six.add_metaclass(abc.ABCMeta)
 class Abstract(object):
     """
     Abstract command
     """
-    __metaclass__ = abc.ABCMeta
 
     name    = ""
     desc    = ""
@@ -23,7 +24,7 @@ def register(cmd):
     """
     assert isinstance(cmd, Abstract)
 
-    if comdict.has_key(cmd.name):
+    if cmd.name in comdict:
         raise Exception("Trying to register two commands with the same name!")
     else:
         comdict[cmd.name] = cmd

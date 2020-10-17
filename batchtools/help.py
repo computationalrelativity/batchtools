@@ -1,4 +1,6 @@
-import command
+from __future__ import print_function
+# using future for python 2 and 3 compatability
+import batchtools.command as command
 
 class Help(command.Abstract):
     """
@@ -15,11 +17,11 @@ Displays the help of a specific command\
         if len(args) == 0:
             s  = "Usage: batchtools command\n\n"
             s += "Available commands\n"
-            for k in sorted(command.comdict.iterkeys()):
+            for k in sorted(command.comdict.keys()):
                 c  = command.comdict[k]
                 s += "    " + c.name.ljust(14) + " " + c.desc + "\n"
-            print(s),
+            print((s), end=' ')
         else:
-            print(command.comdict[args[0]].helpstr)
+            print((command.comdict[args[0]].helpstr))
 
 command.register(Help())

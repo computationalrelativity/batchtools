@@ -1,4 +1,4 @@
-import command
+import batchtools.command as command
 import batchtools
 import batchtools.replace as replace
 from batchtools.utils import get_segment_list, print_segment_id

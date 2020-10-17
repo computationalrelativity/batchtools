@@ -1,4 +1,6 @@
-import command
+from __future__ import print_function
+# using future for python 2 and 3 compatibility
+import batchtools.command as command
 import batchtools
 import batchtools.replace as replace
 
@@ -87,7 +89,7 @@ Initializes the current directory structure.\
         for f in include:
             s += "INCLUDE     : " + os.path.abspath(f) + "\n"
         s += "\nPlease edit the BATCH/CONFIG file to configure the simulation.\n"
-        print(s),
+        print((s), end=' ')
 
         logfile = open("BATCH/log", "w")
         logfile.write(datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p"))

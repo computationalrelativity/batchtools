@@ -1,4 +1,4 @@
-import command
+import batchtools.command as command
 import batchtools
 import batchtools.replace as replace
 from batchtools.utils import get_segment_list, print_segment_id
@@ -102,7 +102,7 @@ The current directory seems not to be initialized. Did you forget to run
             sys.stderr.write("Unknown queueing system: "
                     "\"{0}\".\n".format(qtype))
             sys.stderr.write("Valid values are:\n")
-            for k in qtypes.iterkeys():
+            for k in list(qtypes.keys()):
                 sys.stderr.write(" "*4 + k + "\n")
             exit(1)
 
@@ -113,7 +113,7 @@ The current directory seems not to be initialized. Did you forget to run
 
         # make batch.sub executable if required by queueing system
         if queue.perm:
-            os.chmod(path + "/batch.sub", 0755)
+            os.chmod(path + "/batch.sub", 0o755)
 
         cmd = queue.cmd.format(batch="batch.sub")
         p = sp.Popen(cmd, shell=True, cwd=path, stdout=sp.PIPE, stderr=sp.PIPE)
