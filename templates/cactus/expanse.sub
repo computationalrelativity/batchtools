@@ -4,7 +4,7 @@
 #SBATCH --account=@ALLOCATION@
 #SBATCH --partition=compute
 #SBATCH --nodes=@NODES@ 
-#SBATCH --ntasks-per-node=@PPN@
+#SBATCH --ntasks-per-node=@PROC_PER_NODE@
 #SBATCH --export=ALL
 #SBATCH -J @SIMULATION_NAME@
 #SBATCH --mail-type=ALL
@@ -38,7 +38,7 @@ export OMP_NUM_THREADS=@NUM_THREADS@
 env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
-ln -s /scratch/$USER/$SLURM_JOB_ID scratch
+ln -s /scratch/$USER/job_$SLURM_JOB_ID scratch
 
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
