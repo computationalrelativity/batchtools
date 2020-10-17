@@ -1,7 +1,5 @@
 import abc, six
 
-#imported six for python 2 and 3 compatability
-
 """ Dictionary of commands """
 comdict = {}
 @six.add_metaclass(abc.ABCMeta)

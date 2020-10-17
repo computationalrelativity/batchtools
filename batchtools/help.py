@@ -1,5 +1,4 @@
 from __future__ import print_function
-# using future for python 2 and 3 compatability
 import batchtools.command as command
 
 class Help(command.Abstract):

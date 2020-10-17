@@ -12,6 +12,8 @@ batchtools strictly adheres to the principle of least astonishment.
 Usage
 -----
 
+You will need a working python-2.7 or python-3 installation.
+
 Add batchtools/bin to your `PATH`
 
 ~~~
