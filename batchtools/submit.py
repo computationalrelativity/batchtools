@@ -118,6 +118,8 @@ The current directory seems not to be initialized. Did you forget to run
         cmd = queue.cmd.format(batch="batch.sub")
         p = sp.Popen(cmd, shell=True, cwd=path, stdout=sp.PIPE, stderr=sp.PIPE)
         stdout, stderr = p.communicate()
+        stdout = stdout.decode("utf-8")
+        stderr = stderr.decode("utf-8")
         if p.returncode != 0:
             sys.stderr.write("Submission failed: \"{0}\" returned non-zero exit "
                     "status \"{1}\"\n".format(cmd, p.returncode))
