@@ -7,12 +7,13 @@
 #PBS -N @SIMULATION_NAME@
 #PBS -m abe
 #PBS -l pmem=10gb
+#PBS -l feature=rhel7
 #PBS -o @RUNDIR@/@SIMULATION_NAME@.out
 #PBS -e @RUNDIR@/@SIMULATION_NAME@.err
 
-module load intel/16.0.3
-module load mkl/11.3.3
-module load impi/5.1.3
+module load intel/19.1.2
+module load mkl/2020.3
+module load impi/2019.8
 
 echo "Preparing:"
 set -x                          # Output commands
