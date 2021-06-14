@@ -1,0 +1,50 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -A @ALLOCATION@
+#SBATCH -p RM
+#SBATCH -t @WALLTIME@
+#SBATCH --nodes @NODES@
+#SBATCH --ntasks @NUM_PROCS@
+#SBATCH --cpus-per-task @NUM_THREADS@
+#SBATCH --export=ALL
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+module purge
+module load gcc/10.2.0
+module load openmpi/4.0.5-gcc10.2.0
+module load boost/1.75-gcc10.2.0
+module load fftw/3.3.8
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export OMP_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+time mpirun \
+    -n $SLURM_NTASKS \
+    @EXECUTABLE@ -L 3 @PARFILE@
+
+echo "Stopping:"
+date
+
+echo "Done."
