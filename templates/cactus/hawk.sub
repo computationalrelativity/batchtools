@@ -1,0 +1,41 @@
+#! /bin/bash
+@(#PBS -W depend=afterok:@CHAINED_JOB_ID@)@
+#PBS -A @ALLOCATION@
+#PBS -r n
+#PBS -l walltime=@WALLTIME@
+#PBS -l select=@NODES@:node_type=rome:mpiprocs=@PROC_PER_NODE@
+#PBS -N @SIMULATION_NAME@
+#PBS -m abe
+#PBS -o @RUNDIR@/@SIMULATION_NAME@.out
+#PBS -e @RUNDIR@/@SIMULATION_NAME@.err
+
+#source $HOME/ET2019/Cactus/batchtools/templates/cactus/hawk.env
+source $HOME/ET2019/Cactus/batchtools/templates/cactus/hawk-intel.env
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+cat ${PBS_NODEFILE} > NODES
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+export OMP_NUM_THREADS=@NUM_THREADS@
+export ATP_ENABLED=1
+env | sort > ENVIRONMENT
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+mpirun -np @NUM_PROCS@ @EXECUTABLE@ -L 3 @PARFILE@
+echo "Stopping:"
+date
+
+echo "Done."
