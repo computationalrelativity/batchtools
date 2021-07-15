@@ -29,6 +29,7 @@ date
 echo "Environment:"
 export GMON_OUT_PREFIX=gmon.out
 export OMP_NUM_THREADS=@NUM_THREADS@
+export IBRUN_TASKS_PER_NODE=@PROC_PER_NODE@
 env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
@@ -41,7 +42,8 @@ else
     echo "Starting from IC:"
 fi
 
-time ibrun @EXECUTABLE@ \
+time ibrun mem_affinity \
+    @EXECUTABLE@ \
     -i @PARFILE@ \
     -t @TERMTIME@ \
     $RESTART
