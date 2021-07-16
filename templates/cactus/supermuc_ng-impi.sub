@@ -11,8 +11,7 @@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
 
-module load hwloc/2.0.1
-module load hdf5/1.10.2-intel-impi-threadsafe
+source $HOME/Cactus/batchtools/templates/cactus/supermuc_ng-impi.env
 
 echo "Preparing:"
 set -x                          # Output commands
