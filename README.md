@@ -130,7 +130,7 @@ instance:
 ~~~
 
 will create a new segment 0010 and set its parent to 0005. The user is
-encouraged to setup his code to recover from the data in the `parent/`
+encouraged to setup their code to recover from the data in the `parent/`
 directory. For instance, in Cactus, this can be achieved with the following
 parfile options:
 
