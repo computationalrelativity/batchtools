@@ -1,0 +1,55 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -t @WALLTIME@
+#SBATCH --account=@ALLOCATION@
+#SBATCH --partition=compute
+#SBATCH --nodes=@NODES@
+#SBATCH --ntasks-per-node=@PROC_PER_NODE@
+#SBATCH --export=ALL
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+export SLURM_EXPORT_ENV=ALL
+
+echo "Preparing:"
+set -x              # Output commands
+set -e              # Abort on errors
+
+module load gcc/10.2.0
+module load mvapich2/2.3.6
+module load hdf5/1.10.7
+module load gsl/2.5
+module load slurm
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export GMON_OUT_PREFIX=gmon.out
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent -name \*.rst | sort | tail -n 1)
+    RESTART="-r $CHECKPOINT"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART="time/tlim=0"
+    echo "Starting from IC:"
+fi
+
+time srun --mpi=pmi2 --cpus-per-task=@NUM_THREADS@ --ntasks=@NUM_PROCS@ \
+   @EXECUTABLE@ -i @PARFILE@ -t @TERMTIME@ $RESTART
+
+echo "Stopping:"
+date
+
+echo "Done."
