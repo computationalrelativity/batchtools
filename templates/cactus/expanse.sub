@@ -3,7 +3,7 @@
 #SBATCH -t @WALLTIME@
 #SBATCH --account=@ALLOCATION@
 #SBATCH --partition=compute
-#SBATCH --nodes=@NODES@ 
+#SBATCH --nodes=@NODES@
 #SBATCH --ntasks-per-node=@PROC_PER_NODE@
 #SBATCH --export=ALL
 #SBATCH -J @SIMULATION_NAME@

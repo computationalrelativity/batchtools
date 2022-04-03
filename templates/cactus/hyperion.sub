@@ -7,7 +7,7 @@
 #$ -V
 #$ -R y
 #$ -m abe
-#$ -M @EMAIL@ 
+#$ -M @EMAIL@
 #$ -o @RUNDIR@/@SIMULATION_NAME@.out
 #$ -e @RUNDIR@/@SIMULATION_NAME@.err
 

@@ -1,7 +1,7 @@
 #! /bin/bash
 @(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
 #SBATCH -A @ALLOCATION@
-#SBATCH -p RM 
+#SBATCH -p RM
 #SBATCH -t @WALLTIME@
 #SBATCH --nodes @NODES@
 #SBATCH --ntasks @NUM_PROCS@

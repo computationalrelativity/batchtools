@@ -33,7 +33,7 @@ env | sort > ENVIRONMENT
 
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
-aprun -cc numa_node -n @NUM_PROCS@ -N @PROC_PER_NODE@ -d @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@ > out.txt 2>&1 
+aprun -cc numa_node -n @NUM_PROCS@ -N @PROC_PER_NODE@ -d @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@ > out.txt 2>&1
 echo "Stopping:"
 date
 

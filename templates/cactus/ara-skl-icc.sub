@@ -14,8 +14,8 @@ set -x                          # Output commands
 set -e                          # Abort on errors
 
 module load compiler/intel/2018-Update3
-module load mpi/intel/2018-Update3 
-module load libs/blas/intel-2018          
+module load mpi/intel/2018-Update3
+module load libs/blas/intel-2018
 module load libs/zlib/1.2.11-intel-2018
 module load libs/hdf5/1.10.1-intel-2018
 module load libs/fftw/3.3.7-intel-2018
