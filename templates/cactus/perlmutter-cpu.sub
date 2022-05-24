@@ -1,0 +1,59 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -A @ALLOCATION@
+#SBATCH -q @QUEUE@
+#SBATCH -C cpu
+#SBATCH -t @WALLTIME@
+#SBATCH -N @NODES@ -n @NUM_PROCS@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH --license=SCRATCH,project
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+module load cray-hdf5/1.12.1.1
+module load cray-fftw/3.3.8.13
+module load zlib/1.2.11
+module load e4s/21.11-tcl
+module load gsl/2.7-gcc-11.2.0
+module load boost/1.78.0-gnu
+module list
+
+echo "Checking:"
+pwd
+hostname
+date
+# TODO: This does not work
+cat ${PBS_NODES} > NODES
+
+# Broad cast input data (initial conditions, EOS tables, etc)
+# Make sure you have the following files (or equivalent):
+# . SFHo_09-Feb-2019.pizza
+# . SFHo_hydro_29-Jun-2015.h5
+# . SFHo_weak_29-Jun-2015.h5
+# . resu.d
+for fname in ../BATCH/include/*; do
+  sbcast ${fname} /tmp/$(basename ${fname})
+done
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+srun -n @NUM_PROCS@ -c @NUM_THREADS@ @EXECUTABLE@ -L 3 @PARFILE@
+echo "Stopping:"
+date
+
+echo "Done."
