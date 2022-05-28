@@ -1,0 +1,61 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -A @ALLOCATION@
+#SBATCH -t @WALLTIME@
+#SBATCH -N @NODES@ -n @NUM_PROCS@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH --constraint=knl
+#SBATCH --license=SCRATCH,project
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+module purge
+module load PrgEnv-intel
+module load impi
+module load cray-hdf5-parallel
+module load gsl
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export GMON_OUT_PREFIX=gmon.out
+export OMP_PROC_BIND=true
+export OMP_PLACES=threads
+export OMP_NUM_THREADS=@NUM_THREADS@
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent -name \*.rst | sort | tail -n 1)
+    RESTART="-r $CHECKPOINT"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART="time/tlim=0"
+    echo "Starting from IC:"
+fi
+
+srun \
+    --cpu-bind=cores \
+    -n @NUM_PROCS@ \
+    -c $[4*@NUM_THREADS@] \
+    @EXECUTABLE@ \
+    -i @PARFILE@ \
+    -t @TERMTIME@ \
+    $RESTART
+
+echo "Stopping:"
+date
+
+echo "Done."
