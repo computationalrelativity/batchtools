@@ -10,7 +10,7 @@
 #SBATCH --mail-user=@EMAIL@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
-#SBATCH --license=SCRATCH,project
+#SBATCH --license=SCRATCH
 
 echo "Preparing:"
 set -x                          # Output commands
