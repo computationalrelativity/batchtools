@@ -1,0 +1,57 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -A @ALLOCATION@
+#SBATCH -p RM
+#SBATCH -t @WALLTIME@
+#SBATCH --nodes @NODES@
+#SBATCH --ntasks @NUM_PROCS@
+#SBATCH --cpus-per-task @NUM_THREADS@
+#SBATCH --export=ALL
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+module purge
+module load gcc/10.2.0
+module load openmpi/4.0.5-gcc10.2.0
+module load phdf5/1.10.7-openmpi4.0.5-gcc10.2.0
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export GMON_OUT_PREFIX=gmon.out
+export OMP_NUM_THREADS=@NUM_THREADS@
+export IBRUN_TASKS_PER_NODE=@PROC_PER_NODE@
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent -name \*.rst | sort | tail -n 1)
+    RESTART="-r $CHECKPOINT"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART="time/tlim=0"
+    echo "Starting from IC:"
+fi
+
+time mpirun -n $SLURM_NTASKS \
+    @EXECUTABLE@ \
+    -i @PARFILE@ \
+    -t @TERMTIME@ \
+    $RESTART
+
+echo "Stopping:"
+date
+
+echo "Done."
