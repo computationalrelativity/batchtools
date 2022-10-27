@@ -1,3 +1,9 @@
-module load cray-hdf5-parallel/1.12.1.1
-module load e4s/21.11-tcl
-module load gsl/2.7-gcc-11.2.0
+module purge
+
+module load PrgEnv-gnu
+module load craype-x86-milan
+module use /global/common/software/m3169/perlmutter/modulefiles
+module load openmpi
+module load python
+module load cray-hdf5-parallel
+module load gsl
