@@ -11,7 +11,6 @@
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
 #SBATCH --gpus=1
 #SBATCH --mem-per-gpu=40G
-#SBATCH --license=SCRATCH,project
 
 echo "Preparing:"
 set -x                          # Output commands
