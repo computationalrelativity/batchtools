@@ -37,7 +37,6 @@ export GMON_OUT_PREFIX=gmon.out
 export OMP_PROC_BIND=true
 export OMP_PLACES=threads
 export OMP_NUM_THREADS=@NUM_THREADS@
-export OMP_NUM_THREADS=@NUM_THREADS@
 env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
