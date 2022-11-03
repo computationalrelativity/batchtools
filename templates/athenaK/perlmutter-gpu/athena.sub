@@ -9,7 +9,7 @@
 #SBATCH --mail-user=@EMAIL@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
-#SBATCH --gpus=1
+#SBATCH --gpus=@NUM_GPUS@
 #SBATCH --mem-per-gpu=40G
 
 echo "Preparing:"
