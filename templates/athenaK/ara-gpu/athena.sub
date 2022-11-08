@@ -1,0 +1,38 @@
+#! /bin/bash
+#SBATCH --partition @QUEUE@
+#SBATCH -t @WALLTIME@
+#SBATCH -N @NODES@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH --gres=gpu:@NUM_GPUS@
+#SBATCH --mem-per-gpu=40G
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+cd @RUNDIR@
+
+module purge
+module load compiler/gcc/11.2.0
+module load tools/cmake/3.22.2
+module load nvidia/cuda/11.4
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+# set up for problem & define any environment variables here
+
+srun \
+    @EXECUTABLE@ \
+    -i @PARFILE@ \
+
+# perform any cleanup or short post-processing here
