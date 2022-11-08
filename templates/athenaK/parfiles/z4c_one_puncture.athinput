@@ -2,6 +2,7 @@
 
 <comment>
 problem   = z4c
+repository_info = 1bc8abb4da469f62d3003687ae48ae6b8cb90a3f
 
 <job>
 basename  = z4c      # problem ID: basename of output filenames
