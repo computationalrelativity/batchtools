@@ -14,19 +14,17 @@
 
 echo "Preparing:"
 set -x                          # Output commands
-set -e                          # Abort on errors
+#set -e                          # Abort on errors
 
 cd @RUNDIR@
 
-module unload cudatoolkit
-module unload craype-accel-nvidia80
-module load cray-hdf5/1.12.1.1
-module load cray-fftw/3.3.8.13
-module load zlib/1.2.11
-module load e4s/21.11
-module load gsl/2.7
-module load boost/1.78.0-gnu
-module list
+#module load cray-hdf5/1.12.1.1
+#module load cray-fftw/3.3.8.13
+#module load zlib/1.2.11
+#module load e4s/21.11
+#module load gsl/2.7
+#module load boost/1.78.0-gnu
+#module list
 
 echo "Checking:"
 pwd
@@ -34,6 +32,16 @@ hostname
 date
 # TODO: This does not work
 cat ${PBS_NODES} > NODES
+
+# Broad cast input data (initial conditions, EOS tables, etc)
+# Make sure you have the following files (or equivalent):
+# . SFHo_09-Feb-2019.pizza
+# . SFHo_hydro_29-Jun-2015.h5
+# . SFHo_weak_29-Jun-2015.h5
+# . resu.d
+for fname in ../BATCH/include/*; do
+  sbcast ${fname} /tmp/$(basename ${fname})
+done
 
 echo "Environment:"
 export CACTUS_NUM_PROCS=@NUM_PROCS@
