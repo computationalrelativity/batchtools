@@ -14,7 +14,8 @@ echo "Preparing:"
 set -x                          # Output commands
 set -e                          # Abort on errors
 
-module load intel/18.0.5
+module load intel/19.0.5
+export I_MPI_EXTRA_FILESYSTEM=0
 
 cd @RUNDIR@
 
