@@ -1,8 +1,7 @@
-import abc, six
+import abc
 
 """ Dictionary of commands """
 comdict = {}
-@six.add_metaclass(abc.ABCMeta)
 class Abstract(object):
     """
     Abstract command
