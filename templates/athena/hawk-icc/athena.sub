@@ -1,0 +1,62 @@
+#! /bin/bash
+@(#PBS -W depend=afterok:@CHAINED_JOB_ID@)@
+#PBS -A @ALLOCATION@
+#PBS -q @QUEUE@
+#PBS -l walltime=@WALLTIME@
+#PBS -l select=@NODES@:node_type=rome:mpiprocs=@NUM_PROCS@:ompthreads=@NUM_THREADS@:ncpus=@PPN@:mem=128GB
+#PBS -N @SIMULATION_NAME@
+#PBS -M @EMAIL@
+#PBS -m abe
+#PBS -o @RUNDIR@/@SIMULATION_NAME@.out
+#PBS -e @RUNDIR@/@SIMULATION_NAME@.err
+
+echo "Preparing:"
+set -x                          # Output commands
+cd @RUNDIR@
+
+# libraries: ##############################################
+module purge
+module load hlrs-software-stack/previous hlrs-software-stack/.4  intel/19.1.0  mpt/2.23
+module load hdf5/1.10.5
+module load gsl
+
+module load python/3.8
+
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+# miscellaneous settings
+export MPI_LAUNCH_TIMEOUT=40
+export GMON_OUT_PREFIX=gmon.out
+export OMP_PROC_BIND=true
+export OMP_PLACES=threads
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent -name \*.rst | sort | tail -n 1)
+    RESTART="-r $CHECKPOINT"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART="time/tlim=0"
+    echo "Starting from IC:"
+fi
+
+time mpirun \
+    -np @NUM_PROCS@ \
+    omplace -c 0-127 -nt @NUM_THREADS@ \
+    -vv @EXECUTABLE@ \
+    -i @PARFILE@ \
+    -t @TERMTIME@ \
+    $RESTART
+
+echo "Stopping:"
+date
+
+echo "Done."
+
+

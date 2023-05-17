@@ -5,3 +5,6 @@ module load intel-oneapi-compilers/2021.4.0
 module load intel-oneapi-mpi/2021.7.0-intel
 module load gsl hdf5/1.10.7-intel21-impi
 module load anaconda3/2021.05
+
+export DIR_GSL=${GSL_BASE}
+export DIR_HDF5=${HDF5_BASE}
