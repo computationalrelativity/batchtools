@@ -1,0 +1,58 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH --partition @QUEUE@
+#SBATCH -t @WALLTIME@
+#SBATCH --cpus-per-task=@NUM_THREADS@
+#SBATCH -N @NODES@ --ntasks-per-node=@NUM_PROCS@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+echo "Preparing:"
+set -x                          # Output commands
+cd @RUNDIR@
+
+module purge
+module load tools/python/3.7
+module load libs/hdf5/1.10.7-intel-2018
+module load compiler/intel/2018-Update3
+module load tools/cmake/3.15.3
+module load libs/gsl/2.4-intel-2018
+module load mpi/intel/2018-Update3
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export GMON_OUT_PREFIX=gmon.out
+export OMP_PROC_BIND=true
+export OMP_PLACES=threads
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent -name \*.rst | sort | tail -n 1)
+    RESTART="-r $CHECKPOINT"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART="time/tlim=0"
+    echo "Starting from IC:"
+fi
+
+time srun --mpi=pmi2 -N @NODES@ --ntasks-per-node=@NUM_PROCS@ --cpus-per-task=@NUM_THREADS@ \
+    @EXECUTABLE@ \
+    -i @PARFILE@ \
+    -t @TERMTIME@ \
+    $RESTART
+
+echo "Stopping:"
+date
+
+echo "Done."
+
+
