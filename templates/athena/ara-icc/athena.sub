@@ -16,7 +16,7 @@ cd @RUNDIR@
 
 module purge
 module load tools/python/3.7
-module load libs/hdf5/1.10.7-intel-2018
+module load libs/hdf5/1.10.2-intel-2018
 module load compiler/intel/2018-Update3
 module load tools/cmake/3.15.3
 module load libs/gsl/2.4-intel-2018
