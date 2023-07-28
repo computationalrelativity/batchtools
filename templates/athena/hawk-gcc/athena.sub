@@ -35,7 +35,7 @@ export OMP_NUM_THREADS=@NUM_THREADS@
 env | sort > ENVIRONMENT
 
 if [ -L parent ]; then
-    CHECKPOINT=$(find -L parent -name \*.rst | sort | tail -n 1)
+    CHECKPOINT=$(find -L parent -name \*.rst | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | head     -n 1)
     RESTART="-r $CHECKPOINT"
     echo "Restarting from $CHECKPOINT:"
 else
