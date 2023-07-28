@@ -3,7 +3,7 @@
 #PBS -A @ALLOCATION@
 #PBS -q @QUEUE@
 #PBS -l walltime=@WALLTIME@
-#PBS -l select=@NODES@:node_type=rome:mpiprocs=@NUM_PROCS@:ompthreads=@NUM_THREADS@:ncpus=@PPN@:mem=128GB
+#PBS -l select=@NODES@:node_type=rome:mpiprocs=@PROC_PER_NODE@:ompthreads=@NUM_THREADS@:ncpus=@PPN@:mem=128GB
 #PBS -N @SIMULATION_NAME@
 #PBS -M @EMAIL@
 #PBS -m abe
