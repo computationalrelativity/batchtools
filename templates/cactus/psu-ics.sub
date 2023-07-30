@@ -1,19 +1,18 @@
 #! /bin/bash
-@(#PBS -W depend=afterok:@CHAINED_JOB_ID@)@
-#PBS -A @ALLOCATION@
-#PBS -r n
-#PBS -l walltime=@WALLTIME@
-#PBS -l nodes=@NODES@:ppn=@PPN@
-#PBS -N @SIMULATION_NAME@
-#PBS -m abe
-#PBS -l pmem=10gb
-#PBS -l feature=rhel7
-#PBS -o @RUNDIR@/@SIMULATION_NAME@.out
-#PBS -e @RUNDIR@/@SIMULATION_NAME@.err
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH --account @ALLOCATION@
+#SBATCH -t @WALLTIME@
+#SBATCH --cpus-per-task=@NUM_THREADS@
+#SBATCH --nodes @NODES@
+#SBATCH --ntasks @NUM_PROCS@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
 
-module load intel/19.1.2
-module load mkl/2020.3
-module load impi/2019.8
+module load intel/2021.4.0
+module load mkl/2021.4.0
+module load impi/2021.4.0
 
 echo "Preparing:"
 set -x                          # Output commands
@@ -25,19 +24,20 @@ echo "Checking:"
 pwd
 hostname
 date
-cat ${PBS_NODEFILE} > NODES
 
 echo "Environment:"
 export CACTUS_NUM_PROCS=@NUM_PROCS@
 export CACTUS_NUM_THREADS=@NUM_THREADS@
-export GMON_OUT_PREFIX=gmon.out
 export OMP_NUM_THREADS=@NUM_THREADS@
-export ATP_ENABLED=1
+export GMON_OUT_PREFIX=gmon.out
 env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
 
 echo "Starting:"
 export CACTUS_STARTTIME=$(date +%s)
-mpirun --hostfile ${PBS_NODEFILE} -ppn @PROC_PER_NODE@ -np @NUM_PROCS@ @EXECUTABLE@ -L 3 @PARFILE@
+time srun \
+    @EXECUTABLE@ -L 3 @PARFILE@
+
 echo "Stopping:"
 date
 
