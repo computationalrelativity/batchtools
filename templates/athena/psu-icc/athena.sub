@@ -1,0 +1,52 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH --account @ALLOCATION@
+#SBATCH -t @WALLTIME@
+#SBATCH --cpus-per-task=@NUM_THREADS@
+#SBATCH --nodes=@NODES@
+#SBATCH --ntasks=@NUM_PROCS@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+module load intel
+module load mkl
+module load impi
+module load gsl
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+cd @RUNDIR@
+
+export HDF5_DIR=/storage/group/dur566/default/software/hdf5/1.14.1-2-openmpi
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HDF5_DIR/lib
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+export GMON_OUT_PREFIX=gmon.out
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent -name \*.rst | sort | tail -n 1)
+    RESTART="-r $CHECKPOINT"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART="time/tlim=0"
+    echo "Starting from IC:"
+fi
+
+time srun \
+    @EXECUTABLE@ -i @PARFILE@ -t @TERMTIME@ $RESTART
+
+echo "Stopping:"
+date
+
+echo "Done."
