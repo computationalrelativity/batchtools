@@ -37,7 +37,7 @@ env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
 if [ -L parent ]; then
-    CHECKPOINT=$(find -L parent -name \*.rst | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | head     -n 1)    
+    CHECKPOINT=$(find -L parent -name \*final.rst | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | head     -n 1)    
     RESTART="-r $CHECKPOINT"
     echo "Restarting from $CHECKPOINT:"
 else
