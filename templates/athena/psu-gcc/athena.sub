@@ -11,9 +11,8 @@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
 
-module load intel
-module load mkl
-module load impi
+module load openmpi
+module load hdf5
 module load gsl
 
 echo "Preparing:"
