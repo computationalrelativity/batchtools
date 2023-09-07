@@ -1,9 +1,9 @@
 #! /bin/bash
 @(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
-#SBATCH -A @ALLOCATION@
-#SBATCH -p normal
+#SBATCH --partition @QUEUE@
 #SBATCH -t @WALLTIME@
-#SBATCH -N @NODES@ -n @NUM_PROCS@
+#SBATCH --cpus-per-task=@NUM_THREADS@
+#SBATCH -N @NODES@ --ntasks-per-node=@NUM_PROCS@
 #SBATCH -J @SIMULATION_NAME@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=@EMAIL@
@@ -12,14 +12,16 @@
 
 echo "Preparing:"
 set -x                          # Output commands
-set -e                          # Abort on errors
+cd @RUNDIR@
 
 module purge
-module load intel/19.1.1
-module load impi
-module load phdf5
+module load tools/python/3.7
+module load compiler/gcc/7.3.0
+module load mpi/openmpi/3.1.2-gcc-7.3.0
+module load libs/gsl/2.4-intel-2018
+module load libs/hdf5/1.10.2-gcc-7.3.0
 
-cd @RUNDIR@
+
 
 echo "Checking:"
 pwd
@@ -28,13 +30,14 @@ date
 
 echo "Environment:"
 export GMON_OUT_PREFIX=gmon.out
+export OMP_PROC_BIND=true
+export OMP_PLACES=threads
 export OMP_NUM_THREADS=@NUM_THREADS@
-export IBRUN_TASKS_PER_NODE=@PROC_PER_NODE@
 env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
 if [ -L parent ]; then
-    CHECKPOINT=$(find -L parent -name \*final.rst | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | head     -n 1)
+    CHECKPOINT=$(find -L parent -name \*final.rst | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | head -n 1)
     RESTART="-r $CHECKPOINT"
     echo "Restarting from $CHECKPOINT:"
 else
@@ -42,7 +45,7 @@ else
     echo "Starting from IC:"
 fi
 
-time ibrun mem_affinity \
+time mpiexec -np @NUM_PROCS@ \
     @EXECUTABLE@ \
     -i @PARFILE@ \
     -t @TERMTIME@ \
@@ -52,3 +55,5 @@ echo "Stopping:"
 date
 
 echo "Done."
+
+

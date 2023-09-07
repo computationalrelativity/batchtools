@@ -1,9 +1,10 @@
 #! /bin/bash
 @(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
 #SBATCH -A @ALLOCATION@
-#SBATCH -p normal
+#SBATCH --partition @QUEUE@
 #SBATCH -t @WALLTIME@
-#SBATCH -N @NODES@ -n @NUM_PROCS@
+#SBATCH --cpus-per-task=@NUM_THREADS@
+#SBATCH -N @NODES@ --ntasks-per-node=@NUM_PROCS@
 #SBATCH -J @SIMULATION_NAME@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=@EMAIL@
@@ -12,14 +13,15 @@
 
 echo "Preparing:"
 set -x                          # Output commands
-set -e                          # Abort on errors
+cd @RUNDIR@
 
 module purge
-module load intel/19.1.1
-module load impi
-module load phdf5
-
-cd @RUNDIR@
+module use /dss/dsshome1/0D/di52gal3/spack/modules/x86_avx512/linux-sles15-skylake_avx512/
+module load spack/22.2.1
+module load intel-oneapi-compilers/2021.4.0
+module load intel-oneapi-mpi/2021.7.0-intel
+module load gsl hdf5/1.10.7-intel21-impi
+module load anaconda3/2021.05
 
 echo "Checking:"
 pwd
@@ -28,8 +30,9 @@ date
 
 echo "Environment:"
 export GMON_OUT_PREFIX=gmon.out
+export OMP_PROC_BIND=true
+export OMP_PLACES=threads
 export OMP_NUM_THREADS=@NUM_THREADS@
-export IBRUN_TASKS_PER_NODE=@PROC_PER_NODE@
 env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
@@ -42,7 +45,11 @@ else
     echo "Starting from IC:"
 fi
 
-time ibrun mem_affinity \
+
+srun \
+    --cpu-bind=cores \
+    --ntasks-per-node=@NUM_PROCS@ \
+    -c @NUM_THREADS@ \
     @EXECUTABLE@ \
     -i @PARFILE@ \
     -t @TERMTIME@ \
@@ -52,3 +59,5 @@ echo "Stopping:"
 date
 
 echo "Done."
+
+

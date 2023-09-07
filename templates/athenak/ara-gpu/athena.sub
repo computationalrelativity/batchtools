@@ -8,7 +8,8 @@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
 #SBATCH --gres=gpu:@NUM_GPUS@
-#SBATCH --mem-per-gpu=40G
+#SBATCH --mem-per-gpu=80G
+#SBATCH --mem=80G
 
 echo "Preparing:"
 set -x                          # Output commands

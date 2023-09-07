@@ -1,25 +1,27 @@
 #! /bin/bash
 @(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
-#SBATCH -A @ALLOCATION@
-#SBATCH -p normal
+#SBATCH --account @ALLOCATION@
 #SBATCH -t @WALLTIME@
-#SBATCH -N @NODES@ -n @NUM_PROCS@
+#SBATCH --cpus-per-task=@NUM_THREADS@
+#SBATCH --nodes=@NODES@
+#SBATCH --ntasks=@NUM_PROCS@
+#SBATCH --ntasks-per-node=@PROC_PER_NODE@
 #SBATCH -J @SIMULATION_NAME@
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=@EMAIL@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+
+module load openmpi
+module load hdf5
+module load gsl
 
 echo "Preparing:"
 set -x                          # Output commands
 set -e                          # Abort on errors
-
-module purge
-module load intel/19.1.1
-module load impi
-module load phdf5
-
 cd @RUNDIR@
+
+export HDF5_DIR=/storage/group/dur566/default/software/hdf5/1.14.1-2-openmpi
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HDF5_DIR/lib
 
 echo "Checking:"
 pwd
@@ -27,14 +29,14 @@ hostname
 date
 
 echo "Environment:"
+export SRUN_CPUS_PER_TASK=@NUM_THREADS@
 export GMON_OUT_PREFIX=gmon.out
 export OMP_NUM_THREADS=@NUM_THREADS@
-export IBRUN_TASKS_PER_NODE=@PROC_PER_NODE@
 env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
 if [ -L parent ]; then
-    CHECKPOINT=$(find -L parent -name \*final.rst | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | head     -n 1)
+    CHECKPOINT=$(find -L parent -name \*.rst | sort | tail -n 1)
     RESTART="-r $CHECKPOINT"
     echo "Restarting from $CHECKPOINT:"
 else
@@ -42,11 +44,8 @@ else
     echo "Starting from IC:"
 fi
 
-time ibrun mem_affinity \
-    @EXECUTABLE@ \
-    -i @PARFILE@ \
-    -t @TERMTIME@ \
-    $RESTART
+time srun \
+    @EXECUTABLE@ -i @PARFILE@ -t @TERMTIME@ $RESTART
 
 echo "Stopping:"
 date
