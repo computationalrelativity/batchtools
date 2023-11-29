@@ -36,4 +36,6 @@ srun \
     @EXECUTABLE@ \
     -i @PARFILE@ \
 
+date
+
 # perform any cleanup or short post-processing here
