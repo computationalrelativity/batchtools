@@ -32,9 +32,19 @@ echo ${SLURM_NODELIST} > NODES
 
 # set up for problem & define any environment variables here
 
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent/rst -name \*.rst | awk '{ print length, $0 }' | sort -n  | cut -d" " -f2- | tail -n 1)
+    RESTART="-r $CHECKPOINT"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART=""
+    echo "Starting from IC:"
+fi
+
 srun \
     @EXECUTABLE@ \
     -i @PARFILE@ \
+    $RESTART
 
 date
 
