@@ -49,5 +49,5 @@ fi
 
 srun -N @NODES@ -n $((8 * @NODES@)) \
      -c 1 --gpus-per-node=8 --gpu-bind=closest \
-     athena -d @RUNDIR@ \
+     @EXEC@ -d @RUNDIR@ \
      $restart_line -t @TERMINATION_TIME@
