@@ -1,0 +1,58 @@
+#!/bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -q @QUEUE@
+#SBATCH -A @ALLOCATION@
+#SBATCH -C cpu
+#SBATCH -t @WALLTIME@
+#SBATCH -N @NODES@
+#SBATCH --job-name=@SIMULATION_NAME@
+#SBATCH --ntasks-per-node=@TASKS_PER_NODE@
+#SBATCH --cpus-per-task=@CPUS_PER_TASK@
+#SBATCH --license=SCRATCH
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH --mail-user=@EMAIL@
+#SBATCH --mail-type=ALL
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+cd @RUNDIR@
+
+module purge
+module load cpe/23.12
+module load PrgEnv-gnu
+module load craype-x86-milan
+module load xpmem
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+# Check for restart files
+if [ -d parent/rst ]; then
+  restart_files=$(ls -t parent/rst/*.rst)
+  restart_file=(${restart_files[0]})
+  restart_line="-r $restart_file"
+  printf "\nrestarting from $restart_file\n\n"
+else
+  restart_line="-i @PARFILE@"
+  printf "\nstarting from beginning\n\n"
+fi
+
+# set up for problem & define any environment variables here
+export MPICH_MPIIO_HINTS="*:abort_on_rw_error=enable:romio_cb_write=disable"
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export OMP_NUM_THREADS=$(@CPUS_PER_TASK@ / 2)
+srun \
+    -n $((@NODES@ * @TASKS_PER_NODE@)) \
+    @EXECUTABLE@ \
+    --kokkos-map-device-id-by=mpi_rank \
+    -d @RUNDIR@ \
+    $restart_line -t @TERMINATION_TIME@
