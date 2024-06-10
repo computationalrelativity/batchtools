@@ -20,6 +20,7 @@ module load gcc
 module load gsl
 module load mkl
 module load phdf5
+module load fftw3
 
 export I_MPI_EXTRA_FILESYSTEM=0
 
