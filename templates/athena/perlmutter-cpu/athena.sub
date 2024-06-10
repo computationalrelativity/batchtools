@@ -4,7 +4,7 @@
 #SBATCH -q @QUEUE@
 #SBATCH -C cpu
 #SBATCH -t @WALLTIME@
-#SBATCH -N @NODES@ --ntasks-per-node=@NUM_PROCS@
+#SBATCH -N @NODES@ --ntasks-per-node=@PROC_PER_NODE@
 #SBATCH -J @SIMULATION_NAME@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=@EMAIL@
@@ -16,14 +16,9 @@ set -x                          # Output commands
 set -e                          # Abort on errors
 cd @RUNDIR@
 
-module purge
-
-module load PrgEnv-cray
-module load gsl
 module load cray-hdf5-parallel
 
 export LD_LIBRARY_PATH=${DIR_TWOPUNCTURESC}/lib:$LD_LIBRARY_PATH
-
 
 echo "Checking:"
 pwd
@@ -49,7 +44,7 @@ fi
 
 srun \
     --cpu-bind=cores \
-    --ntasks-per-node=@NUM_PROCS@ \
+    --ntasks-per-node=@PROC_PER_NODE@ \
     -c @NUM_THREADS@ \
     @EXECUTABLE@ \
     -i @PARFILE@ \
