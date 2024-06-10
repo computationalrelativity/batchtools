@@ -30,6 +30,6 @@ echo ${SLURM_NODELIST} > NODES
 # set up for problem & define any environment variables here
 
 @EXECUTABLE@ \
-    -i @PARFILE@ \
+    -i @PARFILE@
 
 # perform any cleanup or short post-processing here

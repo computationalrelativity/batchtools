@@ -1,18 +1,18 @@
-#! /bin/bash
+#!/bin/bash
 @(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
 #SBATCH -q @QUEUE@
-#SBATCH -A @ALLOCATION@ 
-#SBATCH -C gpu
+#SBATCH -A @ALLOCATION@
+#SBATCH -C cpu
 #SBATCH -t @WALLTIME@
 #SBATCH -N @NODES@
-#SBATCH -J @SIMULATION_NAME@
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=@EMAIL@
+#SBATCH --job-name=@SIMULATION_NAME@
+#SBATCH --ntasks-per-node=@TASKS_PER_NODE@
+#SBATCH --cpus-per-task=@CPUS_PER_TASK@
+#SBATCH --license=SCRATCH
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
-#SBATCH --gpus-per-task=1
-#SBATCH --gpu-bind=none
-#SBATCH --ntasks-per-node=@NUM_GPUS@
+#SBATCH --mail-user=@EMAIL@
+#SBATCH --mail-type=ALL
 
 echo "Preparing:"
 set -x                          # Output commands
@@ -22,11 +22,8 @@ cd @RUNDIR@
 module purge
 module load cpe/23.12
 module load PrgEnv-gnu
-module load cudatoolkit/12.2
-module load craype-accel-nvidia80
 module load craype-x86-milan
 module load xpmem
-module load gpu/1.0
 
 echo "Checking:"
 pwd
@@ -49,15 +46,13 @@ else
 fi
 
 # set up for problem & define any environment variables here
-export MPICH_MPIIO_HINTS_DISPLAY=1
 export MPICH_MPIIO_HINTS="*:abort_on_rw_error=enable:romio_cb_write=disable"
-export MPICH_MPIIO_STATS=1
-export SLURM_CPU_BIND="cores"
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export OMP_NUM_THREADS=$(@CPUS_PER_TASK@ / 2)
 srun \
-    -n $((@NODES@ * 4)) \
+    -n $((@NODES@ * @TASKS_PER_NODE@)) \
     @EXECUTABLE@ \
     --kokkos-map-device-id-by=mpi_rank \
     -d @RUNDIR@ \
     $restart_line -t @TERMINATION_TIME@
-
-# perform any cleanup or short post-processing here
