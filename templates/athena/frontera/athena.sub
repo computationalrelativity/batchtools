@@ -1,5 +1,5 @@
 #! /bin/bash
-@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+@(#SBATCH -d afterany:@CHAINED_JOB_ID@)@
 #SBATCH -A @ALLOCATION@
 #SBATCH -p normal
 #SBATCH -t @WALLTIME@
@@ -15,12 +15,17 @@ set -x                          # Output commands
 set -e                          # Abort on errors
 
 module load intel/19.0.5
+module load impi/19.0.9
+module load gcc
 module load gsl
+module load mkl
 module load phdf5
 
 export I_MPI_EXTRA_FILESYSTEM=0
 
 cd @RUNDIR@
+
+lfs setstripe -c 8 $PWD
 
 echo "Checking:"
 pwd
@@ -39,7 +44,6 @@ if [ -L parent ]; then
     RESTART="-r $CHECKPOINT"
     echo "Restarting from $CHECKPOINT:"
 else
-    RESTART="time/tlim=0"
     echo "Starting from IC:"
 fi
 
