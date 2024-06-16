@@ -1,12 +1,3 @@
-module load intel/19.0.5
-module load impi/19.0.9
-module load gcc
-module load mkl
-module load phdf5
-module load gsl
-module load fftw3
-#module load mvapich2-x
-
 gsl_path=${TACC_GSL_DIR}
 phdf5_path=${TACC_HDF5_DIR}
 fftw_path=${TACC_FFTW3_DIR}
