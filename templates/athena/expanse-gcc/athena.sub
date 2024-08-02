@@ -48,7 +48,7 @@ else
 fi
 
 time srun --mpi=pmi2 --cpus-per-task=@NUM_THREADS@ --ntasks=@NUM_PROCS@ \
-   @EXECUTABLE@ -i @PARFILE@ -t @TERMTIME@ $RESTART
+   @EXECUTABLE@ -i @PARFILE@ -t @TERMINATION_TIME@ $RESTART
 
 mkdir -p checkpoint
 ls *.rst 1> /dev/null 2>&1 && mv *.rst checkpoint/

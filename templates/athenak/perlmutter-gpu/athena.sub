@@ -44,7 +44,7 @@ if [ -d parent/rst ]; then
   restart_line="-r $restart_file"
   printf "\nrestarting from $restart_file\n\n"
 else
-  restart_line="-i @PARFILE@"
+  restart_line="-i @PARFILE@ time/tlim=0"
   printf "\nstarting from beginning\n\n"
 fi
 
@@ -58,6 +58,7 @@ srun \
     @EXECUTABLE@ \
     --kokkos-map-device-id-by=mpi_rank \
     -d @RUNDIR@ \
-    $restart_line -t @TERMINATION_TIME@
+    -t @TERMINATION_TIME@ \
+    $restart_line
 
 # perform any cleanup or short post-processing here

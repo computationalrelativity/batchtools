@@ -52,7 +52,7 @@ srun \
     -c @NUM_THREADS@ \
     @EXECUTABLE@ \
     -i @PARFILE@ \
-    -t @TERMTIME@ \
+    -t @TERMINATION_TIME@ \
     $RESTART
 
 echo "Stopping:"

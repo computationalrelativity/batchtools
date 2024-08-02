@@ -40,7 +40,7 @@ __patterns__ = [
     ('RUNDIR', None, "Work directory for each segment"),
     ('SEGMENT', None, "Segment ID"),
     ('SIMULATION_NAME', "", "Name of the simulation"),
-    ('TERMTIME', "", "Time at which to checkpoint and terminate HH:MM:SS"),
+    ('TERMINATION_TIME', "", "Time at which to checkpoint and terminate HH:MM:SS"),
     ('THREADS', "", "Total number of threads"),
     ('WALLTIME', "", "Walltime HH:MM:SS"),
     ('WALLTIME_HOURS', "", "Walltime in hours HH"),

@@ -48,7 +48,7 @@ fi
 time mpirun -n $SLURM_NTASKS \
     @EXECUTABLE@ \
     -i @PARFILE@ \
-    -t @TERMTIME@ \
+    -t @TERMINATION_TIME@ \
     $RESTART
 
 echo "Stopping:"

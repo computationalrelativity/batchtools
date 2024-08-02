@@ -46,7 +46,7 @@ fi
 time ibrun mem_affinity \
     @EXECUTABLE@ \
     -i @PARFILE@ \
-    -t @TERMTIME@ \
+    -t @TERMINATION_TIME@ \
     $RESTART
 
 echo "Stopping:"

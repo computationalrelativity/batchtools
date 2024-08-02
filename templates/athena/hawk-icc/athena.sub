@@ -52,7 +52,7 @@ time mpirun \
     omplace -c 0-127 -nt @NUM_THREADS@ \
     -vv @EXECUTABLE@ \
     -i @PARFILE@ \
-    -t @TERMTIME@ \
+    -t @TERMINATION_TIME@ \
     $RESTART
 
 echo "Stopping:"

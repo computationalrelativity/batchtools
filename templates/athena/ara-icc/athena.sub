@@ -47,7 +47,7 @@ fi
 time srun --mpi=pmi2 -N @NODES@ --ntasks-per-node=@NUM_PROCS@ --cpus-per-task=@NUM_THREADS@ \
     @EXECUTABLE@ \
     -i @PARFILE@ \
-    -t @TERMTIME@ \
+    -t @TERMINATION_TIME@ \
     $RESTART
 
 echo "Stopping:"

@@ -48,7 +48,7 @@ fi
 time mpiexec -np @NUM_PROCS@ \
     @EXECUTABLE@ \
     -i @PARFILE@ \
-    -t @TERMTIME@ \
+    -t @TERMINATION_TIME@ \
     $RESTART
 
 echo "Stopping:"

@@ -46,7 +46,7 @@ else
 fi
 
 time srun \
-    @EXECUTABLE@ -i @PARFILE@ -t @TERMTIME@ $RESTART
+    @EXECUTABLE@ -i @PARFILE@ -t @TERMINATION_TIME@ $RESTART
 
 echo "Stopping:"
 date
