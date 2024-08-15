@@ -1,0 +1,53 @@
+#! /bin/bash
+#SBATCH --partition @QUEUE@
+#SBATCH -t @WALLTIME@
+#SBATCH -N @NODES@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH --gres=gpu:@NUM_GPUS@
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+cd @RUNDIR@
+
+
+module purge
+module load compiler/gcc/11.3.0
+module load tools/cmake/3.18.4
+module load nvidia/cuda/11.7
+
+
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+# set up for problem & define any environment variables here
+
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent/rst -name \*.rst | awk '{ print length, $0 }' | sort -n  | cut -d" " -f2- | tail -n 1)
+    RESTART="-r $CHECKPOINT"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART=""
+    echo "Starting from IC:"
+fi
+
+srun \
+    @EXECUTABLE@ \
+    -i @PARFILE@ \
+    -t @TERMINATION_TIME@ \
+    $RESTART
+
+date
+
+# perform any cleanup or short post-processing here
