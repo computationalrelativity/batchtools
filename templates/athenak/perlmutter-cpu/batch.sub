@@ -38,7 +38,7 @@ echo ${SLURM_NODELIST} > NODES
 if [ -d parent/rst ]; then
   restart_files=$(ls -t parent/rst/*.rst)
   restart_file=(${restart_files[0]})
-  restart_line="-r $restart_file"
+  restart_line="-r $restart_file -i @PARFILE@"
   printf "\nrestarting from $restart_file\n\n"
 else
   restart_line="-i @PARFILE@"

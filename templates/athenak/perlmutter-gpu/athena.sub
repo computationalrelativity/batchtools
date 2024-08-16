@@ -54,7 +54,7 @@ export MPICH_MPIIO_HINTS="*:abort_on_rw_error=enable:romio_cb_write=disable"
 export MPICH_MPIIO_STATS=1
 export SLURM_CPU_BIND="cores"
 srun \
-    -n $((@NODES@ * 4)) \
+    -n $((@NODES@ * @NUM_GPUS@)) \
     @EXECUTABLE@ \
     --kokkos-map-device-id-by=mpi_rank \
     -d @RUNDIR@ \

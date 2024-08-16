@@ -31,7 +31,7 @@ __patterns__ = [
     ('NODES', "", "Total number of nodes"),
     ('NUM_PROCS', "", "Total number of processes"),
     ('NUM_THREADS', "", "Number of threads per process"),
-    ('NUM_GPUS', "", "Number of gpus per node"),
+    ('NUM_GPUS', "", "Number of GPUs per node"),
     ('NUM_CPU_TASK',"","Number of CPUs per MPI task"),
     ('INCLUDE', "../BATCH/include", "Path to extra simulation files"),
     ('PARFILE', "parfile.par", "Name of the parfile to use"),
