@@ -9,7 +9,6 @@
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
 #SBATCH --gres=gpu:@NUM_GPUS@
 #SBATCH --mem-per-gpu=80G
-#SBATCH --mem=50G
 
 echo "Preparing:"
 set -x                          # Output commands
@@ -17,9 +16,7 @@ set -e                          # Abort on errors
 cd @RUNDIR@
 
 module purge
-module load compiler/gcc/11.2.0
-module load tools/cmake/3.22.2
-module load nvidia/cuda/11.4
+module load nvidia/cuda/12.4.0
 
 echo "Checking:"
 pwd
@@ -44,7 +41,8 @@ fi
 srun \
     @EXECUTABLE@ \
     -i @PARFILE@ \
-    $RESTART
+    $RESTART \
+    -t @TERMINATION_TIME@
 
 date
 
