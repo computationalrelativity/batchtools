@@ -19,14 +19,22 @@ set -x                          # Output commands
 set -e                          # Abort on errors
 cd @RUNDIR@
 
+# Broad cast the initial data
+for f in ../BATCH/include/*; do
+    sbcast $f /tmp/$(basename $f)
+done
+
 module purge
 module load cpe/23.12
+source /opt/cray/pe/cpe/23.12/restore_lmod_system_defaults.sh
 module load PrgEnv-gnu
 module load cudatoolkit/12.2
 module load craype-accel-nvidia80
 module load craype-x86-milan
 module load xpmem
 module load gpu/1.0
+
+export OMP_NUM_THREADS=@NUM_THREADS@
 
 echo "Checking:"
 pwd
@@ -39,9 +47,9 @@ echo ${SLURM_NODELIST} > NODES
 
 # Check for restart files
 if [ -d parent/rst ]; then
-  restart_files=$(ls -t parent/rst/*.rst)
+  restart_files=$(ls -r parent/rst/*.rst)
   restart_file=(${restart_files[0]})
-  restart_line="-r $restart_file"
+  restart_line="-r $restart_file -i @PARFILE@"
   printf "\nrestarting from $restart_file\n\n"
 else
   restart_line="-i @PARFILE@ time/tlim=0"

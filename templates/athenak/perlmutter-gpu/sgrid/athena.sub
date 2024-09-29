@@ -26,6 +26,7 @@ done
 ln -s /tmp @SGRID_DATA@
 
 module purge
+source /opt/cray/pe/cpe/23.12/restore_lmod_system_defaults.sh
 module load cpe/23.12
 module load PrgEnv-gnu
 module load cudatoolkit/12.2
