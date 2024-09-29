@@ -1,0 +1,21 @@
+diff -ru Lorene.orig/C++/Source/Tensor/Scalar/scalar.C Lorene/C++/Source/Tensor/Scalar/scalar.C
+--- Lorene.orig/C++/Source/Tensor/Scalar/scalar.C	2016-07-05 14:49:04.592557855 -0500
++++ Lorene/C++/Source/Tensor/Scalar/scalar.C	2016-07-05 15:03:00.068236778 -0500
+@@ -1028,7 +1028,7 @@
+ 	  for (int k=0; k<np; k++) {
+ 	    for (int j=0; j<nt; j++) {
+ 	      for (int i=0; i<nr; i++) {
+-		if (isnan( (*va.c)(lz, k, j, i) ) ) {
++		if (std::isnan( (*va.c)(lz, k, j, i) ) ) {
+ 		  resu = true ;
+ 		  if (verb) {
+ 		    cout << "NaN found at physical grid point domain = " << lz
+@@ -1046,7 +1046,7 @@
+ 	  for (int k=0; k<np; k++) {
+ 	    for (int j=0; j<nt; j++) {
+ 	      for (int i=0; i<nr; i++) {
+-		if (isnan( (*va.c_cf)(lz, k, j, i) ) ) {
++		if (std::isnan( (*va.c_cf)(lz, k, j, i) ) ) {
+ 		  resu = true ;
+ 		  if (verb) {
+ 		    cout << "NaN found at coefficient, domain = " << lz

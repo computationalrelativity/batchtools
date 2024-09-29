@@ -1,0 +1,230 @@
+diff -rupN Lorene_original/C++/Include/binaire.h Lorene/C++/Include/binaire.h
+--- Lorene_original/C++/Include/binaire.h	2015-07-07 14:47:32.000000000 +0200
++++ Lorene/C++/Include/binaire.h	2015-07-09 10:44:37.000000000 +0200
+@@ -365,7 +365,7 @@ class Binaire {
+ 	 *		    of the ``center of mass'' of star 2
+ 	 *
+ 	 */
+-	void orbit(double fact_omeg_min, double fact_omeg_max, double& xgg1, 
++	void orbit(double fact_x_axe_limits, double fact_omeg_min, double fact_omeg_max, double& xgg1, 
+ 		   double& xgg2) ;
+ 	   
+ 	/** Computes the orbital angular velocity {\tt omega} and the 
+diff -rupN Lorene_original/C++/Source/Binaire/binaire_orbite.C Lorene/C++/Source/Binaire/binaire_orbite.C
+--- Lorene_original/C++/Source/Binaire/binaire_orbite.C	2015-07-07 14:47:32.000000000 +0200
++++ Lorene/C++/Source/Binaire/binaire_orbite.C	2015-07-09 10:43:36.000000000 +0200
+@@ -119,7 +119,7 @@ double  fonc_binaire_orbit(double , cons
+ 
+ //******************************************************************************
+ 
+-void Binaire::orbit(double fact_omeg_min, double fact_omeg_max, double& xgg1, 
++  void Binaire::orbit(double fact_x_axe_limits,double fact_omeg_min, double fact_omeg_max, double& xgg1, 
+ 		     double& xgg2) {
+ 
+   using namespace Unites ;
+@@ -317,7 +317,7 @@ void Binaire::orbit(double fact_omeg_min
+ 	int nit_axe ; 
+ 	double precis_axe = 1.e-13 ;
+ 
+-	x_axe = zerosec(fonc_binaire_axe, paraxe, 0.9*ori_x1, 0.9*ori_x2,
++	x_axe = zerosec(fonc_binaire_axe, paraxe, fact_x_axe_limits*ori_x1, fact_x_axe_limits*ori_x2,
+ 			precis_axe, nitmax_axe, nit_axe) ;
+ 
+ 	cout << "Binaire::orbit : Number of iterations in zerosec for x_axe : "
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_cor/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_cor/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_cor/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_cor/parcoal.d	2015-07-09 11:24:55.000000000 +0200
+@@ -25,5 +25,6 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R17_50Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R17_50Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R17_50Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R17_50Km/parcoal.d	2015-07-09 11:29:17.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R17_60Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R17_60Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R17_60Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R17_60Km/parcoal.d	2015-07-09 11:29:47.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R25_60Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R25_60Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R25_60Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R25_60Km/parcoal.d	2015-07-09 11:30:11.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_30Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_30Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_30Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_30Km/parcoal.d	2015-07-09 11:31:06.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_35Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_35Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_35Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_35Km/parcoal.d	2015-07-09 11:31:24.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_40Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_40Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_40Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_40Km/parcoal.d	2015-07-09 11:31:40.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_45Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_45Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_45Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_45Km/parcoal.d	2015-07-09 11:31:51.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_50Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_50Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_50Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_50Km/parcoal.d	2015-07-09 11:27:18.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_55Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_55Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_55Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_55Km/parcoal.d	2015-07-09 11:32:40.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_60Km/parcoal.d Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_60Km/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_60Km/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Akmal_irrot/APR_1.35vs1.35_D4R33_60Km/parcoal.d	2015-07-09 11:32:57.000000000 +0200
+@@ -25,5 +25,6 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+diff -rupN Lorene_original/Codes/Bin_star/Parameters/Polytrope_irrot/Test_GR/parcoal.d Lorene/Codes/Bin_star/Parameters/Polytrope_irrot/Test_GR/parcoal.d
+--- Lorene_original/Codes/Bin_star/Parameters/Polytrope_irrot/Test_GR/parcoal.d	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/Parameters/Polytrope_irrot/Test_GR/parcoal.d	2015-07-09 11:33:58.000000000 +0200
+@@ -25,6 +25,7 @@ ini.d
+ 0.75	relax_omeg : Relaxation factor on Omega (orbital angular velocity)
+ 0.7	fact_omeg_min : fact_omeg_min * omega = low bound in the omega search
+ 1.3	fact_omeg_max : fact_omeg_max * omega = high bound in the omega search
++0.2     fact_x_axe_limits : fact_x_axe_limits * ori_x = limits in the x_axe search
+ 0.	thres_adapt1 : threshold on dH/dr for the adaptation of the mapping in star 1
+ 0.	thres_adapt2 : threshold on dH/dr for the adaptation of the mapping in star 2
+ 0.6	reduce_shift : factor by which the initial analytical shift is reduced
+diff -rupN Lorene_original/Codes/Bin_star/coal.C Lorene/Codes/Bin_star/coal.C
+--- Lorene_original/Codes/Bin_star/coal.C	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/coal.C	2015-07-09 11:21:13.000000000 +0200
+@@ -206,7 +206,7 @@ int main(){
+     int mermax_potvit, mer_masse, fmer_upd_met, ind_rel_met ;  
+     double seuil, relax_poisson, relax_potvit, relax, aexp_masse ; 
+     double mbar_voulue[2], fact_separ, relax_met, relax_omeg ;
+-    double fact_omeg_min, fact_omeg_max, thres_adapt[2], reduce_shift ; 
++    double fact_omeg_min, fact_omeg_max, fact_x_axe_limits, thres_adapt[2], reduce_shift ; 
+     
+     ifstream fpar("parcoal.d") ;
+ 	if ( !fpar.good() ) {
+@@ -243,6 +243,7 @@ int main(){
+     fpar >> relax_omeg ; fpar.ignore(1000, '\n');
+     fpar >> fact_omeg_min ; fpar.ignore(1000, '\n');
+     fpar >> fact_omeg_max ; fpar.ignore(1000, '\n');
++    fpar >> fact_x_axe_limits ; fpar.ignore(1000, '\n');
+     fpar >> thres_adapt[0] ; fpar.ignore(1000, '\n');
+     fpar >> thres_adapt[1] ; fpar.ignore(1000, '\n');
+ 	fpar >> reduce_shift ; 
+@@ -309,6 +310,8 @@ int main(){
+ 	 << fact_omeg_min << endl ; 
+     cout << "Relative high bound in the omega search : " 
+ 	 << fact_omeg_max << endl ; 
++    cout << "Relative bounds in the x_axe search :  " 
++	 << fact_x_axe_limits << endl ; 
+     cout << 
+     "Threshold on |dH/dr|_eq / |dH/dr|_pole for the adaptation of the mapping for star 1"
+     << endl << thres_adapt[0] << endl ;
+@@ -651,7 +654,7 @@ int main(){
+ 
+     double xgg[2] ; 
+ 
+-    star.orbit(fact_omeg_min, fact_omeg_max, xgg[0], xgg[1]) ; 
++    star.orbit(fact_x_axe_limits, fact_omeg_min, fact_omeg_max, xgg[0], xgg[1]) ; 
+ 
+     // Translation of the stars in order to set the origin
+     //  of the absolute frame on the rotation axis
+diff -rupN Lorene_original/Codes/Bin_star/coal_regu.C Lorene/Codes/Bin_star/coal_regu.C
+--- Lorene_original/Codes/Bin_star/coal_regu.C	2015-07-07 14:47:33.000000000 +0200
++++ Lorene/Codes/Bin_star/coal_regu.C	2015-07-09 11:22:44.000000000 +0200
+@@ -170,6 +170,7 @@ int main(){
+     fpar >> relax_omeg ; fpar.ignore(1000, '\n');
+     fpar >> fact_omeg_min ; fpar.ignore(1000, '\n');
+     fpar >> fact_omeg_max ; fpar.ignore(1000, '\n');
++    fpar >> fact_x_axe_limits ; fpar.ignore(1000, '\n');
+     fpar >> thres_adapt[0] ; fpar.ignore(1000, '\n');
+     fpar >> thres_adapt[1] ; fpar.ignore(1000, '\n');
+ 	fpar >> reduce_shift ; 
+@@ -235,6 +236,8 @@ int main(){
+ 	 << fact_omeg_min << endl ; 
+     cout << "Relative high bound in the omega search : " 
+ 	 << fact_omeg_max << endl ; 
++    cout << "Relative bounds in the x_axe search : " 
++	 << fact_x_axe_limits << endl ; 
+     cout << 
+     "Threshold on |dH/dr|_eq / |dH/dr|_pole for the adaptation of the mapping for star 1"
+     << endl << thres_adapt[0] << endl ;
+@@ -555,7 +558,7 @@ int main(){
+ 
+     double xgg[2] ; 
+ 
+-    star.orbit(fact_omeg_min, fact_omeg_max, xgg[0], xgg[1]) ; 
++    star.orbit(fact_x_axe_limits,fact_omeg_min, fact_omeg_max, xgg[0], xgg[1]) ; 
+ 
+     // Translation of the stars in order to set the origin
+     //  of the absolute frame on the rotation axis

@@ -1,0 +1,74 @@
+diff -ru Lorene.orig/Codes/Bin_star/coal.C Lorene/Codes/Bin_star/coal.C
+--- Lorene.orig/Codes/Bin_star/coal.C	2017-05-18 11:49:53.713709312 -0500
++++ Lorene/Codes/Bin_star/coal.C	2017-05-18 11:50:06.422239681 -0500
+@@ -869,7 +869,7 @@
+ 
+     // Graphical output
+     // ----------------
+-    
++/*    
+     if ( (graph==1) && (mer % 5 == 0) ) {
+ 	double xdes_min = - star(1).ray_eq_pi() + star(1).get_mp().get_ori_x() ; 
+ 	xdes_min *= 1.5 ; 
+@@ -904,7 +904,7 @@
+ 		    xdes_min, xdes_max, ydes_min, ydes_max, 
+ 		    "Baryon density (y=0)", &surf1, &surf2 ) ; 
+     }
+-
++*/
+     
+ 
+     //-----------------------------------------------------------------------
+diff -ru Lorene.orig/Codes/Bin_star/Makefile Lorene/Codes/Bin_star/Makefile
+--- Lorene.orig/Codes/Bin_star/Makefile	2017-05-18 11:49:53.713709312 -0500
++++ Lorene/Codes/Bin_star/Makefile	2017-05-18 11:51:47.482457552 -0500
+@@ -2,8 +2,8 @@
+ 
+ include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+ 
+-LIB_G = -L$(HOME_LORENE)/Lib -llorene_g -llorenef77_g 
+-LIBLOR = $(HOME_LORENE)/Lib/liblorene_g.a $(HOME_LORENE)/Lib/liblorenef77_g.a 
++LIB_L = -L$(HOME_LORENE)/Lib -llorene -llorenef77 
++LIBLOR = $(HOME_LORENE)/Lib/liblorene.a $(HOME_LORENE)/Lib/liblorenef77.a 
+ 
+ .SUFFIXES : .o .C
+ 
+@@ -36,31 +36,31 @@
+ EXE7 = $(SRC7:.C=)
+ 
+ $(EXE1): $(OBJ1) $(LIBLOR) 
+-	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ1) $(LIB_G) $(LIB_LAPACK) \
++	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ1) $(LIB_L) $(LIB_LAPACK) \
+ 					$(LIB_GSL) $(LIB_PGPLOT) $(LIB_CXX)
+ 
+ $(EXE2): $(OBJ2) $(LIBLOR) 
+-	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ2) $(LIB_G) $(LIB_LAPACK) \
++	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ2) $(LIB_L) $(LIB_LAPACK) \
+ 					$(LIB_GSL) $(LIB_PGPLOT) $(LIB_CXX)
+ 
+ $(EXE3): $(OBJ3) $(LIBLOR) 
+-	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ3) $(LIB_G) $(LIB_LAPACK) \
++	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ3) $(LIB_L) $(LIB_LAPACK) \
+ 					$(LIB_GSL) $(LIB_PGPLOT) $(LIB_CXX)
+ 
+ $(EXE4): $(OBJ4) $(LIBLOR) 
+-	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ4) $(LIB_G) $(LIB_LAPACK) \
++	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ4) $(LIB_L) $(LIB_LAPACK) \
+ 					$(LIB_GSL) $(LIB_PGPLOT) $(LIB_CXX)
+ 
+ $(EXE5): $(OBJ5) $(LIBLOR) 
+-	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ5) $(LIB_G) $(LIB_LAPACK) \
++	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ5) $(LIB_L) $(LIB_LAPACK) \
+ 					$(LIB_GSL) $(LIB_PGPLOT) $(LIB_CXX)
+ 
+ $(EXE6): $(OBJ6) $(LIBLOR) 
+-	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ6) $(LIB_G) $(LIB_LAPACK) \
++	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ6) $(LIB_L) $(LIB_LAPACK) \
+ 					$(LIB_GSL) $(LIB_PGPLOT) $(LIB_CXX)
+ 
+ $(EXE7): $(OBJ7) $(LIBLOR) 
+-	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ7) $(LIB_G) 
++	$(CXX) -o $@ $(CXXFLAGS_G) $(OBJ7) $(LIB_L) 
+ 
+ .C.o:
+ 	$(CXX)  -c $(CXXFLAGS_G) $(INC) $<

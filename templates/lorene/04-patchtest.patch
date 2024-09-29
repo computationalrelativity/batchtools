@@ -1,0 +1,5 @@
+diff --new-file -ru Lorene.orig/.patch_tmp Lorene/.patch_tmp
+--- Lorene.orig/.patch_tmp	1969-12-31 18:00:00.000000000 -0600
++++ Lorene/.patch_tmp	2010-06-24 19:43:15.000000000 -0500
+@@ -0,0 +1 @@
++ 

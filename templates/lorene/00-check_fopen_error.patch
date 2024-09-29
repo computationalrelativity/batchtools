@@ -1,0 +1,79 @@
+diff -ru Lorene.orig/Export/C++/Source/bin_bh_aux.C Lorene/Export/C++/Source/bin_bh_aux.C
+--- Lorene.orig/Export/C++/Source/bin_bh_aux.C	2016-07-05 14:01:19.116857882 -0500
++++ Lorene/Export/C++/Source/bin_bh_aux.C	2016-07-05 14:04:02.152297946 -0500
+@@ -68,7 +68,13 @@
+ #include "../Include/bin_bh.h"
+ 
+ // C headers
++#include <string.h>
++#include <errno.h>
++
++// C++ headers
+ #include <cmath>
++#include <ios>
++#include <string>
+ 
+ // Lorene headers
+ #include "tenseur.h"
+@@ -89,6 +95,9 @@
+     // Reading of data
+     // ---------------
+     FILE* fich = fopen(filename, "r") ;
++    if ( NULL == fich ) {
++        throw std::ios_base::failure(strerror(errno));
++    }
+     Mg3d* grille_1 = new Mg3d (fich) ;
+     Mg3d* grille_2 ;
+     if (mdiff)
+diff -ru Lorene.orig/Export/C++/Source/bin_ns_aux.C Lorene/Export/C++/Source/bin_ns_aux.C
+--- Lorene.orig/Export/C++/Source/bin_ns_aux.C	2016-07-05 14:01:19.116857882 -0500
++++ Lorene/Export/C++/Source/bin_ns_aux.C	2016-07-05 14:05:06.880086299 -0500
+@@ -65,8 +65,13 @@
+ 
+ // C headers
+ #include <cstring>
++#include <errno.h>
+ #include <cmath>
+ 
++// C++ headers
++#include <ios>
++#include <string>
++
+ // Lorene headers
+ #include "tenseur.h"
+ #include "binaire.h"
+@@ -87,6 +92,9 @@
+     // Reading of data
+     // ---------------
+     FILE* fich = fopen(filename, "r") ;
++    if ( NULL == fich ) {
++        throw std::ios_base::failure(strerror(errno));
++    }
+ 
+     int mer ;
+     fread(&mer, sizeof(int), 1, fich) ; // mer
+diff -ru Lorene.orig/Export/C++/Source/mag_ns_aux.C Lorene/Export/C++/Source/mag_ns_aux.C
+--- Lorene.orig/Export/C++/Source/mag_ns_aux.C	2016-07-05 14:01:19.116857882 -0500
++++ Lorene/Export/C++/Source/mag_ns_aux.C	2016-07-05 14:05:51.567943557 -0500
+@@ -53,6 +53,11 @@
+ // C headers
+ #include <cstring>
+ #include <cmath>
++#include <errno.h>
++
++// C++ headers
++#include <ios>
++#include <string>
+ 
+ // Lorene headers
+ #include "tenseur.h"
+@@ -77,6 +82,9 @@
+     // Reading of data
+     // ---------------
+     FILE* fich = fopen(filename, "r") ;
++    if ( NULL == fich ) {
++        throw std::ios_base::failure(strerror(errno));
++    }
+ 
+     Mg3d spectral_grid(fich) ;
+     int nphi = spectral_grid.get_np(0) ;

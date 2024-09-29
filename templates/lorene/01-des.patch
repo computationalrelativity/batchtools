@@ -1,0 +1,240 @@
+diff -ru Lorene.orig/C++/Source/Binaire/binaire_orbite.C Lorene/C++/Source/Binaire/binaire_orbite.C
+--- Lorene.orig/C++/Source/Binaire/binaire_orbite.C	2016-07-05 13:47:27.071567859 -0500
++++ Lorene/C++/Source/Binaire/binaire_orbite.C	2016-07-05 13:46:55.095590822 -0500
+@@ -186,9 +186,9 @@
+ 				  
+ 	cout << "dloggamdx_c : " <<  factx*loggam.dsdx()(0, 0, 0, 0) << endl ; 
+ 	Scalar stmp(logn_comp) ; 
+-        save_profile(stmp, 0., 10., 0.5*M_PI, 0., "prof_logn.d") ; 
++        //save_profile(stmp, 0., 10., 0.5*M_PI, 0., "prof_logn.d") ; 
+ 	stmp = loggam ; 
+-        save_profile(stmp, 0., 1.8, 0.5*M_PI, 0., "prof_loggam.d") ; 
++        //save_profile(stmp, 0., 1.8, 0.5*M_PI, 0., "prof_loggam.d") ; 
+   
+ 	//----------------------------------
+ 	// Calcul de A^2/N^2 au centre de l'etoile ---> asn2[i]
+diff -ru Lorene.orig/C++/Source/Binary_xcts/binary_orbit_xcts.C Lorene/C++/Source/Binary_xcts/binary_orbit_xcts.C
+--- Lorene.orig/C++/Source/Binary_xcts/binary_orbit_xcts.C	2016-07-05 13:47:27.071567859 -0500
++++ Lorene/C++/Source/Binary_xcts/binary_orbit_xcts.C	2016-07-05 13:46:55.095590822 -0500
+@@ -155,8 +155,8 @@
+ 	Scalar tgraph = logn - log( (1. + et[i]->get_chi_auto()) / (1. + et[i]->get_Psi_auto()) ) ; 
+ 	// tmp = log( (1. + et[i]->get_chi_comp()) / (1. + et[i]->get_Psi_comp()) ) ; 
+ 	tgraph.std_spectral_base() ; 
+-        save_profile(tgraph, 0., 10., 0.5*M_PI, 0., "prof_logn.d") ; 
+-        save_profile(et[i]->get_loggam(), 0., 1.8, 0.5*M_PI, 0., "prof_loggam.d") ;
++        //save_profile(tgraph, 0., 10., 0.5*M_PI, 0., "prof_logn.d") ; 
++        //save_profile(et[i]->get_loggam(), 0., 1.8, 0.5*M_PI, 0., "prof_loggam.d") ;
+  
+ 	//------------------------------------------------------------------
+ 	// Psi^4/N^2 = in the center of the star ---> asn2[i]
+diff -ru Lorene.orig/C++/Source/Bin_hor/binhor_hh.C Lorene/C++/Source/Bin_hor/binhor_hh.C
+--- Lorene.orig/C++/Source/Bin_hor/binhor_hh.C	2016-07-05 13:47:27.071567859 -0500
++++ Lorene/C++/Source/Bin_hor/binhor_hh.C	2016-07-05 13:46:55.095590822 -0500
+@@ -892,7 +892,7 @@
+   cout << hole1.mp.phi << endl ;
+   cout << hole1.mp.tet << endl ;
+ 
+-
++  /*
+   //des_meridian(hh1, 0., 20., "hh1 cart", 20) ;
+   for (int i=1 ; i<= 3 ; i++)
+     for (int j=i ; j<= 3 ; j++){
+@@ -901,7 +901,7 @@
+       //des_profile(hh1(i,j), 0., 20., 0, M_PI) ;
+       des_coupe_z (hh1(i,j), 0., 5) ;
+     }
+-
++   */
+   hh1.change_triad(hole1.mp.get_bvect_spher()) ;
+   hh2.change_triad(hole2.mp.get_bvect_spher()) ;
+ 
+@@ -915,7 +915,7 @@
+   hole2.tgam = tgam_2 ;
+ 
+   
+-  des_meridian(hh1, 0., 20., "hh1", 0) ;
++  //des_meridian(hh1, 0., 20., "hh1", 0) ;
+ 
+ 
+ }
+diff -ru Lorene.orig/C++/Source/Gravastar/gravastar_equil.C Lorene/C++/Source/Gravastar/gravastar_equil.C
+--- Lorene.orig/C++/Source/Gravastar/gravastar_equil.C	2016-07-05 13:47:27.079567855 -0500
++++ Lorene/C++/Source/Gravastar/gravastar_equil.C	2016-07-05 13:46:55.095590822 -0500
+@@ -640,7 +640,7 @@
+ 	    double mlngamma_c = 0 ;*/
+ 
+ 	    //des_profile(nuf,0.,10.,1.5708,0.,"nuf");
+-	    des_profile(nuf,0.,10.,1.5708,0.,"nuf (debut step suivant)");
++	    //des_profile(nuf,0.,10.,1.5708,0.,"nuf (debut step suivant)");
+ 
+ 	    //des_profile(nuq,0.,10.,0.,0.,"nuq");
+ 	    //des_profile(logn,0.,10.,0.,0.,"nu");
+@@ -706,8 +706,8 @@
+ 	    //ent.annule(nzet,nz-1); //***NB: si je le mets, erreur division par zero dans le remapping
+ 
+ 	    //des_profile(logn,0.,10.,0.,0.,"nu");
+-	    des_profile(ent,0.,10.,0.,0.,"enthalpy apres cst");
+-	    des_profile(ent,1.001,1.2,0.,0.,"enthalpy apres zoom");
++	    //des_profile(ent,0.,10.,0.,0.,"enthalpy apres cst");
++	    //des_profile(ent,1.001,1.2,0.,0.,"enthalpy apres zoom");
+ 
+ 	    // Test: is the enthalpy negative somewhere in the equatorial plane
+ 	    //  inside the star ? If yes, this means that the Keplerian velocity
+@@ -784,7 +784,7 @@
+ 	//	mp.reevaluate(&mp_prev, nzet+1, cent) ; //***NB: annule le champ (cent) pour les domaines [nzet+1,nz] -> pourquoi mettre nzet+1 et pas nzet???
+ 	mp.reevaluate(&mp_prev, nzet, cent) ;
+ 	ent = cent ; 
+-	des_profile(ent,0.,10.,0.,0.,"enthalpy apres mapping (used for eos)");
++	//des_profile(ent,0.,10.,0.,0.,"enthalpy apres mapping (used for eos)");
+ 
+ 	//----------------------------------------------------
+ 	// Equation of state  
+diff -ru Lorene.orig/C++/Source/Isol_hor/init_data.C Lorene/C++/Source/Isol_hor/init_data.C
+--- Lorene.orig/C++/Source/Isol_hor/init_data.C	2016-07-05 13:47:27.079567855 -0500
++++ Lorene/C++/Source/Isol_hor/init_data.C	2016-07-05 13:46:55.095590822 -0500
+@@ -1268,13 +1268,13 @@
+ 
+     for (int mer=0; mer<niter; mer++) {
+ 
+-      
++      /*
+       des_meridian(psi_j, 1, 10., "psi", 0) ;
+       des_meridian(nn_j, 1, 10., "nn", 1) ;
+       des_meridian(theta_j, 1, 10., "Theta", 2) ;
+       des_meridian(chi_j, 1, 10., "chi", 3) ;
+       arrete() ;
+-
++      */
+ 
+       //========
+       // Sources
+@@ -1415,11 +1415,11 @@
+ 	   
+ 	 // Iteration in theta/chi
+ 	 for (int i=0 ; i<niter ; i++) {
+-
++      /*
+ 	   des_meridian(theta_i, 1, 10., "Theta", 2) ;
+ 	   des_meridian(chi_i, 1, 10., "chi", 3) ;
+ 	   arrete() ;
+-
++      */
+ 
+ 
+ 	   //Sources
+diff -ru Lorene.orig/C++/Source/Time_slice/tslice_conf_init.C Lorene/C++/Source/Time_slice/tslice_conf_init.C
+--- Lorene.orig/C++/Source/Time_slice/tslice_conf_init.C	2016-07-05 13:47:27.091567845 -0500
++++ Lorene/C++/Source/Time_slice/tslice_conf_init.C	2016-07-05 13:46:55.095590822 -0500
+@@ -232,7 +232,7 @@
+         maxabs(psi_jp1.laplacian() - source_psi,
+                 "Absolute error in the resolution of the equation for Psi") ;  
+ 
+-        des_meridian(psi_jp1, 0., ray_des, "Psi", ngraph0, graph_device) ; 
++        //des_meridian(psi_jp1, 0., ray_des, "Psi", ngraph0, graph_device) ; 
+ 
+         // Resolution of the Poisson equation for the lapse
+         // ------------------------------------------------
+@@ -245,21 +245,21 @@
+         maxabs(nn_jp1.laplacian() - source_nn,
+                 "Absolute error in the resolution of the equation for N") ;  
+ 
+-        des_meridian(nn_jp1, 0., ray_des, "N", ngraph0+1, graph_device) ; 
++        //des_meridian(nn_jp1, 0., ray_des, "N", ngraph0+1, graph_device) ; 
+         
+         // Resolution of the vector Poisson equation for the shift
+         //---------------------------------------------------------
+         
+         Vector beta_jp1 = source_beta.poisson(0.3333333333333333, ff, 
+                                               method_poisson_vect) ; 
+-        
++        /*
+         des_meridian(beta_jp1(1), 0., ray_des, "\\gb\\ur\\d", ngraph0+2, 
+                      graph_device) ; 
+         des_meridian(beta_jp1(2), 0., ray_des, "\\gb\\u\\gh\\d", ngraph0+3, 
+                      graph_device) ; 
+         des_meridian(beta_jp1(3), 0., ray_des, "\\gb\\u\\gf\\d", ngraph0+4, 
+                      graph_device) ; 
+-        
++        */ 
+         // Test:
+         Vector test_beta = (beta_jp1.derive_con(ff)).divergence(ff)
+             +  0.3333333333333333 * (beta_jp1.divergence(ff)).derive_con(ff) ;
+diff -ru Lorene.orig/C++/Source/Time_slice/tslice_dirac_max_evolve.C Lorene/C++/Source/Time_slice/tslice_dirac_max_evolve.C
+--- Lorene.orig/C++/Source/Time_slice/tslice_dirac_max_evolve.C	2016-07-05 13:47:27.091567845 -0500
++++ Lorene/C++/Source/Time_slice/tslice_dirac_max_evolve.C	2016-07-05 13:46:55.095590822 -0500
+@@ -405,8 +405,10 @@
+ 	  // Monitoring
+ 	  // ---------- 
+ 	  m_adm.update(adm_mass(), jtime, the_time[jtime]) ;
++          /*
+ 	  if (jt > 0) des_evol(m_adm, "ADM mass", "Variation of ADM mass", 
+ 			       ngraph0_mon, graph_device) ;          
++          */
+ 	  
+ 	  
+ 	  nn_monitor.update(monitor_scalar(nn(), select_scalar), 
+@@ -449,9 +451,11 @@
+ 	    if (xx > max_error) max_error = xx ; 
+ 	  }
+ 	  test_ham_constr.update(max_error, jt_graph, the_time[jtime]) ; 
++          /*
+ 	  if (jt > 0) des_evol(test_ham_constr, "Absolute error", 
+ 			       "Check of Hamiltonian constraint", 
+ 			       ngraph0_mon+1, graph_device) ; 
++          */
+ 	  
+ 	  Tbl tmom = check_momentum_constraint(0x0, cout, verbose) ; 
+             max_error = tmom(0,0) ;
+@@ -460,9 +464,11 @@
+                 if (xx > max_error) max_error = xx ; 
+             }
+             test_mom_constr_r.update(max_error, jt_graph, the_time[jtime]) ; 
++            /*
+             if (jt > 0) des_evol(test_mom_constr_r, "Absolute error", 
+                 "Check of momentum constraint (r comp.)", ngraph0_mon+2, 
+                 graph_device) ; 
++            */
+ 
+             max_error = tmom(1,0) ;
+             for (int l=1; l<nz-1; l++) {    // all domains but the last one
+@@ -470,9 +476,11 @@
+                 if (xx > max_error) max_error = xx ; 
+             }
+             test_mom_constr_t.update(max_error, jt_graph, the_time[jtime]) ; 
++            /*
+             if (jt > 0) des_evol(test_mom_constr_t, "Absolute error", 
+                 "Check of momentum constraint (\\gh comp.)", ngraph0_mon+3,
+                  graph_device) ; 
++            */
+ 
+             max_error = tmom(2,0) ;
+             for (int l=1; l<nz-1; l++) {    // all domains but the last one
+@@ -480,9 +488,11 @@
+                 if (xx > max_error) max_error = xx ; 
+             }
+             test_mom_constr_p.update(max_error, jt_graph, the_time[jtime]) ; 
++            /*
+             if (jt > 0) des_evol(test_mom_constr_p, "Absolute error", 
+                 "Check of momentum constraint (\\gf comp.)", ngraph0_mon+4, 
+                 graph_device) ; 
++            */
+                
+ 	    if (jt>2) {
+ 	      Tbl tevol = check_dynamical_equations(0x0, 0x0, cout, verbose) ;
+@@ -699,7 +709,7 @@
+             beta_new = relax * beta_new + (1.-relax) * beta() ;
+ 	    beta_evol.update(beta_new, jtime, ttime) ;             
+ 	}    
+-                
++   /*        
+         des_meridian(vec_X()(1), 0., ray_des, "\\gb\\ur\\d", ngraph0+6,
+                      graph_device) ; 
+         des_meridian(vec_X()(2), 0., ray_des, "\\gb\\u\\gh\\d", ngraph0+7,
+@@ -724,6 +734,7 @@
+                      graph_device) ; 
+                 
+         arrete(nopause) ; 
++    */
+     }
+ 
+     par_A.clean_all() ;

@@ -1,0 +1,4860 @@
+diff --new-file -ru Lorene.orig/C++/Makefile Lorene/C++/Makefile
+--- Lorene.orig/C++/Makefile	2012-11-15 21:18:23.000000000 +0100
++++ Lorene/C++/Makefile	2014-03-27 15:36:06.336321461 +0100
+@@ -1,146 +1,92 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		
++include $(HOME_LORENE)/global_settings		
+ 
+-BIN_TOOLS = $(HOME_LORENE)/bin
+-LIB	  = $(HOME_LORENE)/Lib
++SUBDIRS = \
++Source/App_hor\
++Source/Base_val\
++Source/Base_vect\
++Source/Bhole\
++Source/Bhole_binaire\
++Source/Bin_bhns\
++Source/Bin_bhns_extr\
++Source/Bin_hor\
++Source/Bin_ns_bh\
++Source/Binaire\
++Source/Binary\
++Source/Binary_xcts\
++Source/Black_hole\
++Source/Change_var\
++Source/Cmp\
++Source/Compobj\
++Source/Connection\
++Source/Coord\
++Source/Diff\
++Source/Eos\
++Source/Etoile\
++Source/Excised_slice\
++Source/Gravastar\
++Source/Grille3d\
++Source/Hole_bhns\
++Source/Isol_hor\
++Source/Isol_hole\
++Source/Itbl\
++Source/Map\
++Source/Matrice\
++Source/Metric\
++Source/Metrique\
++Source/Mg3d\
++Source/Mtbl\
++Source/Mtbl_cf\
++Source/Non_class_members/Coef\
++Source/Non_class_members/Coef/$(FFT_DIR)\
++Source/Non_class_members/Graphics\
++Source/Non_class_members/Operators\
++Source/Non_class_members/PDE\
++Source/Non_class_members/Utilities\
++Source/Ope_elementary\
++Source/Ope_elementary/Ope_sec_order_r2\
++Source/Ope_elementary/Ope_sec_order\
++Source/Ope_elementary/Ope_pois_vect_r\
++Source/Ope_elementary/Ope_poisson_2d\
++Source/Ope_elementary/Ope_helmholtz_minus_2d\
++Source/Ope_elementary/Ope_poisson_pseudo_1d\
++Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d\
++Source/Ope_elementary/Ope_vorton\
++Source/Param\
++Source/Param_elliptic\
++Source/Star\
++Source/Star_bhns\
++Source/Tbl\
++Source/Tenseur\
++Source/Tensor\
++Source/Tensor/Scalar\
++Source/Time_slice\
++Source/Valencia\
++Source/Valeur
++
++SUBLIBS = $(patsubst %,%/Objects/,$(SUBDIRS))
++SUBGLIBS = $(patsubst %,%/Objects_g/,$(SUBDIRS))
++
++.PHONY: subdirs $(SUBDIRS)
++
++subdirs: $(LIB) $(SUBDIRS)
++	${FIND} ${SUBLIBS} -name "*.o" | ${XARGS} ar -rv $(LIB)/liblorene.a
++	$(RANLIB) $(LIB)/liblorene.a
++ifndef DONTBUILDDEBUGLIB
++	${FIND} ${SUBGLIBS} -name "*.o" | ${XARGS} ar -rv $(LIB)/liblorene_g.a
++	$(RANLIB) $(LIB)/liblorene_g.a
++endif
+ 
+-install: $(LIB) $(BIN_TOOLS) $(BIN_TOOLS)/pointCpointo
+-	cd Source/App_hor; $(MAKE)
+-	cd Source/Base_val; $(MAKE)
+-	cd Source/Base_vect; $(MAKE)
+-	cd Source/Bhole; $(MAKE)
+-	cd Source/Bhole_binaire; $(MAKE)
+-	cd Source/Bin_bhns; $(MAKE)
+-	cd Source/Bin_bhns_extr; $(MAKE)
+-	cd Source/Bin_hor; $(MAKE)
+-	cd Source/Bin_ns_bh; $(MAKE)
+-	cd Source/Binaire; $(MAKE)
+-	cd Source/Binary; $(MAKE)
+-	cd Source/Binary_xcts; $(MAKE)
+-	cd Source/Black_hole; $(MAKE)
+-	cd Source/Change_var; $(MAKE)
+-	cd Source/Cmp; $(MAKE)
+-	cd Source/Compobj; $(MAKE)
+-	cd Source/Connection; $(MAKE)
+-	cd Source/Coord; $(MAKE)
+-	cd Source/Diff; $(MAKE)
+-	cd Source/Eos; $(MAKE)
+-	cd Source/Etoile; $(MAKE)
+-	cd Source/Excised_slice; $(MAKE)
+-	cd Source/Gravastar; $(MAKE)		
+-	cd Source/Grille3d; $(MAKE)
+-	cd Source/Hole_bhns; $(MAKE)
+-	cd Source/Isol_hor; $(MAKE)	
+-	cd Source/Isol_hole; $(MAKE)
+-	cd Source/Itbl; $(MAKE)
+-	cd Source/Map; $(MAKE)
+-	cd Source/Matrice; $(MAKE)
+-	cd Source/Metric; $(MAKE)
+-	cd Source/Metrique; $(MAKE)
+-	cd Source/Mg3d; $(MAKE)
+-	cd Source/Mtbl; $(MAKE)
+-	cd Source/Mtbl_cf; $(MAKE)
+-	cd Source/Non_class_members/Coef; $(MAKE)
+-	cd Source/Non_class_members/Coef/$(FFT_DIR); $(MAKE)
+-	cd Source/Non_class_members/Graphics; $(MAKE)
+-	cd Source/Non_class_members/Operators; $(MAKE)
+-	cd Source/Non_class_members/PDE; $(MAKE)
+-	cd Source/Non_class_members/Utilities; $(MAKE)
+-	cd Source/Ope_elementary; $(MAKE)
+-	cd Source/Ope_elementary/Ope_sec_order_r2; $(MAKE)
+-	cd Source/Ope_elementary/Ope_sec_order; $(MAKE)
+-	cd Source/Ope_elementary/Ope_pois_vect_r; $(MAKE)	
+-	cd Source/Ope_elementary/Ope_poisson_2d; $(MAKE)
+-	cd Source/Ope_elementary/Ope_helmholtz_minus_2d; $(MAKE)
+-	cd Source/Ope_elementary/Ope_poisson_pseudo_1d; $(MAKE)
+-	cd Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d; $(MAKE)
+-	cd Source/Ope_elementary/Ope_vorton; $(MAKE)
+-	cd Source/Param; $(MAKE)
+-	cd Source/Param_elliptic; $(MAKE)
+-	cd Source/Star; $(MAKE)
+-	cd Source/Star_bhns; $(MAKE)
+-	cd Source/Tbl; $(MAKE)
+-	cd Source/Tenseur; $(MAKE)
+-	cd Source/Tensor; $(MAKE)
+-	cd Source/Tensor/Scalar; $(MAKE)
+-	cd Source/Time_slice; $(MAKE)
+-	cd Source/Valencia; $(MAKE)
+-	cd Source/Valeur; $(MAKE)
++install: subdirs
+ 	touch $(LIB)/date_mark
+ 
++$(SUBDIRS):
++	$(MAKE) -C $@
++
+ uninstall:
+ 	rm -fr $(LIB)/liblorene.a
+ 	rm -fr $(LIB)/liblorene_g.a
+-	rm -f $(BIN_TOOLS)/pointCpointo
+-	cd Source/App_hor; $(MAKE) -i uninstall
+-	cd Source/Base_val; $(MAKE) -i uninstall
+-	cd Source/Base_vect; $(MAKE) -i uninstall
+-	cd Source/Bhole; $(MAKE) -i uninstall
+-	cd Source/Bhole_binaire; $(MAKE) -i uninstall
+-	cd Source/Bin_bhns; $(MAKE) -i uninstall
+-	cd Source/Bin_bhns_extr; $(MAKE) -i uninstall
+-	cd Source/Bin_hor; $(MAKE) -i uninstall
+-	cd Source/Bin_ns_bh; $(MAKE) -i uninstall
+-	cd Source/Binaire; $(MAKE) -i uninstall
+-	cd Source/Binary; $(MAKE) -i uninstall
+-	cd Source/Binary_xcts; $(MAKE) -i uninstall
+-	cd Source/Black_hole; $(MAKE) -i uninstall
+-	cd Source/Change_var; $(MAKE) -i uninstall
+-	cd Source/Cmp; $(MAKE) -i uninstall
+-	cd Source/Connection; $(MAKE) -i uninstall
+-	cd Source/Coord; $(MAKE) -i uninstall
+-	cd Source/Diff; $(MAKE) -i uninstall
+-	cd Source/Eos; $(MAKE) -i uninstall
+-	cd Source/Etoile; $(MAKE) -i uninstall
+-	cd Source/Excised_slice; $(MAKE) -i uninstall
+-	cd Source/Gravastar; $(MAKE) -i uninstall
+-	cd Source/Grille3d; $(MAKE) -i uninstall
+-	cd Source/Hole_bhns; $(MAKE) -i uninstall
+-	cd Source/Isol_hor; $(MAKE) -i uninstall
+-	cd Source/Isol_hole; $(MAKE) -i uninstall
+-	cd Source/Itbl; $(MAKE) -i uninstall
+-	cd Source/Map; $(MAKE) -i uninstall
+-	cd Source/Matrice; $(MAKE) -i uninstall
+-	cd Source/Metric; $(MAKE) -i uninstall
+-	cd Source/Metrique; $(MAKE) -i uninstall
+-	cd Source/Mg3d; $(MAKE) -i uninstall
+-	cd Source/Mtbl; $(MAKE) -i uninstall
+-	cd Source/Mtbl_cf; $(MAKE) -i uninstall
+-	cd Source/Non_class_members/Coef; $(MAKE) -i uninstall
+-	cd Source/Non_class_members/Coef/FFT991; $(MAKE) -i uninstall
+-	cd Source/Non_class_members/Coef/FFTW3; $(MAKE) -i uninstall
+-	cd Source/Non_class_members/Graphics; $(MAKE) -i uninstall
+-	cd Source/Non_class_members/Operators; $(MAKE) -i uninstall
+-	cd Source/Non_class_members/PDE; $(MAKE) -i uninstall
+-	cd Source/Non_class_members/Utilities; $(MAKE) -i uninstall
+-	cd Source/Ope_elementary; $(MAKE) -i uninstall
+-	cd Source/Ope_elementary/Ope_sec_order_r2; $(MAKE) -i uninstall	
+-	cd Source/Ope_elementary/Ope_sec_order; $(MAKE) -i uninstall	
+-	cd Source/Ope_elementary/Ope_pois_vect_r; $(MAKE) -i uninstall	
+-	cd Source/Ope_elementary/Ope_poisson_2d; $(MAKE) -i uninstall
+-	cd Source/Ope_elementary/Ope_poisson_pseudo_1d; $(MAKE) -i uninstall
+-	cd Source/Ope_elementary/Ope_helmholtz_minus_2d; $(MAKE) -i uninstall
+-	cd Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d; $(MAKE) -i uninstall
+-	cd Source/Ope_elementary/Ope_vorton; $(MAKE) -i uninstall
+-	cd Source/Param; $(MAKE) -i uninstall
+-	cd Source/Param_elliptic; $(MAKE) -i uninstall
+-	cd Source/Star; $(MAKE) -i uninstall
+-	cd Source/Star_bhns; $(MAKE) -i uninstall
+-	cd Source/Tbl; $(MAKE) -i uninstall
+-	cd Source/Tenseur; $(MAKE) -i uninstall
+-	cd Source/Tensor; $(MAKE)  -i uninstall
+-	cd Source/Tensor/Scalar; $(MAKE)  -i uninstall
+-	cd Source/Time_slice; $(MAKE)  -i uninstall
+-	cd Source/Valencia; $(MAKE) -i uninstall
+-	cd Source/Valeur; $(MAKE) -i uninstall
+-
+-$(LIB):
+-	mkdir $@
+-
+-$(BIN_TOOLS):	
+-	mkdir $@
+-
+-$(BIN_TOOLS)/pointCpointo:
+-	$(CXX) $(CXXFLAGS) -o $@ $(HOME_LORENE)/Inst_tools/pointCpointo.C
+-
++	for subdir in $(SUBDIRS); do \
++	  (cd "$$subdir"; $(MAKE) -i uninstall;) \
++	done;
+diff --new-file -ru Lorene.orig/C++/Source/App_hor/Makefile Lorene/C++/Source/App_hor/Makefile
+--- Lorene.orig/C++/Source/App_hor/Makefile	2006-09-11 13:28:18.000000000 +0200
++++ Lorene/C++/Source/App_hor/Makefile	2014-03-27 15:35:51.524744171 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/App_hor/Makefile_lib Lorene/C++/Source/App_hor/Makefile_lib
+--- Lorene.orig/C++/Source/App_hor/Makefile_lib	2006-09-11 13:28:18.000000000 +0200
++++ Lorene/C++/Source/App_hor/Makefile_lib	2014-03-27 15:35:51.527744085 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/App_hor/Makefile_lib_g Lorene/C++/Source/App_hor/Makefile_lib_g
+--- Lorene.orig/C++/Source/App_hor/Makefile_lib_g	2006-09-11 13:28:18.000000000 +0200
++++ Lorene/C++/Source/App_hor/Makefile_lib_g	2014-03-27 15:35:51.530744000 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Base_val/Makefile Lorene/C++/Source/Base_val/Makefile
+--- Lorene.orig/C++/Source/Base_val/Makefile	2006-09-11 13:28:19.000000000 +0200
++++ Lorene/C++/Source/Base_val/Makefile	2014-03-27 15:35:51.534743885 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Base_val/Makefile_lib Lorene/C++/Source/Base_val/Makefile_lib
+--- Lorene.orig/C++/Source/Base_val/Makefile_lib	2006-09-11 13:28:19.000000000 +0200
++++ Lorene/C++/Source/Base_val/Makefile_lib	2014-03-27 15:35:51.536743828 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Base_val/Makefile_lib_g Lorene/C++/Source/Base_val/Makefile_lib_g
+--- Lorene.orig/C++/Source/Base_val/Makefile_lib_g	2006-09-11 13:28:19.000000000 +0200
++++ Lorene/C++/Source/Base_val/Makefile_lib_g	2014-03-27 15:35:51.539743743 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Base_vect/Makefile Lorene/C++/Source/Base_vect/Makefile
+--- Lorene.orig/C++/Source/Base_vect/Makefile	2006-09-11 13:28:20.000000000 +0200
++++ Lorene/C++/Source/Base_vect/Makefile	2014-03-27 15:35:51.542743657 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Base_vect/Makefile_lib Lorene/C++/Source/Base_vect/Makefile_lib
+--- Lorene.orig/C++/Source/Base_vect/Makefile_lib	2006-09-11 13:28:20.000000000 +0200
++++ Lorene/C++/Source/Base_vect/Makefile_lib	2014-03-27 15:35:51.545743571 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Base_vect/Makefile_lib_g Lorene/C++/Source/Base_vect/Makefile_lib_g
+--- Lorene.orig/C++/Source/Base_vect/Makefile_lib_g	2006-09-11 13:28:21.000000000 +0200
++++ Lorene/C++/Source/Base_vect/Makefile_lib_g	2014-03-27 15:35:51.548743486 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bhole/Makefile Lorene/C++/Source/Bhole/Makefile
+--- Lorene.orig/C++/Source/Bhole/Makefile	2006-09-11 13:28:23.000000000 +0200
++++ Lorene/C++/Source/Bhole/Makefile	2014-03-27 15:35:51.552743372 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Bhole/Makefile_lib Lorene/C++/Source/Bhole/Makefile_lib
+--- Lorene.orig/C++/Source/Bhole/Makefile_lib	2006-09-11 13:28:23.000000000 +0200
++++ Lorene/C++/Source/Bhole/Makefile_lib	2014-03-27 15:35:51.554743315 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bhole/Makefile_lib_g Lorene/C++/Source/Bhole/Makefile_lib_g
+--- Lorene.orig/C++/Source/Bhole/Makefile_lib_g	2006-09-11 13:28:23.000000000 +0200
++++ Lorene/C++/Source/Bhole/Makefile_lib_g	2014-03-27 15:35:51.557743229 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bhole_binaire/Makefile Lorene/C++/Source/Bhole_binaire/Makefile
+--- Lorene.orig/C++/Source/Bhole_binaire/Makefile	2006-09-11 13:28:24.000000000 +0200
++++ Lorene/C++/Source/Bhole_binaire/Makefile	2014-03-27 15:35:51.561743115 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Bhole_binaire/Makefile_lib Lorene/C++/Source/Bhole_binaire/Makefile_lib
+--- Lorene.orig/C++/Source/Bhole_binaire/Makefile_lib	2006-09-11 13:28:24.000000000 +0200
++++ Lorene/C++/Source/Bhole_binaire/Makefile_lib	2014-03-27 15:35:51.564743029 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bhole_binaire/Makefile_lib_g Lorene/C++/Source/Bhole_binaire/Makefile_lib_g
+--- Lorene.orig/C++/Source/Bhole_binaire/Makefile_lib_g	2006-09-11 13:28:24.000000000 +0200
++++ Lorene/C++/Source/Bhole_binaire/Makefile_lib_g	2014-03-27 15:35:51.567742944 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Binaire/Makefile Lorene/C++/Source/Binaire/Makefile
+--- Lorene.orig/C++/Source/Binaire/Makefile	2006-09-11 13:28:36.000000000 +0200
++++ Lorene/C++/Source/Binaire/Makefile	2014-03-27 15:35:51.570742858 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Binaire/Makefile_lib Lorene/C++/Source/Binaire/Makefile_lib
+--- Lorene.orig/C++/Source/Binaire/Makefile_lib	2006-09-11 13:28:36.000000000 +0200
++++ Lorene/C++/Source/Binaire/Makefile_lib	2014-03-27 15:35:51.573742772 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Binaire/Makefile_lib_g Lorene/C++/Source/Binaire/Makefile_lib_g
+--- Lorene.orig/C++/Source/Binaire/Makefile_lib_g	2006-09-11 13:28:36.000000000 +0200
++++ Lorene/C++/Source/Binaire/Makefile_lib_g	2014-03-27 15:35:51.576742687 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Binary/Makefile Lorene/C++/Source/Binary/Makefile
+--- Lorene.orig/C++/Source/Binary/Makefile	2006-09-11 13:28:37.000000000 +0200
++++ Lorene/C++/Source/Binary/Makefile	2014-03-27 15:35:51.580742573 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Binary/Makefile_lib Lorene/C++/Source/Binary/Makefile_lib
+--- Lorene.orig/C++/Source/Binary/Makefile_lib	2006-09-11 13:28:37.000000000 +0200
++++ Lorene/C++/Source/Binary/Makefile_lib	2014-03-27 15:35:51.582742516 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Binary/Makefile_lib_g Lorene/C++/Source/Binary/Makefile_lib_g
+--- Lorene.orig/C++/Source/Binary/Makefile_lib_g	2006-09-11 13:28:37.000000000 +0200
++++ Lorene/C++/Source/Binary/Makefile_lib_g	2014-03-27 15:35:51.585742430 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Binary_xcts/Makefile Lorene/C++/Source/Binary_xcts/Makefile
+--- Lorene.orig/C++/Source/Binary_xcts/Makefile	2010-05-04 09:36:33.000000000 +0200
++++ Lorene/C++/Source/Binary_xcts/Makefile	2014-03-27 15:35:51.589742316 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Binary_xcts/Makefile_lib Lorene/C++/Source/Binary_xcts/Makefile_lib
+--- Lorene.orig/C++/Source/Binary_xcts/Makefile_lib	2010-05-04 09:36:33.000000000 +0200
++++ Lorene/C++/Source/Binary_xcts/Makefile_lib	2014-03-27 15:35:51.591742259 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Binary_xcts/Makefile_lib_g Lorene/C++/Source/Binary_xcts/Makefile_lib_g
+--- Lorene.orig/C++/Source/Binary_xcts/Makefile_lib_g	2010-05-04 09:36:33.000000000 +0200
++++ Lorene/C++/Source/Binary_xcts/Makefile_lib_g	2014-03-27 15:35:51.594742173 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_bhns/Makefile Lorene/C++/Source/Bin_bhns/Makefile
+--- Lorene.orig/C++/Source/Bin_bhns/Makefile	2007-06-22 03:11:44.000000000 +0200
++++ Lorene/C++/Source/Bin_bhns/Makefile	2014-03-27 15:35:51.598742059 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Bin_bhns/Makefile_lib Lorene/C++/Source/Bin_bhns/Makefile_lib
+--- Lorene.orig/C++/Source/Bin_bhns/Makefile_lib	2007-06-22 03:13:37.000000000 +0200
++++ Lorene/C++/Source/Bin_bhns/Makefile_lib	2014-03-27 15:35:51.601741973 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_bhns/Makefile_lib_g Lorene/C++/Source/Bin_bhns/Makefile_lib_g
+--- Lorene.orig/C++/Source/Bin_bhns/Makefile_lib_g	2007-06-22 03:13:59.000000000 +0200
++++ Lorene/C++/Source/Bin_bhns/Makefile_lib_g	2014-03-27 15:35:51.603741916 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_bhns_extr/Makefile Lorene/C++/Source/Bin_bhns_extr/Makefile
+--- Lorene.orig/C++/Source/Bin_bhns_extr/Makefile	2006-09-11 13:28:27.000000000 +0200
++++ Lorene/C++/Source/Bin_bhns_extr/Makefile	2014-03-27 15:35:51.607741802 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Bin_bhns_extr/Makefile_lib Lorene/C++/Source/Bin_bhns_extr/Makefile_lib
+--- Lorene.orig/C++/Source/Bin_bhns_extr/Makefile_lib	2006-09-11 13:28:27.000000000 +0200
++++ Lorene/C++/Source/Bin_bhns_extr/Makefile_lib	2014-03-27 15:35:51.610741716 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_bhns_extr/Makefile_lib_g Lorene/C++/Source/Bin_bhns_extr/Makefile_lib_g
+--- Lorene.orig/C++/Source/Bin_bhns_extr/Makefile_lib_g	2006-09-11 13:28:27.000000000 +0200
++++ Lorene/C++/Source/Bin_bhns_extr/Makefile_lib_g	2014-03-27 15:35:51.613741631 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_hor/Makefile Lorene/C++/Source/Bin_hor/Makefile
+--- Lorene.orig/C++/Source/Bin_hor/Makefile	2006-09-11 13:28:28.000000000 +0200
++++ Lorene/C++/Source/Bin_hor/Makefile	2014-03-27 15:35:51.616741545 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Bin_hor/Makefile_lib Lorene/C++/Source/Bin_hor/Makefile_lib
+--- Lorene.orig/C++/Source/Bin_hor/Makefile_lib	2006-09-11 13:28:28.000000000 +0200
++++ Lorene/C++/Source/Bin_hor/Makefile_lib	2014-03-27 15:35:51.619741460 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_hor/Makefile_lib_g Lorene/C++/Source/Bin_hor/Makefile_lib_g
+--- Lorene.orig/C++/Source/Bin_hor/Makefile_lib_g	2006-09-11 13:28:29.000000000 +0200
++++ Lorene/C++/Source/Bin_hor/Makefile_lib_g	2014-03-27 15:35:51.622741374 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_ns_bh/Makefile Lorene/C++/Source/Bin_ns_bh/Makefile
+--- Lorene.orig/C++/Source/Bin_ns_bh/Makefile	2006-09-11 13:28:31.000000000 +0200
++++ Lorene/C++/Source/Bin_ns_bh/Makefile	2014-03-27 15:35:51.626741260 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Bin_ns_bh/Makefile_lib Lorene/C++/Source/Bin_ns_bh/Makefile_lib
+--- Lorene.orig/C++/Source/Bin_ns_bh/Makefile_lib	2006-09-11 13:28:31.000000000 +0200
++++ Lorene/C++/Source/Bin_ns_bh/Makefile_lib	2014-03-27 15:35:51.629741174 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_ns_bh/Makefile_lib_g Lorene/C++/Source/Bin_ns_bh/Makefile_lib_g
+--- Lorene.orig/C++/Source/Bin_ns_bh/Makefile_lib_g	2006-09-11 13:28:31.000000000 +0200
++++ Lorene/C++/Source/Bin_ns_bh/Makefile_lib_g	2014-03-27 15:35:51.632741089 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_ns_ncp/Makefile Lorene/C++/Source/Bin_ns_ncp/Makefile
+--- Lorene.orig/C++/Source/Bin_ns_ncp/Makefile	2006-09-11 13:28:33.000000000 +0200
++++ Lorene/C++/Source/Bin_ns_ncp/Makefile	2014-03-27 15:35:51.635741003 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Bin_ns_ncp/Makefile_lib Lorene/C++/Source/Bin_ns_ncp/Makefile_lib
+--- Lorene.orig/C++/Source/Bin_ns_ncp/Makefile_lib	2006-09-11 13:28:34.000000000 +0200
++++ Lorene/C++/Source/Bin_ns_ncp/Makefile_lib	2014-03-27 15:35:51.638740917 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Bin_ns_ncp/Makefile_lib_g Lorene/C++/Source/Bin_ns_ncp/Makefile_lib_g
+--- Lorene.orig/C++/Source/Bin_ns_ncp/Makefile_lib_g	2006-09-11 13:28:35.000000000 +0200
++++ Lorene/C++/Source/Bin_ns_ncp/Makefile_lib_g	2014-03-27 15:35:51.641740832 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Black_hole/Makefile Lorene/C++/Source/Black_hole/Makefile
+--- Lorene.orig/C++/Source/Black_hole/Makefile	2007-06-22 03:21:27.000000000 +0200
++++ Lorene/C++/Source/Black_hole/Makefile	2014-03-27 15:35:51.644740746 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Black_hole/Makefile_lib Lorene/C++/Source/Black_hole/Makefile_lib
+--- Lorene.orig/C++/Source/Black_hole/Makefile_lib	2007-06-22 03:21:49.000000000 +0200
++++ Lorene/C++/Source/Black_hole/Makefile_lib	2014-03-27 15:35:51.647740661 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Black_hole/Makefile_lib_g Lorene/C++/Source/Black_hole/Makefile_lib_g
+--- Lorene.orig/C++/Source/Black_hole/Makefile_lib_g	2007-06-22 03:22:08.000000000 +0200
++++ Lorene/C++/Source/Black_hole/Makefile_lib_g	2014-03-27 15:35:51.650740575 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Change_var/Makefile Lorene/C++/Source/Change_var/Makefile
+--- Lorene.orig/C++/Source/Change_var/Makefile	2006-09-11 13:28:39.000000000 +0200
++++ Lorene/C++/Source/Change_var/Makefile	2014-03-27 15:35:51.662740232 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Change_var/Makefile_lib Lorene/C++/Source/Change_var/Makefile_lib
+--- Lorene.orig/C++/Source/Change_var/Makefile_lib	2006-09-11 13:28:39.000000000 +0200
++++ Lorene/C++/Source/Change_var/Makefile_lib	2014-03-27 15:35:51.665740147 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Change_var/Makefile_lib_g Lorene/C++/Source/Change_var/Makefile_lib_g
+--- Lorene.orig/C++/Source/Change_var/Makefile_lib_g	2006-09-11 13:28:39.000000000 +0200
++++ Lorene/C++/Source/Change_var/Makefile_lib_g	2014-03-27 15:35:51.668740061 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Cmp/Makefile Lorene/C++/Source/Cmp/Makefile
+--- Lorene.orig/C++/Source/Cmp/Makefile	2006-09-11 13:28:40.000000000 +0200
++++ Lorene/C++/Source/Cmp/Makefile	2014-03-27 15:35:51.672739947 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Cmp/Makefile_lib Lorene/C++/Source/Cmp/Makefile_lib
+--- Lorene.orig/C++/Source/Cmp/Makefile_lib	2006-09-11 13:28:40.000000000 +0200
++++ Lorene/C++/Source/Cmp/Makefile_lib	2014-03-27 15:35:51.674739890 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Cmp/Makefile_lib_g Lorene/C++/Source/Cmp/Makefile_lib_g
+--- Lorene.orig/C++/Source/Cmp/Makefile_lib_g	2006-09-11 13:28:41.000000000 +0200
++++ Lorene/C++/Source/Cmp/Makefile_lib_g	2014-03-27 15:35:51.677739804 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Compobj/Makefile Lorene/C++/Source/Compobj/Makefile
+--- Lorene.orig/C++/Source/Compobj/Makefile	2006-09-11 13:28:40.000000000 +0200
++++ Lorene/C++/Source/Compobj/Makefile	2014-03-27 15:35:51.672739947 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Compobj/Makefile_lib Lorene/C++/Source/Compobj/Makefile_lib
+--- Lorene.orig/C++/Source/Compobj/Makefile_lib	2006-09-11 13:28:40.000000000 +0200
++++ Lorene/C++/Source/Compobj/Makefile_lib	2014-03-27 15:35:51.674739890 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Compobj/Makefile_lib_g Lorene/C++/Source/Compobj/Makefile_lib_g
+--- Lorene.orig/C++/Source/Compobj/Makefile_lib_g	2006-09-11 13:28:41.000000000 +0200
++++ Lorene/C++/Source/Compobj/Makefile_lib_g	2014-03-27 15:35:51.677739804 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Connection/Makefile Lorene/C++/Source/Connection/Makefile
+--- Lorene.orig/C++/Source/Connection/Makefile	2006-09-11 13:28:42.000000000 +0200
++++ Lorene/C++/Source/Connection/Makefile	2014-03-27 15:35:51.681739690 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Connection/Makefile_lib Lorene/C++/Source/Connection/Makefile_lib
+--- Lorene.orig/C++/Source/Connection/Makefile_lib	2006-09-11 13:28:42.000000000 +0200
++++ Lorene/C++/Source/Connection/Makefile_lib	2014-03-27 15:35:51.683739633 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Connection/Makefile_lib_g Lorene/C++/Source/Connection/Makefile_lib_g
+--- Lorene.orig/C++/Source/Connection/Makefile_lib_g	2006-09-11 13:28:42.000000000 +0200
++++ Lorene/C++/Source/Connection/Makefile_lib_g	2014-03-27 15:35:51.686739548 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Coord/Makefile Lorene/C++/Source/Coord/Makefile
+--- Lorene.orig/C++/Source/Coord/Makefile	2006-09-11 13:28:43.000000000 +0200
++++ Lorene/C++/Source/Coord/Makefile	2014-03-27 15:35:51.690739433 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Coord/Makefile_lib Lorene/C++/Source/Coord/Makefile_lib
+--- Lorene.orig/C++/Source/Coord/Makefile_lib	2006-09-11 13:28:43.000000000 +0200
++++ Lorene/C++/Source/Coord/Makefile_lib	2014-03-27 15:35:51.693739348 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Coord/Makefile_lib_g Lorene/C++/Source/Coord/Makefile_lib_g
+--- Lorene.orig/C++/Source/Coord/Makefile_lib_g	2006-09-11 13:28:43.000000000 +0200
++++ Lorene/C++/Source/Coord/Makefile_lib_g	2014-03-27 15:35:51.695739291 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Diff/Makefile Lorene/C++/Source/Diff/Makefile
+--- Lorene.orig/C++/Source/Diff/Makefile	2006-09-11 13:28:44.000000000 +0200
++++ Lorene/C++/Source/Diff/Makefile	2014-03-27 15:35:51.701739119 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Diff/Makefile_lib Lorene/C++/Source/Diff/Makefile_lib
+--- Lorene.orig/C++/Source/Diff/Makefile_lib	2006-09-11 13:28:44.000000000 +0200
++++ Lorene/C++/Source/Diff/Makefile_lib	2014-03-27 15:35:51.704739034 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Diff/Makefile_lib_g Lorene/C++/Source/Diff/Makefile_lib_g
+--- Lorene.orig/C++/Source/Diff/Makefile_lib_g	2006-09-11 13:28:44.000000000 +0200
++++ Lorene/C++/Source/Diff/Makefile_lib_g	2014-03-27 15:35:51.706738977 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Dim_tbl/Makefile Lorene/C++/Source/Dim_tbl/Makefile
+--- Lorene.orig/C++/Source/Dim_tbl/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ Lorene/C++/Source/Dim_tbl/Makefile	2014-03-27 15:35:51.709738891 +0100
+@@ -0,0 +1,34 @@
++SHELL=/bin/sh
++
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
++
++SRC	= *.C
++
++install: $(SRC) Objects Objects_g
++	mkdir -p $(DEPDIR)
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
++	mv Objects_g/*.o .
++	$(MAKE) -f Makefile_lib_g
++	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
++	mv Objects/*.o .
++	$(MAKE) -f Makefile_lib
++	mv *.o Objects
++	rm Objects/_rien.o
++
++uninstall:
++	rm -f *.o
++	rm List_obj
++	rm -fr Objects	
++	rm -fr Objects_g
++	rm -fr $(DEPDIR)
++
++Objects:
++	mkdir Objects
++
++Objects_g:
++	mkdir Objects_g
+diff --new-file -ru Lorene.orig/C++/Source/Eos/Makefile Lorene/C++/Source/Eos/Makefile
+--- Lorene.orig/C++/Source/Eos/Makefile	2006-09-11 13:28:45.000000000 +0200
++++ Lorene/C++/Source/Eos/Makefile	2014-03-27 15:35:51.712738806 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Eos/Makefile_lib Lorene/C++/Source/Eos/Makefile_lib
+--- Lorene.orig/C++/Source/Eos/Makefile_lib	2006-09-11 13:28:45.000000000 +0200
++++ Lorene/C++/Source/Eos/Makefile_lib	2014-03-27 15:35:51.714738748 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Eos/Makefile_lib_g Lorene/C++/Source/Eos/Makefile_lib_g
+--- Lorene.orig/C++/Source/Eos/Makefile_lib_g	2006-09-11 13:28:45.000000000 +0200
++++ Lorene/C++/Source/Eos/Makefile_lib_g	2014-03-27 15:35:51.717738663 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Etoile/Makefile Lorene/C++/Source/Etoile/Makefile
+--- Lorene.orig/C++/Source/Etoile/Makefile	2006-09-11 13:28:46.000000000 +0200
++++ Lorene/C++/Source/Etoile/Makefile	2014-03-27 15:35:51.721738549 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Etoile/Makefile_lib Lorene/C++/Source/Etoile/Makefile_lib
+--- Lorene.orig/C++/Source/Etoile/Makefile_lib	2006-09-11 13:28:47.000000000 +0200
++++ Lorene/C++/Source/Etoile/Makefile_lib	2014-03-27 15:35:51.723738492 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Etoile/Makefile_lib_g Lorene/C++/Source/Etoile/Makefile_lib_g
+--- Lorene.orig/C++/Source/Etoile/Makefile_lib_g	2006-09-11 13:28:47.000000000 +0200
++++ Lorene/C++/Source/Etoile/Makefile_lib_g	2014-03-27 15:35:51.726738406 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Excised_slice/Makefile Lorene/C++/Source/Excised_slice/Makefile
+--- Lorene.orig/C++/Source/Excised_slice/Makefile	2010-01-29 15:44:45.000000000 +0100
++++ Lorene/C++/Source/Excised_slice/Makefile	2014-03-27 15:35:51.730738292 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Excised_slice/Makefile_lib Lorene/C++/Source/Excised_slice/Makefile_lib
+--- Lorene.orig/C++/Source/Excised_slice/Makefile_lib	2010-01-30 22:54:47.000000000 +0100
++++ Lorene/C++/Source/Excised_slice/Makefile_lib	2014-03-27 15:35:51.733738206 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Excised_slice/Makefile_lib_g Lorene/C++/Source/Excised_slice/Makefile_lib_g
+--- Lorene.orig/C++/Source/Excised_slice/Makefile_lib_g	2010-01-30 22:55:00.000000000 +0100
++++ Lorene/C++/Source/Excised_slice/Makefile_lib_g	2014-03-27 15:35:51.735738149 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Gravastar/Makefile Lorene/C++/Source/Gravastar/Makefile
+--- Lorene.orig/C++/Source/Gravastar/Makefile	2006-09-11 13:28:48.000000000 +0200
++++ Lorene/C++/Source/Gravastar/Makefile	2014-03-27 15:35:51.739738035 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Gravastar/Makefile_lib Lorene/C++/Source/Gravastar/Makefile_lib
+--- Lorene.orig/C++/Source/Gravastar/Makefile_lib	2006-09-11 13:28:48.000000000 +0200
++++ Lorene/C++/Source/Gravastar/Makefile_lib	2014-03-27 15:35:51.742737949 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Gravastar/Makefile_lib_g Lorene/C++/Source/Gravastar/Makefile_lib_g
+--- Lorene.orig/C++/Source/Gravastar/Makefile_lib_g	2006-09-11 13:28:49.000000000 +0200
++++ Lorene/C++/Source/Gravastar/Makefile_lib_g	2014-03-27 15:35:51.745737864 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Grille3d/Makefile Lorene/C++/Source/Grille3d/Makefile
+--- Lorene.orig/C++/Source/Grille3d/Makefile	2006-09-11 13:28:48.000000000 +0200
++++ Lorene/C++/Source/Grille3d/Makefile	2014-03-27 15:35:51.739738035 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Grille3d/Makefile_lib Lorene/C++/Source/Grille3d/Makefile_lib
+--- Lorene.orig/C++/Source/Grille3d/Makefile_lib	2006-09-11 13:28:48.000000000 +0200
++++ Lorene/C++/Source/Grille3d/Makefile_lib	2014-03-27 15:35:51.742737949 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Grille3d/Makefile_lib_g Lorene/C++/Source/Grille3d/Makefile_lib_g
+--- Lorene.orig/C++/Source/Grille3d/Makefile_lib_g	2006-09-11 13:28:49.000000000 +0200
++++ Lorene/C++/Source/Grille3d/Makefile_lib_g	2014-03-27 15:35:51.745737864 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Grille_cart/Makefile Lorene/C++/Source/Grille_cart/Makefile
+--- Lorene.orig/C++/Source/Grille_cart/Makefile	2006-09-11 13:28:50.000000000 +0200
++++ Lorene/C++/Source/Grille_cart/Makefile	2014-03-27 15:35:51.748737778 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Grille_cart/Makefile_lib Lorene/C++/Source/Grille_cart/Makefile_lib
+--- Lorene.orig/C++/Source/Grille_cart/Makefile_lib	2006-09-11 13:28:50.000000000 +0200
++++ Lorene/C++/Source/Grille_cart/Makefile_lib	2014-03-27 15:35:51.751737693 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Grille_cart/Makefile_lib_g Lorene/C++/Source/Grille_cart/Makefile_lib_g
+--- Lorene.orig/C++/Source/Grille_cart/Makefile_lib_g	2006-09-11 13:28:50.000000000 +0200
++++ Lorene/C++/Source/Grille_cart/Makefile_lib_g	2014-03-27 15:35:51.754737607 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Hole_bhns/Makefile Lorene/C++/Source/Hole_bhns/Makefile
+--- Lorene.orig/C++/Source/Hole_bhns/Makefile	2007-06-22 03:26:10.000000000 +0200
++++ Lorene/C++/Source/Hole_bhns/Makefile	2014-03-27 15:35:51.758737493 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Hole_bhns/Makefile_lib Lorene/C++/Source/Hole_bhns/Makefile_lib
+--- Lorene.orig/C++/Source/Hole_bhns/Makefile_lib	2007-06-22 03:26:31.000000000 +0200
++++ Lorene/C++/Source/Hole_bhns/Makefile_lib	2014-03-27 15:35:51.761737407 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Hole_bhns/Makefile_lib_g Lorene/C++/Source/Hole_bhns/Makefile_lib_g
+--- Lorene.orig/C++/Source/Hole_bhns/Makefile_lib_g	2007-06-22 03:27:14.000000000 +0200
++++ Lorene/C++/Source/Hole_bhns/Makefile_lib_g	2014-03-27 15:35:51.764737322 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Isol_hole/Makefile Lorene/C++/Source/Isol_hole/Makefile
+--- Lorene.orig/C++/Source/Isol_hole/Makefile	2009-08-31 18:02:42.000000000 +0200
++++ Lorene/C++/Source/Isol_hole/Makefile	2014-03-27 15:35:51.767737236 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Isol_hole/Makefile_lib Lorene/C++/Source/Isol_hole/Makefile_lib
+--- Lorene.orig/C++/Source/Isol_hole/Makefile_lib	2009-08-31 18:02:42.000000000 +0200
++++ Lorene/C++/Source/Isol_hole/Makefile_lib	2014-03-27 15:35:51.770737150 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Isol_hole/Makefile_lib_g Lorene/C++/Source/Isol_hole/Makefile_lib_g
+--- Lorene.orig/C++/Source/Isol_hole/Makefile_lib_g	2009-08-31 18:02:42.000000000 +0200
++++ Lorene/C++/Source/Isol_hole/Makefile_lib_g	2014-03-27 15:35:51.773737065 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Isol_hor/Makefile Lorene/C++/Source/Isol_hor/Makefile
+--- Lorene.orig/C++/Source/Isol_hor/Makefile	2006-09-11 13:28:51.000000000 +0200
++++ Lorene/C++/Source/Isol_hor/Makefile	2014-03-27 15:35:51.776736979 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Isol_hor/Makefile_lib Lorene/C++/Source/Isol_hor/Makefile_lib
+--- Lorene.orig/C++/Source/Isol_hor/Makefile_lib	2006-09-11 13:28:51.000000000 +0200
++++ Lorene/C++/Source/Isol_hor/Makefile_lib	2014-03-27 15:35:51.779736893 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Isol_hor/Makefile_lib_g Lorene/C++/Source/Isol_hor/Makefile_lib_g
+--- Lorene.orig/C++/Source/Isol_hor/Makefile_lib_g	2006-09-11 13:28:51.000000000 +0200
++++ Lorene/C++/Source/Isol_hor/Makefile_lib_g	2014-03-27 15:35:51.782736808 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Itbl/Makefile Lorene/C++/Source/Itbl/Makefile
+--- Lorene.orig/C++/Source/Itbl/Makefile	2006-09-11 13:28:52.000000000 +0200
++++ Lorene/C++/Source/Itbl/Makefile	2014-03-27 15:35:51.786736694 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Itbl/Makefile_lib Lorene/C++/Source/Itbl/Makefile_lib
+--- Lorene.orig/C++/Source/Itbl/Makefile_lib	2006-09-11 13:28:52.000000000 +0200
++++ Lorene/C++/Source/Itbl/Makefile_lib	2014-03-27 15:35:51.789736608 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Itbl/Makefile_lib_g Lorene/C++/Source/Itbl/Makefile_lib_g
+--- Lorene.orig/C++/Source/Itbl/Makefile_lib_g	2006-09-11 13:28:52.000000000 +0200
++++ Lorene/C++/Source/Itbl/Makefile_lib_g	2014-03-27 15:35:51.792736522 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Map/Makefile Lorene/C++/Source/Map/Makefile
+--- Lorene.orig/C++/Source/Map/Makefile	2006-09-11 13:28:53.000000000 +0200
++++ Lorene/C++/Source/Map/Makefile	2014-03-27 15:35:51.795736437 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Map/Makefile_lib Lorene/C++/Source/Map/Makefile_lib
+--- Lorene.orig/C++/Source/Map/Makefile_lib	2006-09-11 13:28:53.000000000 +0200
++++ Lorene/C++/Source/Map/Makefile_lib	2014-03-27 15:35:51.798736351 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Map/Makefile_lib_g Lorene/C++/Source/Map/Makefile_lib_g
+--- Lorene.orig/C++/Source/Map/Makefile_lib_g	2006-09-11 13:28:53.000000000 +0200
++++ Lorene/C++/Source/Map/Makefile_lib_g	2014-03-27 15:35:51.801736266 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Map_cart/Makefile Lorene/C++/Source/Map_cart/Makefile
+--- Lorene.orig/C++/Source/Map_cart/Makefile	2006-09-11 13:28:54.000000000 +0200
++++ Lorene/C++/Source/Map_cart/Makefile	2014-03-27 15:35:51.805736151 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Map_cart/Makefile_lib Lorene/C++/Source/Map_cart/Makefile_lib
+--- Lorene.orig/C++/Source/Map_cart/Makefile_lib	2006-09-11 13:28:54.000000000 +0200
++++ Lorene/C++/Source/Map_cart/Makefile_lib	2014-03-27 15:35:51.808736066 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Map_cart/Makefile_lib_g Lorene/C++/Source/Map_cart/Makefile_lib_g
+--- Lorene.orig/C++/Source/Map_cart/Makefile_lib_g	2006-09-11 13:28:55.000000000 +0200
++++ Lorene/C++/Source/Map_cart/Makefile_lib_g	2014-03-27 15:35:51.810736009 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Matrice/Makefile Lorene/C++/Source/Matrice/Makefile
+--- Lorene.orig/C++/Source/Matrice/Makefile	2006-09-11 13:28:56.000000000 +0200
++++ Lorene/C++/Source/Matrice/Makefile	2014-03-27 15:35:51.814735895 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Matrice/Makefile_lib Lorene/C++/Source/Matrice/Makefile_lib
+--- Lorene.orig/C++/Source/Matrice/Makefile_lib	2006-09-11 13:28:56.000000000 +0200
++++ Lorene/C++/Source/Matrice/Makefile_lib	2014-03-27 15:35:51.817735809 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Matrice/Makefile_lib_g Lorene/C++/Source/Matrice/Makefile_lib_g
+--- Lorene.orig/C++/Source/Matrice/Makefile_lib_g	2006-09-11 13:28:56.000000000 +0200
++++ Lorene/C++/Source/Matrice/Makefile_lib_g	2014-03-27 15:35:51.820735723 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Metric/Makefile Lorene/C++/Source/Metric/Makefile
+--- Lorene.orig/C++/Source/Metric/Makefile	2006-09-11 13:28:57.000000000 +0200
++++ Lorene/C++/Source/Metric/Makefile	2014-03-27 15:35:51.822735666 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Metric/Makefile_lib Lorene/C++/Source/Metric/Makefile_lib
+--- Lorene.orig/C++/Source/Metric/Makefile_lib	2006-09-11 13:28:57.000000000 +0200
++++ Lorene/C++/Source/Metric/Makefile_lib	2014-03-27 15:35:51.824735609 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Metric/Makefile_lib_g Lorene/C++/Source/Metric/Makefile_lib_g
+--- Lorene.orig/C++/Source/Metric/Makefile_lib_g	2006-09-11 13:28:57.000000000 +0200
++++ Lorene/C++/Source/Metric/Makefile_lib_g	2014-03-27 15:35:51.825735581 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Metrique/Makefile Lorene/C++/Source/Metrique/Makefile
+--- Lorene.orig/C++/Source/Metrique/Makefile	2006-09-11 13:28:58.000000000 +0200
++++ Lorene/C++/Source/Metrique/Makefile	2014-03-27 15:35:51.826735552 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Metrique/Makefile_lib Lorene/C++/Source/Metrique/Makefile_lib
+--- Lorene.orig/C++/Source/Metrique/Makefile_lib	2006-09-11 13:28:58.000000000 +0200
++++ Lorene/C++/Source/Metrique/Makefile_lib	2014-03-27 15:35:51.828735495 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Metrique/Makefile_lib_g Lorene/C++/Source/Metrique/Makefile_lib_g
+--- Lorene.orig/C++/Source/Metrique/Makefile_lib_g	2006-09-11 13:28:58.000000000 +0200
++++ Lorene/C++/Source/Metrique/Makefile_lib_g	2014-03-27 15:35:51.829735467 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Mg3d/Makefile Lorene/C++/Source/Mg3d/Makefile
+--- Lorene.orig/C++/Source/Mg3d/Makefile	2006-09-11 13:29:00.000000000 +0200
++++ Lorene/C++/Source/Mg3d/Makefile	2014-03-27 15:35:51.831735409 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Mg3d/Makefile_lib Lorene/C++/Source/Mg3d/Makefile_lib
+--- Lorene.orig/C++/Source/Mg3d/Makefile_lib	2006-09-11 13:29:00.000000000 +0200
++++ Lorene/C++/Source/Mg3d/Makefile_lib	2014-03-27 15:35:51.832735381 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Mg3d/Makefile_lib_g Lorene/C++/Source/Mg3d/Makefile_lib_g
+--- Lorene.orig/C++/Source/Mg3d/Makefile_lib_g	2006-09-11 13:29:00.000000000 +0200
++++ Lorene/C++/Source/Mg3d/Makefile_lib_g	2014-03-27 15:35:51.833735352 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Mtbl/Makefile Lorene/C++/Source/Mtbl/Makefile
+--- Lorene.orig/C++/Source/Mtbl/Makefile	2006-09-11 13:29:02.000000000 +0200
++++ Lorene/C++/Source/Mtbl/Makefile	2014-03-27 15:35:51.835735295 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Mtbl/Makefile_lib Lorene/C++/Source/Mtbl/Makefile_lib
+--- Lorene.orig/C++/Source/Mtbl/Makefile_lib	2006-09-11 13:29:02.000000000 +0200
++++ Lorene/C++/Source/Mtbl/Makefile_lib	2014-03-27 15:35:51.836735267 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Mtbl/Makefile_lib_g Lorene/C++/Source/Mtbl/Makefile_lib_g
+--- Lorene.orig/C++/Source/Mtbl/Makefile_lib_g	2006-09-11 13:29:03.000000000 +0200
++++ Lorene/C++/Source/Mtbl/Makefile_lib_g	2014-03-27 15:35:51.838735210 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Mtbl_cf/Makefile Lorene/C++/Source/Mtbl_cf/Makefile
+--- Lorene.orig/C++/Source/Mtbl_cf/Makefile	2006-09-11 13:29:04.000000000 +0200
++++ Lorene/C++/Source/Mtbl_cf/Makefile	2014-03-27 15:35:51.840735153 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Mtbl_cf/Makefile_lib Lorene/C++/Source/Mtbl_cf/Makefile_lib
+--- Lorene.orig/C++/Source/Mtbl_cf/Makefile_lib	2006-09-11 13:29:04.000000000 +0200
++++ Lorene/C++/Source/Mtbl_cf/Makefile_lib	2014-03-27 15:35:51.841735124 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Mtbl_cf/Makefile_lib_g Lorene/C++/Source/Mtbl_cf/Makefile_lib_g
+--- Lorene.orig/C++/Source/Mtbl_cf/Makefile_lib_g	2006-09-11 13:29:04.000000000 +0200
++++ Lorene/C++/Source/Mtbl_cf/Makefile_lib_g	2014-03-27 15:35:51.843735067 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Coef/FFT991/Makefile Lorene/C++/Source/Non_class_members/Coef/FFT991/Makefile
+--- Lorene.orig/C++/Source/Non_class_members/Coef/FFT991/Makefile	2006-09-11 13:29:07.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Coef/FFT991/Makefile	2014-03-27 15:35:51.845735010 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Coef/FFT991/Makefile_lib Lorene/C++/Source/Non_class_members/Coef/FFT991/Makefile_lib
+--- Lorene.orig/C++/Source/Non_class_members/Coef/FFT991/Makefile_lib	2006-09-11 13:29:07.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Coef/FFT991/Makefile_lib	2014-03-27 15:35:51.847734953 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Coef/FFT991/Makefile_lib_g Lorene/C++/Source/Non_class_members/Coef/FFT991/Makefile_lib_g
+--- Lorene.orig/C++/Source/Non_class_members/Coef/FFT991/Makefile_lib_g	2006-09-11 13:29:07.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Coef/FFT991/Makefile_lib_g	2014-03-27 15:35:51.848734924 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Coef/FFTW3/Makefile Lorene/C++/Source/Non_class_members/Coef/FFTW3/Makefile
+--- Lorene.orig/C++/Source/Non_class_members/Coef/FFTW3/Makefile	2006-09-11 13:29:08.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Coef/FFTW3/Makefile	2014-03-27 15:35:51.850734867 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Coef/FFTW3/Makefile_lib Lorene/C++/Source/Non_class_members/Coef/FFTW3/Makefile_lib
+--- Lorene.orig/C++/Source/Non_class_members/Coef/FFTW3/Makefile_lib	2006-09-11 13:29:08.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Coef/FFTW3/Makefile_lib	2014-03-27 15:35:51.851734839 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Coef/FFTW3/Makefile_lib_g Lorene/C++/Source/Non_class_members/Coef/FFTW3/Makefile_lib_g
+--- Lorene.orig/C++/Source/Non_class_members/Coef/FFTW3/Makefile_lib_g	2006-09-11 13:29:08.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Coef/FFTW3/Makefile_lib_g	2014-03-27 15:35:51.852734810 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Coef/Makefile Lorene/C++/Source/Non_class_members/Coef/Makefile
+--- Lorene.orig/C++/Source/Non_class_members/Coef/Makefile	2006-09-11 13:29:06.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Coef/Makefile	2014-03-27 15:35:51.854734753 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Coef/Makefile_lib Lorene/C++/Source/Non_class_members/Coef/Makefile_lib
+--- Lorene.orig/C++/Source/Non_class_members/Coef/Makefile_lib	2006-09-11 13:29:06.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Coef/Makefile_lib	2014-03-27 15:35:51.855734725 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Coef/Makefile_lib_g Lorene/C++/Source/Non_class_members/Coef/Makefile_lib_g
+--- Lorene.orig/C++/Source/Non_class_members/Coef/Makefile_lib_g	2006-09-11 13:29:06.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Coef/Makefile_lib_g	2014-03-27 15:35:51.857734667 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Graphics/Makefile Lorene/C++/Source/Non_class_members/Graphics/Makefile
+--- Lorene.orig/C++/Source/Non_class_members/Graphics/Makefile	2006-09-11 13:29:09.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Graphics/Makefile	2014-03-27 15:35:51.859734610 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Graphics/Makefile_lib Lorene/C++/Source/Non_class_members/Graphics/Makefile_lib
+--- Lorene.orig/C++/Source/Non_class_members/Graphics/Makefile_lib	2006-09-11 13:29:09.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Graphics/Makefile_lib	2014-03-27 15:35:51.860734582 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Graphics/Makefile_lib_g Lorene/C++/Source/Non_class_members/Graphics/Makefile_lib_g
+--- Lorene.orig/C++/Source/Non_class_members/Graphics/Makefile_lib_g	2006-09-11 13:29:09.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Graphics/Makefile_lib_g	2014-03-27 15:35:51.862734525 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Makefile Lorene/C++/Source/Non_class_members/Makefile
+--- Lorene.orig/C++/Source/Non_class_members/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ Lorene/C++/Source/Non_class_members/Makefile	2014-03-27 15:35:51.863734496 +0100
+@@ -0,0 +1,34 @@
++SHELL=/bin/sh
++
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
++
++SRC	= *.C
++
++install: $(SRC) Objects Objects_g
++	mkdir -p $(DEPDIR)
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
++	mv Objects_g/*.o .
++	$(MAKE) -f Makefile_lib_g
++	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
++	mv Objects/*.o .
++	$(MAKE) -f Makefile_lib
++	mv *.o Objects
++	rm Objects/_rien.o
++
++uninstall:
++	rm -f *.o
++	rm List_obj
++	rm -fr Objects	
++	rm -fr Objects_g
++	rm -fr $(DEPDIR)
++
++Objects:
++	mkdir Objects
++
++Objects_g:
++	mkdir Objects_g
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Operators/Makefile Lorene/C++/Source/Non_class_members/Operators/Makefile
+--- Lorene.orig/C++/Source/Non_class_members/Operators/Makefile	2006-09-11 13:29:11.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Operators/Makefile	2014-03-27 15:35:51.864734468 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Operators/Makefile_lib Lorene/C++/Source/Non_class_members/Operators/Makefile_lib
+--- Lorene.orig/C++/Source/Non_class_members/Operators/Makefile_lib	2006-09-11 13:29:11.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Operators/Makefile_lib	2014-03-27 15:35:51.866734411 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Operators/Makefile_lib_g Lorene/C++/Source/Non_class_members/Operators/Makefile_lib_g
+--- Lorene.orig/C++/Source/Non_class_members/Operators/Makefile_lib_g	2006-09-11 13:29:11.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Operators/Makefile_lib_g	2014-03-27 15:35:51.867734382 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/PDE/Makefile Lorene/C++/Source/Non_class_members/PDE/Makefile
+--- Lorene.orig/C++/Source/Non_class_members/PDE/Makefile	2006-09-11 13:29:12.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/PDE/Makefile	2014-03-27 15:35:51.869734325 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/PDE/Makefile_lib Lorene/C++/Source/Non_class_members/PDE/Makefile_lib
+--- Lorene.orig/C++/Source/Non_class_members/PDE/Makefile_lib	2006-09-11 13:29:12.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/PDE/Makefile_lib	2014-03-27 15:35:51.870734296 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/PDE/Makefile_lib_g Lorene/C++/Source/Non_class_members/PDE/Makefile_lib_g
+--- Lorene.orig/C++/Source/Non_class_members/PDE/Makefile_lib_g	2006-09-11 13:29:12.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/PDE/Makefile_lib_g	2014-03-27 15:35:51.871734268 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Utilities/Makefile Lorene/C++/Source/Non_class_members/Utilities/Makefile
+--- Lorene.orig/C++/Source/Non_class_members/Utilities/Makefile	2006-09-11 13:29:13.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Utilities/Makefile	2014-03-27 15:35:51.873734211 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Utilities/Makefile_lib Lorene/C++/Source/Non_class_members/Utilities/Makefile_lib
+--- Lorene.orig/C++/Source/Non_class_members/Utilities/Makefile_lib	2006-09-11 13:29:13.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Utilities/Makefile_lib	2014-03-27 15:35:51.874734182 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Non_class_members/Utilities/Makefile_lib_g Lorene/C++/Source/Non_class_members/Utilities/Makefile_lib_g
+--- Lorene.orig/C++/Source/Non_class_members/Utilities/Makefile_lib_g	2006-09-11 13:29:15.000000000 +0200
++++ Lorene/C++/Source/Non_class_members/Utilities/Makefile_lib_g	2014-03-27 15:35:51.876734125 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Makefile Lorene/C++/Source/Ope_elementary/Makefile
+--- Lorene.orig/C++/Source/Ope_elementary/Makefile	2006-09-11 13:29:16.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Makefile	2014-03-27 15:35:51.877734097 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Makefile_lib Lorene/C++/Source/Ope_elementary/Makefile_lib
+--- Lorene.orig/C++/Source/Ope_elementary/Makefile_lib	2006-09-11 13:29:16.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Makefile_lib	2014-03-27 15:35:51.878734068 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Makefile_lib_g Lorene/C++/Source/Ope_elementary/Makefile_lib_g
+--- Lorene.orig/C++/Source/Ope_elementary/Makefile_lib_g	2006-09-11 13:29:16.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Makefile_lib_g	2014-03-27 15:35:51.880734011 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile	2006-09-11 13:29:17.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile	2014-03-27 15:35:51.881733983 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile_lib Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile_lib
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile_lib	2006-09-11 13:29:18.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile_lib	2014-03-27 15:35:51.883733925 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile_lib_g Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile_lib_g
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile_lib_g	2006-09-11 13:29:18.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_2d/Makefile_lib_g	2014-03-27 15:35:51.884733897 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile	2006-09-11 13:29:19.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile	2014-03-27 15:35:51.886733840 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile_lib Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile_lib
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile_lib	2006-09-11 13:29:19.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile_lib	2014-03-27 15:35:51.887733811 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile_lib_g Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile_lib_g
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile_lib_g	2006-09-11 13:29:19.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_helmholtz_minus_pseudo_1d/Makefile_lib_g	2014-03-27 15:35:51.888733783 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile Lorene/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile	2006-09-11 13:29:21.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile	2014-03-27 15:35:51.890733726 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile_lib Lorene/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile_lib
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile_lib	2006-09-11 13:29:21.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile_lib	2014-03-27 15:35:51.891733697 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile_lib_g Lorene/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile_lib_g
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile_lib_g	2006-09-11 13:29:23.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_poisson_2d/Makefile_lib_g	2014-03-27 15:35:51.893733640 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile Lorene/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile	2006-09-11 13:29:24.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile	2014-03-27 15:35:51.894733612 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile_lib Lorene/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile_lib
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile_lib	2006-09-11 13:29:24.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile_lib	2014-03-27 15:35:51.896733554 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile_lib_g Lorene/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile_lib_g
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile_lib_g	2006-09-11 13:29:24.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_poisson_pseudo_1d/Makefile_lib_g	2014-03-27 15:35:51.897733526 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile Lorene/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile	2006-09-11 13:29:20.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile	2014-03-27 15:35:51.899733469 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile_lib Lorene/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile_lib
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile_lib	2006-09-11 13:29:20.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile_lib	2014-03-27 15:35:51.900733440 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile_lib_g Lorene/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile_lib_g
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile_lib_g	2006-09-11 13:29:20.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_pois_vect_r/Makefile_lib_g	2014-03-27 15:35:51.902733383 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order/Makefile Lorene/C++/Source/Ope_elementary/Ope_sec_order/Makefile
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order/Makefile	2006-09-11 13:29:25.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_sec_order/Makefile	2014-03-27 15:35:51.904733326 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order/Makefile_lib Lorene/C++/Source/Ope_elementary/Ope_sec_order/Makefile_lib
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order/Makefile_lib	2006-09-11 13:29:25.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_sec_order/Makefile_lib	2014-03-27 15:35:51.905733298 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order/Makefile_lib_g Lorene/C++/Source/Ope_elementary/Ope_sec_order/Makefile_lib_g
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order/Makefile_lib_g	2006-09-11 13:29:25.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_sec_order/Makefile_lib_g	2014-03-27 15:35:51.906733269 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile Lorene/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile	2006-09-11 13:29:26.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile	2014-03-27 15:35:51.908733212 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile_lib Lorene/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile_lib
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile_lib	2006-09-11 13:29:26.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile_lib	2014-03-27 15:35:51.909733183 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile_lib_g Lorene/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile_lib_g
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile_lib_g	2006-09-11 13:29:26.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_sec_order_r2/Makefile_lib_g	2014-03-27 15:35:51.911733126 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_vorton/Makefile Lorene/C++/Source/Ope_elementary/Ope_vorton/Makefile
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_vorton/Makefile	2007-04-24 11:13:23.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_vorton/Makefile	2014-03-27 15:35:51.912733098 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_vorton/Makefile_lib Lorene/C++/Source/Ope_elementary/Ope_vorton/Makefile_lib
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_vorton/Makefile_lib	2007-04-24 11:13:23.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_vorton/Makefile_lib	2014-03-27 15:35:51.914733041 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Ope_elementary/Ope_vorton/Makefile_lib_g Lorene/C++/Source/Ope_elementary/Ope_vorton/Makefile_lib_g
+--- Lorene.orig/C++/Source/Ope_elementary/Ope_vorton/Makefile_lib_g	2007-04-24 11:13:23.000000000 +0200
++++ Lorene/C++/Source/Ope_elementary/Ope_vorton/Makefile_lib_g	2014-03-27 15:35:51.915733012 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Param/Makefile Lorene/C++/Source/Param/Makefile
+--- Lorene.orig/C++/Source/Param/Makefile	2006-09-11 13:29:27.000000000 +0200
++++ Lorene/C++/Source/Param/Makefile	2014-03-27 15:35:51.917732955 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Param/Makefile_lib Lorene/C++/Source/Param/Makefile_lib
+--- Lorene.orig/C++/Source/Param/Makefile_lib	2006-09-11 13:29:28.000000000 +0200
++++ Lorene/C++/Source/Param/Makefile_lib	2014-03-27 15:35:51.918732927 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Param/Makefile_lib_g Lorene/C++/Source/Param/Makefile_lib_g
+--- Lorene.orig/C++/Source/Param/Makefile_lib_g	2006-09-11 13:29:28.000000000 +0200
++++ Lorene/C++/Source/Param/Makefile_lib_g	2014-03-27 15:35:51.920732870 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Param_elliptic/Makefile Lorene/C++/Source/Param_elliptic/Makefile
+--- Lorene.orig/C++/Source/Param_elliptic/Makefile	2006-09-11 13:29:29.000000000 +0200
++++ Lorene/C++/Source/Param_elliptic/Makefile	2014-03-27 15:35:51.922732812 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Param_elliptic/Makefile_lib Lorene/C++/Source/Param_elliptic/Makefile_lib
+--- Lorene.orig/C++/Source/Param_elliptic/Makefile_lib	2006-09-11 13:29:29.000000000 +0200
++++ Lorene/C++/Source/Param_elliptic/Makefile_lib	2014-03-27 15:35:51.923732784 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Param_elliptic/Makefile_lib_g Lorene/C++/Source/Param_elliptic/Makefile_lib_g
+--- Lorene.orig/C++/Source/Param_elliptic/Makefile_lib_g	2006-09-11 13:29:29.000000000 +0200
++++ Lorene/C++/Source/Param_elliptic/Makefile_lib_g	2014-03-27 15:35:51.925732727 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Star/Makefile Lorene/C++/Source/Star/Makefile
+--- Lorene.orig/C++/Source/Star/Makefile	2006-09-11 13:29:31.000000000 +0200
++++ Lorene/C++/Source/Star/Makefile	2014-03-27 15:35:51.930732584 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Star/Makefile_lib Lorene/C++/Source/Star/Makefile_lib
+--- Lorene.orig/C++/Source/Star/Makefile_lib	2006-09-11 13:29:31.000000000 +0200
++++ Lorene/C++/Source/Star/Makefile_lib	2014-03-27 15:35:51.932732527 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Star/Makefile_lib_g Lorene/C++/Source/Star/Makefile_lib_g
+--- Lorene.orig/C++/Source/Star/Makefile_lib_g	2006-09-11 13:29:31.000000000 +0200
++++ Lorene/C++/Source/Star/Makefile_lib_g	2014-03-27 15:35:51.933732499 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Star_bhns/Makefile Lorene/C++/Source/Star_bhns/Makefile
+--- Lorene.orig/C++/Source/Star_bhns/Makefile	2007-06-22 03:28:41.000000000 +0200
++++ Lorene/C++/Source/Star_bhns/Makefile	2014-03-27 15:35:51.935732441 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Star_bhns/Makefile_lib Lorene/C++/Source/Star_bhns/Makefile_lib
+--- Lorene.orig/C++/Source/Star_bhns/Makefile_lib	2007-06-22 03:29:03.000000000 +0200
++++ Lorene/C++/Source/Star_bhns/Makefile_lib	2014-03-27 15:35:51.936732413 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Star_bhns/Makefile_lib_g Lorene/C++/Source/Star_bhns/Makefile_lib_g
+--- Lorene.orig/C++/Source/Star_bhns/Makefile_lib_g	2007-06-22 03:29:20.000000000 +0200
++++ Lorene/C++/Source/Star_bhns/Makefile_lib_g	2014-03-27 15:35:51.937732384 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Tbl/Makefile Lorene/C++/Source/Tbl/Makefile
+--- Lorene.orig/C++/Source/Tbl/Makefile	2006-09-11 13:29:32.000000000 +0200
++++ Lorene/C++/Source/Tbl/Makefile	2014-03-27 15:35:51.939732327 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Tbl/Makefile_lib Lorene/C++/Source/Tbl/Makefile_lib
+--- Lorene.orig/C++/Source/Tbl/Makefile_lib	2006-09-11 13:29:32.000000000 +0200
++++ Lorene/C++/Source/Tbl/Makefile_lib	2014-03-27 15:35:51.940732299 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Tbl/Makefile_lib_g Lorene/C++/Source/Tbl/Makefile_lib_g
+--- Lorene.orig/C++/Source/Tbl/Makefile_lib_g	2006-09-11 13:29:32.000000000 +0200
++++ Lorene/C++/Source/Tbl/Makefile_lib_g	2014-03-27 15:35:51.941732270 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Tenseur/Makefile Lorene/C++/Source/Tenseur/Makefile
+--- Lorene.orig/C++/Source/Tenseur/Makefile	2006-09-11 13:29:33.000000000 +0200
++++ Lorene/C++/Source/Tenseur/Makefile	2014-03-27 15:35:51.943732213 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Tenseur/Makefile_lib Lorene/C++/Source/Tenseur/Makefile_lib
+--- Lorene.orig/C++/Source/Tenseur/Makefile_lib	2006-09-11 13:29:33.000000000 +0200
++++ Lorene/C++/Source/Tenseur/Makefile_lib	2014-03-27 15:35:51.944732185 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Tenseur/Makefile_lib_g Lorene/C++/Source/Tenseur/Makefile_lib_g
+--- Lorene.orig/C++/Source/Tenseur/Makefile_lib_g	2006-09-11 13:29:34.000000000 +0200
++++ Lorene/C++/Source/Tenseur/Makefile_lib_g	2014-03-27 15:35:51.945732156 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Tensor/Makefile Lorene/C++/Source/Tensor/Makefile
+--- Lorene.orig/C++/Source/Tensor/Makefile	2006-09-11 13:29:35.000000000 +0200
++++ Lorene/C++/Source/Tensor/Makefile	2014-03-27 15:35:51.947732099 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Tensor/Makefile_lib Lorene/C++/Source/Tensor/Makefile_lib
+--- Lorene.orig/C++/Source/Tensor/Makefile_lib	2006-09-11 13:29:35.000000000 +0200
++++ Lorene/C++/Source/Tensor/Makefile_lib	2014-03-27 15:35:51.948732070 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Tensor/Makefile_lib_g Lorene/C++/Source/Tensor/Makefile_lib_g
+--- Lorene.orig/C++/Source/Tensor/Makefile_lib_g	2006-09-11 13:29:35.000000000 +0200
++++ Lorene/C++/Source/Tensor/Makefile_lib_g	2014-03-27 15:35:51.950732013 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Tensor/Scalar/Makefile Lorene/C++/Source/Tensor/Scalar/Makefile
+--- Lorene.orig/C++/Source/Tensor/Scalar/Makefile	2006-09-11 13:29:36.000000000 +0200
++++ Lorene/C++/Source/Tensor/Scalar/Makefile	2014-03-27 15:35:51.951731985 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Tensor/Scalar/Makefile_lib Lorene/C++/Source/Tensor/Scalar/Makefile_lib
+--- Lorene.orig/C++/Source/Tensor/Scalar/Makefile_lib	2006-09-11 13:29:36.000000000 +0200
++++ Lorene/C++/Source/Tensor/Scalar/Makefile_lib	2014-03-27 15:35:51.953731928 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Tensor/Scalar/Makefile_lib_g Lorene/C++/Source/Tensor/Scalar/Makefile_lib_g
+--- Lorene.orig/C++/Source/Tensor/Scalar/Makefile_lib_g	2006-09-11 13:29:36.000000000 +0200
++++ Lorene/C++/Source/Tensor/Scalar/Makefile_lib_g	2014-03-27 15:35:51.954731899 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Time_slice/Makefile Lorene/C++/Source/Time_slice/Makefile
+--- Lorene.orig/C++/Source/Time_slice/Makefile	2006-09-11 13:29:37.000000000 +0200
++++ Lorene/C++/Source/Time_slice/Makefile	2014-03-27 15:35:51.955731871 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Time_slice/Makefile_lib Lorene/C++/Source/Time_slice/Makefile_lib
+--- Lorene.orig/C++/Source/Time_slice/Makefile_lib	2006-09-11 13:29:37.000000000 +0200
++++ Lorene/C++/Source/Time_slice/Makefile_lib	2014-03-27 15:35:51.957731814 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Time_slice/Makefile_lib_g Lorene/C++/Source/Time_slice/Makefile_lib_g
+--- Lorene.orig/C++/Source/Time_slice/Makefile_lib_g	2006-09-11 13:29:37.000000000 +0200
++++ Lorene/C++/Source/Time_slice/Makefile_lib_g	2014-03-27 15:35:51.958731785 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Valencia/Makefile Lorene/C++/Source/Valencia/Makefile
+--- Lorene.orig/C++/Source/Valencia/Makefile	2006-09-11 13:29:38.000000000 +0200
++++ Lorene/C++/Source/Valencia/Makefile	2014-03-27 15:35:51.959731757 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Valencia/Makefile_lib Lorene/C++/Source/Valencia/Makefile_lib
+--- Lorene.orig/C++/Source/Valencia/Makefile_lib	2006-09-11 13:29:38.000000000 +0200
++++ Lorene/C++/Source/Valencia/Makefile_lib	2014-03-27 15:35:51.961731699 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Valencia/Makefile_lib_g Lorene/C++/Source/Valencia/Makefile_lib_g
+--- Lorene.orig/C++/Source/Valencia/Makefile_lib_g	2006-09-11 13:29:38.000000000 +0200
++++ Lorene/C++/Source/Valencia/Makefile_lib_g	2014-03-27 15:35:51.962731671 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Valeur/Makefile Lorene/C++/Source/Valeur/Makefile
+--- Lorene.orig/C++/Source/Valeur/Makefile	2006-09-11 13:29:39.000000000 +0200
++++ Lorene/C++/Source/Valeur/Makefile	2014-03-27 15:35:51.964731614 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,6 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
+diff --new-file -ru Lorene.orig/C++/Source/Valeur/Makefile_lib Lorene/C++/Source/Valeur/Makefile_lib
+--- Lorene.orig/C++/Source/Valeur/Makefile_lib	2006-09-11 13:29:39.000000000 +0200
++++ Lorene/C++/Source/Valeur/Makefile_lib	2014-03-27 15:35:51.965731585 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene.a  $?
+-	$(RANLIB) $(LIB)/liblorene.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/C++/Source/Valeur/Makefile_lib_g Lorene/C++/Source/Valeur/Makefile_lib_g
+--- Lorene.orig/C++/Source/Valeur/Makefile_lib_g	2006-09-11 13:29:39.000000000 +0200
++++ Lorene/C++/Source/Valeur/Makefile_lib_g	2014-03-27 15:35:51.966731557 +0100
+@@ -8,8 +8,6 @@
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+ $(LIB)/date_mark : $(OBJ)
+-	ar -rv $(LIB)/liblorene_g.a  $?
+-	$(RANLIB) $(LIB)/liblorene_g.a
+ 	
+ %.o: %.C
+ 	@$(MAKEDEPEND); \
+diff --new-file -ru Lorene.orig/Export/C++/Makefile Lorene/Export/C++/Makefile
+--- Lorene.orig/Export/C++/Makefile	2001-12-18 23:27:04.000000000 +0100
++++ Lorene/Export/C++/Makefile	2014-03-27 15:35:51.968731500 +0100
+@@ -2,24 +2,12 @@
+ 
+ include $(HOME_LORENE)/local_settings		
+ 
+-BIN_TOOLS = $(HOME_LORENE)/bin
+ LIB	  = $(HOME_LORENE)/Lib
+ 
+-install: $(LIB) $(BIN_TOOLS) $(BIN_TOOLS)/pointCpointo
++install:
+ 	cd Source; $(MAKE)
+ 
+ uninstall:
+ 	rm -fr $(LIB)/liblorene_export.a
+ 	rm -fr $(LIB)/liblorene_export_g.a
+ 	cd Source; $(MAKE) -i uninstall
+-
+-$(LIB):
+-	mkdir $@
+-	touch date_mark
+-
+-$(BIN_TOOLS):	
+-	mkdir $@
+-
+-$(BIN_TOOLS)/pointCpointo:
+-	$(CXX) $(CXXFLAGS) -o $@ $(HOME_LORENE)/Inst_tools/pointCpointo.C
+-
+diff --new-file -ru Lorene.orig/Export/C++/Source/Makefile Lorene/Export/C++/Source/Makefile
+--- Lorene.orig/Export/C++/Source/Makefile	2009-11-19 17:15:21.000000000 +0100
++++ Lorene/Export/C++/Source/Makefile	2014-03-27 15:35:51.970731443 +0100
+@@ -1,22 +1,24 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
+-
+-BIN_TOOLS = $(HOME_LORENE)/bin
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+ SRC	= *.C
+ 
+ install: $(SRC) Objects Objects_g
+ 	mkdir -p $(DEPDIR)
+-	echo *C | $(BIN_TOOLS)/pointCpointo > List_obj     # list of *.o files
++	echo 'OBJ = $(patsubst %.C,%.o,$(wildcard *.C))' > List_obj   # list of *.o files
++ifndef DONTBUILDDEBUGLIB
++	touch Objects_g/_rien.o
+ 	mv Objects_g/*.o .
+-	mv _rien.o Objects_g
+ 	$(MAKE) -f Makefile_lib_g
+ 	mv *.o Objects_g
++	rm Objects_g/_rien.o
++endif
++	touch Objects/_rien.o
+ 	mv Objects/*.o .
+-	mv _rien.o Objects
+ 	$(MAKE) -f Makefile_lib
+ 	mv *.o Objects
++	rm Objects/_rien.o
+ 
+ uninstall:
+ 	rm -f *.o
+@@ -27,8 +29,8 @@
+ 
+ Objects:
+ 	mkdir Objects
+-	touch Objects/_rien.o
+ 
+ Objects_g:
++ifndef DONTBUILDDEBUGLIB
+ 	mkdir Objects_g
+-	touch Objects_g/_rien.o
++endif
+diff --new-file -ru Lorene.orig/F77/Makefile Lorene/F77/Makefile
+--- Lorene.orig/F77/Makefile	2001-11-20 16:19:30.000000000 +0100
++++ Lorene/F77/Makefile	2014-03-27 15:35:51.971731414 +0100
+@@ -1,28 +1,21 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings	
++include $(HOME_LORENE)/global_settings	
+ 
+-LIB	  = $(HOME_LORENE)/Lib
+-
+-install: $(LIB) $(LIB)/liblorenef77_g.a $(LIB)/liblorenef77.a
+-
+-$(LIB)/liblorenef77_g.a: Source/*.f Source/Poisson2d/*.f
+-	cd Source; $(MAKE) $@
+-	cd Source/Poisson2d; $(MAKE) $@
+-	ar -rv $@ $(?:.f=.o)
+-	$(RANLIB) $@
++install: Source/*.f Source/Poisson2d/*.f
++	cd Source; $(MAKE) $(LIB)/liblorenef77.a
++	cd Source/Poisson2d; $(MAKE) $(LIB)/liblorenef77.a
++	ar -rv $(LIB)/liblorenef77.a $(?:.f=.o)
++	$(RANLIB) $(LIB)/liblorenef77.a
+ 	rm -f $(?:.f=.o)
+-
+-$(LIB)/liblorenef77.a: Source/*.f Source/Poisson2d/*.f
+-	cd Source; $(MAKE) $@
+-	cd Source/Poisson2d; $(MAKE) $@
+-	ar -rv $@ $(?:.f=.o)
+-	$(RANLIB) $@
++ifndef DONTBUILDDEBUGLIB
++	cd Source; $(MAKE) $(LIB)/liblorenef77_g.a
++	cd Source/Poisson2d; $(MAKE) $(LIB)/liblorenef77_g.a
++	ar -rv $(LIB)/liblorenef77_g.a $(?:.f=.o)
++	$(RANLIB) $(LIB)/liblorenef77_g.a
+ 	rm -f $(?:.f=.o)
++endif
+ 
+ uninstall:
+ 	rm -f $(LIB)/liblorenef77.a
+ 	rm -f $(LIB)/liblorenef77_g.a
+-
+-$(LIB):
+-	mkdir $@
+diff --new-file -ru Lorene.orig/F77/Source/Makefile Lorene/F77/Source/Makefile
+--- Lorene.orig/F77/Source/Makefile	2006-09-11 13:29:43.000000000 +0200
++++ Lorene/F77/Source/Makefile	2014-03-27 15:35:51.973731357 +0100
+@@ -1,8 +1,7 @@
+ SHELL=/bin/sh
+ 
+-include $(HOME_LORENE)/local_settings		  # defines which compiler,...
++include $(HOME_LORENE)/global_settings		  # defines which compiler,...
+ 
+-LIB = $(HOME_LORENE)/Lib
+ SRC = *.f 
+ 
+ install: $(LIB)/liblorenef77_g.a $(LIB)/liblorenef77.a
+diff --new-file -ru Lorene.orig/global_settings Lorene/global_settings
+--- Lorene.orig/global_settings	1970-01-01 01:00:00.000000000 +0100
++++ Lorene/global_settings	2014-03-27 15:35:51.974731328 +0100
+@@ -0,0 +1,11 @@
++include $(HOME_LORENE)/local_settings
++
++BIN_TOOLS = $(HOME_LORENE)/bin
++LIB       = $(HOME_LORENE)/Lib
++
++ifndef FIND
++  FIND=find
++endif
++ifndef XARGS
++  XARGS=xargs
++endif
+diff --new-file -ru Lorene.orig/Makefile Lorene/Makefile
+--- Lorene.orig/Makefile	2009-11-22 18:06:11.000000000 +0100
++++ Lorene/Makefile	2014-03-27 15:35:51.975731300 +0100
+@@ -1,5 +1,10 @@
+ SHELL=/bin/sh
+ 
++include $(HOME_LORENE)/local_settings
++
++BIN_TOOLS = $(HOME_LORENE)/bin
++LIB       = $(HOME_LORENE)/Lib
++
+ all: doc cpp fortran export
+ 
+ install: all
+@@ -7,15 +12,24 @@
+ doc:
+ 	cd Doc; $(MAKE) -i
+ 
+-cpp:
++cpp: $(LIB) $(BIN_TOOLS)/pointCpointo
+ 	cd C++; $(MAKE)
+ 
+-fortran:
++fortran: $(LIB) $(BIN_TOOLS)/pointCpointo
+ 	cd F77; $(MAKE)
+ 
+-export:
++export: $(LIB) $(BIN_TOOLS)/pointCpointo
+ 	cd Export/C++; $(MAKE)
+ 
++$(LIB):
++	mkdir -p $@
++
++$(BIN_TOOLS): 
++	mkdir -p $@
++
++$(BIN_TOOLS)/pointCpointo: $(BIN_TOOLS)
++	$(CXX) $(CXXFLAGS) -o $@ $(HOME_LORENE)/Inst_tools/pointCpointo.C
++
+ uninstall:
+ 	cd Doc; $(MAKE) -i uninstall
+ 	cd C++; $(MAKE) -i uninstall
+@@ -25,6 +39,7 @@
+ 	rm -fr Lib
+ 	rm -f Test/*.o
+ 	rm -f Test/test_fft Test/test_lapack Test/test_pgplot
++	rm -f $(BIN_TOOLS)/pointCpointo
+ 
+ test: 
+ 	cd Test; $(MAKE)
