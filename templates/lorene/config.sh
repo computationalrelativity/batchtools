@@ -2,10 +2,8 @@
 
 CONFIG_HOME=$(cd $(dirname $0); pwd)
 
-cd Lorene
-
 for f in ${CONFIG_HOME}/*.patch; do
-    patch -p0 < $f
+    patch -p1 < $f
 done
 
 cat > local_settings <<EOF
@@ -32,7 +30,7 @@ CXXFLAGS = -O2 -DNDEBUG
 
 # Options for the C++ compiler to produce the library for debugging:
 # -----------------------------------------------------------------
-CXXFLAGS_G = -O0 -ggdb
+CXXFLAGS_G = -O0 -g
 
 # with the option -Weffc++ :
 #CXXFLAGS_G = -g -pedantic -Wall -W -Wfloat-equal -Wundef -Wshadow -Wcast-qual \
