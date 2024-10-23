@@ -6,4 +6,5 @@ cmake -D Athena_ENABLE_MPI=ON \
       -D Kokkos_ENABLE_CUDA_LAMBDA=ON \
       -D Kokkos_ARCH_AMPERE80=ON \
       -D Kokkos_ARCH_ZEN3=ON \
+      -D Kokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC=OFF \
       $@ ../
