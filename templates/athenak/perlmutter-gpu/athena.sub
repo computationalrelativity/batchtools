@@ -24,6 +24,9 @@ for f in ../BATCH/include/*; do
     sbcast $f /tmp/$(basename $f)
 done
 
+if module is-loaded python; then
+  module unload python
+fi
 module purge
 module load cpe/23.12
 source /opt/cray/pe/cpe/23.12/restore_lmod_system_defaults.sh
