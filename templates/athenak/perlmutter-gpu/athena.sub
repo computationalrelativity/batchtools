@@ -20,9 +20,11 @@ set -e                          # Abort on errors
 cd @RUNDIR@
 
 # Broad cast the initial data
-for f in ../BATCH/include/*; do
-    sbcast $f /tmp/$(basename $f)
-done
+if [ -d ../BATCH/include ]; then
+  for f in ../BATCH/include/*; do
+      sbcast $f /tmp/$(basename $f)
+  done
+fi
 
 if module is-loaded python; then
   module unload python
