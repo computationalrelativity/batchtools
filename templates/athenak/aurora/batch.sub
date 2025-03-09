@@ -1,0 +1,44 @@
+#!/bin/bash -l
+#PBS -A @ALLOCATION@
+#PBS -q @QUEUE@
+#PBS -N @SIMULATION_NAME@
+#PBS -l select=@NODES@
+#PBS -l walltime=@WALLTIME@
+#PBS -l filesystems=flare:home
+#PBS -k doe
+#PBS -o @RUNDIR@/@SIMULATION_NAME@.out
+#PBS -e @RUNDIR@/@SIMULATION_NAME@.err
+#PBS -l place=scatter
+
+echo "Preparing:"
+set -x              # Output commands
+set -e              # Abort on errors
+cd @RUNDIR@
+
+# Set environment
+NTHREADS=@NUM_THREADS@    # Number of OMP threads per rank
+NNODES=@NODES@            # Number of Nodes
+NRANKS=@NUM_GPUS@         # Number of MPI ranks per node (assume one per GPU)
+NTOTRANKS=$(( NNODES * NRANKS ))
+
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=1
+export OMP_PLACES=threads
+
+CPU_BIND="list:0-7:8-15:16-23:24-31:32-39:40-47:52-59:60-67:68-75:76-83:84-91:92-99"
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo "NUM_OF_NODES=${NNODES}  TOTAL_NUM_RANKS=${NTOTRANKS}  RANKS_PER_NODE=${NRANKS}  THREADS_PER_RANK=${NTHREADS}"
+
+mpiexec -np $((@NUM_GPUS@ * @NODES@)) \
+        -ppn $((@NUM_GPUS@)) \
+        --cpu-bind=$CPU_BIND /soft/tools/mpi_wrapper_utils/gpu_tile_compact.sh @EXEC@ \
+        -d @RUNDIR@ \
+        -t @TERMINATION_TIME@ \
+        -i parfile.par \
