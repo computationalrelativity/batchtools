@@ -5,6 +5,8 @@
 #PBS -l select=@NODES@
 #PBS -l walltime=@WALLTIME@
 #PBS -l filesystems=flare:home
+#PBS -M @EMAIL@
+#PBS -m abe
 #PBS -k doe
 #PBS -o @RUNDIR@/@SIMULATION_NAME@.out
 #PBS -e @RUNDIR@/@SIMULATION_NAME@.err
@@ -49,7 +51,8 @@ fi
 
 mpiexec -np $((@NUM_GPUS@ * @NODES@)) \
         -ppn $((@NUM_GPUS@)) \
-        --cpu-bind=$CPU_BIND /soft/tools/mpi_wrapper_utils/gpu_tile_compact.sh @EXECUTABLE@ \
+        --cpu-bind=$CPU_BIND /soft/tools/mpi_wrapper_utils/gpu_tile_compact.sh \
+        @EXECUTABLE@ \
         -d @RUNDIR@ \
         -t @TERMINATION_TIME@ \
         $restart_line
