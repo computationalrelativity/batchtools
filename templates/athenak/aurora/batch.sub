@@ -49,7 +49,7 @@ fi
 
 mpiexec -np $((@NUM_GPUS@ * @NODES@)) \
         -ppn $((@NUM_GPUS@)) \
-        --cpu-bind=$CPU_BIND /soft/tools/mpi_wrapper_utils/gpu_tile_compact.sh @EXEC@ \
+        --cpu-bind=$CPU_BIND /soft/tools/mpi_wrapper_utils/gpu_tile_compact.sh @EXECUTABLE@ \
         -d @RUNDIR@ \
         -t @TERMINATION_TIME@ \
         $restart_line
