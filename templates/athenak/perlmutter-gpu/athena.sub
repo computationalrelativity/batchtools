@@ -57,7 +57,7 @@ if [ -d parent/rst ]; then
   restart_line="-r $restart_file -i @PARFILE@"
   printf "\nrestarting from $restart_file\n\n"
 else
-  restart_line="-i @PARFILE@ time/tlim=0"
+  restart_line="-i @PARFILE@"
   printf "\nstarting from beginning\n\n"
 fi
 
