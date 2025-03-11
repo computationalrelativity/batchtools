@@ -1,4 +1,5 @@
 #!/bin/bash -l
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
 #PBS -A @ALLOCATION@
 #PBS -q @QUEUE@
 #PBS -N @SIMULATION_NAME@
