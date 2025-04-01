@@ -13,10 +13,11 @@ if [ -z "${1:-}" ]; then
 fi
 
 INSTALL_DIR=$1
+mkdir -p "$INSTALL_DIR"
+INSTALL_DIR=$(cd $INSTALL_DIR ; pwd)
 
 echo "Downloading and installing GSL ${GSL_VERSION} to ${INSTALL_DIR}..."
 
-mkdir -p "$INSTALL_DIR"
 cd "$INSTALL_DIR"
 
 # Download GSL
@@ -27,7 +28,8 @@ fi
 
 # Extract and build GSL
 tar -zxvf "gsl-${GSL_VERSION}.tar.gz"
-cd "gsl-${GSL_VERSION}"
+mv gsl-${GSL_VERSION} src
+cd src
 
 ./configure --prefix="$INSTALL_DIR"
 make -j8
