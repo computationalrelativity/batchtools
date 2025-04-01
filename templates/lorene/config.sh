@@ -26,11 +26,11 @@ CXX 	 = g++
 
 # Options for the C++ compiler to produce the optimized library:
 # -------------------------------------------------------------
-CXXFLAGS = -O2 -DNDEBUG
+CXXFLAGS = -O2 -DNDEBUG $(gsl-config --cflags)
 
 # Options for the C++ compiler to produce the library for debugging:
 # -----------------------------------------------------------------
-CXXFLAGS_G = -O0 -g
+CXXFLAGS_G = -O0 -g $(gsl-config --cflags)
 
 # with the option -Weffc++ :
 #CXXFLAGS_G = -g -pedantic -Wall -W -Wfloat-equal -Wundef -Wshadow -Wcast-qual \
@@ -97,5 +97,5 @@ LIB_PGPLOT =
 
 # GNU scientific library
 # -----------------------------------
-LIB_GSL = -lgsl -lgslcblas
+LIB_GSL = $(gsl-config --libs)
 EOF
