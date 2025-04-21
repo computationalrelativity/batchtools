@@ -11,7 +11,7 @@
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
 #SBATCH --gpus=@NUM_GPUS_TOT@
 #SBATCH --ntasks-per-node=@NUM_GPUS@
-#SBATCH --mem=64G
+#SBATCH --mem=377308M
 
 echo "Preparing:"
 set -x                          # Output commands
