@@ -54,6 +54,7 @@ mpiexec -np $((@NUM_GPUS@ * @NODES@)) \
         -ppn $((@NUM_GPUS@)) \
         --cpu-bind=$CPU_BIND /soft/tools/mpi_wrapper_utils/gpu_tile_compact.sh \
         @EXECUTABLE@ \
+        -w @WATCHDOG_TIMEOUT_SECONDS@ \
         -d @RUNDIR@ \
         -t @TERMINATION_TIME@ \
         $restart_line

@@ -2,6 +2,7 @@
 #SBATCH -A @ALLOCATION@ 
 #SBATCH -t @WALLTIME@
 #SBATCH -N @NODES@
+#SBATCH --mem 20G
 #SBATCH -J @SIMULATION_NAME@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=@EMAIL@
@@ -15,7 +16,7 @@ set -e                          # Abort on errors
 
 cd @RUNDIR@
 
-module load cuda/11.5.0
+module load cuda/12.6.0
 module load cmake/3.21.4
 
 echo "Checking:"
@@ -23,13 +24,26 @@ pwd
 hostname
 date
 
+# set up for problem & define any environment variables here
+
 echo "Environment:"
 env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
-# set up for problem & define any environment variables here
+# Check for restart files
+if [ -d parent/rst ]; then
+  restart_files=$(ls -r parent/rst/*.rst)
+  restart_file=(${restart_files[0]})
+  restart_line="-r $restart_file -i @PARFILE@"
+  printf "\nrestarting from $restart_file\n\n"
+else
+  restart_line="-i @PARFILE@"
+  printf "\nstarting from beginning\n\n"
+fi
 
 @EXECUTABLE@ \
-    -i @PARFILE@
+    -t @TERMINATION_TIME@ \
+    -i @PARFILE@ \
+    $restart_line
 
 # perform any cleanup or short post-processing here
