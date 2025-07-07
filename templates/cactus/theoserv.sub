@@ -1,0 +1,41 @@
+# Submission script for the TIFPA-INFN machine 'theoserv' in Trento
+
+#! /bin/bash
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+spack load gcc@13.2.0
+spack load perl@5.38.0%gcc@13.2.0
+spack load openmpi@4.1.5%gcc@13.2.0
+spack load fftw@3.3.10%gcc@13.2.0
+spack load gsl@2.7.1%gcc@13.2.0
+spack load hwloc@2.9.1%gcc@13.2.0
+spack load hdf5@1.14.1-2
+spack load boost@1.82.0%gcc@13.2.0
+spack load openblas@0.3.23%gcc@13.2.0
+
+echo "Environment:"
+export CACTUS_NUM_PROCS=@NUM_PROCS@
+export CACTUS_NUM_THREADS=@NUM_THREADS@
+export GMON_OUT_PREFIX=gmon.out
+export KMP_AFFINITY=norespect,compact # verbose
+export OMP_NUM_THREADS=@NUM_THREADS@
+env | sort > ENVIRONMENT
+
+echo "Starting:"
+export CACTUS_STARTTIME=$(date +%s)
+time mpirun -np @NUM_PROCS@ -v @EXECUTABLE@ -L 3 @PARFILE@ 1> @SIMULATION_NAME@.out 2> @SIMULATION_NAME@.err
+
+echo "Stopping:"
+date
+
+echo "Done."
