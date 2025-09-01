@@ -1,0 +1,110 @@
+#!/bin/bash -l
+@(#PBS -W depend=afterok:@CHAINED_JOB_ID@)@
+#PBS -A @ALLOCATION@
+#PBS -q @QUEUE@
+#PBS -N @SIMULATION_NAME@
+#PBS -l select=@NODES@
+#PBS -l walltime=@WALLTIME@
+#PBS -l filesystems=flare:home
+#PBS -M @EMAIL@
+#PBS -m abe
+#PBS -k doe
+#PBS -o @RUNDIR@/@SIMULATION_NAME@.out
+#PBS -e @RUNDIR@/@SIMULATION_NAME@.err
+#PBS -l place=scatter
+
+echo "Preparing:"
+#set -x              # Output commands
+set -e              # Abort on errors
+cd @RUNDIR@
+
+# Set environment
+NTHREADS=@NUM_THREADS@    # Number of OMP threads per rank
+NNODES=@NODES@            # Number of Nodes
+NRANKS=@NUM_GPUS@         # Number of MPI ranks per node (assume one per GPU)
+NTOTRANKS=$(( NNODES * NRANKS ))
+
+module load mpich/dbg
+
+export MPICH_GPU_SUPPORT_ENABLED=1
+export MPIR_CVAR_CH4_OFI_MAX_EAGAIN_RETRY=-1
+export OMP_NUM_THREADS=192
+export OMP_PLACES=threads
+export SplitBcsCopy=0
+export ZE_SERIALIZE=2
+
+CPU_BIND="list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100"
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo "NUM_OF_NODES=${NNODES}  TOTAL_NUM_RANKS=${NTOTRANKS}  RANKS_PER_NODE=${NRANKS}  THREADS_PER_RANK=${NTHREADS}"
+
+sort -u "$PBS_NODEFILE" > nodelist.txt
+
+monitor_logs() {
+    local out_file="$1"
+    local err_file="$2"
+    local timeout_minutes=10
+    local check_interval=30  # Check every 30 seconds
+
+    while true; do
+        sleep $check_interval
+
+        # Get current timestamps of the files (if they exist)
+        if [[ -f "$out_file" ]]; then
+            out_mtime=$(stat -c %Y "$out_file" 2>/dev/null || echo 0)
+        else
+            out_mtime=0
+        fi
+
+        if [[ -f "$err_file" ]]; then
+            err_mtime=$(stat -c %Y "$err_file" 2>/dev/null || echo 0)
+        else
+            err_mtime=0
+        fi
+
+        current_time=$(date +%s)
+        timeout_seconds=$((timeout_minutes * 60))
+
+        # Check if both files haven not been modified for the timeout period
+        out_stale=$((current_time - out_mtime > timeout_seconds))
+        err_stale=$((current_time - err_mtime > timeout_seconds))
+
+        # Alert if both files are stale (assuming they exist)
+        if [[ $out_mtime -gt 0 && $err_mtime -gt 0 && $out_stale -eq 1 && $err_stale -eq 1 ]]; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') ALERT: Log files athena128.out and athena128.err have not changed for $timeout_minutes minutes" >> "$err_file"
+            echo "$(date '+%Y-%m-%d %H:%M:%S') ALERT: Possible job hang or completion detected" >> "$err_file"
+            ../backtrace_all_ranks.bash nodelist.txt ../BATCH/exec >> "$err_file"
+            break
+        fi
+    done
+}
+
+monitor_logs @RUNDIR@/@SIMULATION_NAME@.out @RUNDIR@/@SIMULATION_NAME@.err &
+MONITOR_PID=$!
+
+# Check for restart files
+if [ -d parent/rst ]; then
+  restart_files=$(ls -r parent/rst/*.rst)
+  restart_file=(${restart_files[0]})
+  restart_line="-r $restart_file -i @PARFILE@"
+  printf "\nrestarting from $restart_file\n\n"
+else
+  restart_line="-i @PARFILE@"
+  printf "\nstarting from beginning\n\n"
+fi
+
+mpiexec -np $((@NUM_GPUS@ * @NODES@)) \
+        -ppn $((@NUM_GPUS@)) \
+        --cpu-bind=$CPU_BIND /soft/tools/mpi_wrapper_utils/gpu_tile_compact.sh \
+        @EXECUTABLE@ \
+        -d @RUNDIR@ \
+        -t @TERMINATION_TIME@ \
+        $restart_line
+
+kill $MONITOR_PID 2>/dev/null || true
