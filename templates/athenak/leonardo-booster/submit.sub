@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#SBATCH --account=@ACCOUNT@
+#SBATCH --time=@WALLTIME@
+#SBATCH --nodes=@NODES@
+#SBATCH --ntasks-per-node=4                   # Number of MPI tasks per node (1 per GPU)
+#SBATCH --cpus-per-task=8                     # Number of CPU cores per task
+#SBATCH --gres=gpu:4                          # Number of GPUs per node
+#SBATCH --mem=
+#SBATCH --partition=boost_usr_prod
+#SBATCH --qos=@QOS@
+#SBATCH --job-name=@SIMULATION_NAME@
+#SBATCH --output=@RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH --error=@RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+
+cd @RUNDIR@
+
+module load --silent gcc/12.2.0
+module load --silent cuda/12.3
+module load --silent openmpi/4.1.6--gcc--12.2.0-cuda-12.2
+module load --silent python/3.11.7
+module load --silent openblas/0.3.24--gcc--12.2.0
+module load --silent gsl/2.7.1--gcc--12.2.0
+module load --silent fftw/3.3.10--openmpi--4.1.6--gcc--12.2.0-spack0.22
+module load --silent cmake/3.27.9
+
+echo "Checking:"
+pwd
+hostname
+date
+
+# set up for problem & define any environment variables here
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+# Check for restart files
+if [ -d parent/rst ]; then
+  restart_files=$(ls -r parent/rst/*.rst)
+  restart_file=(${restart_files[0]})
+  restart_line="-r $restart_file -i @PARFILE@"
+  printf "\nrestarting from $restart_file\n\n"
+else
+  restart_line="-i @PARFILE@"
+  printf "\nstarting from beginning\n\n"
+fi
+
+@EXECUTABLE@ \
+    -t @TERMINATION_TIME@ \
+    -i @PARFILE@ \
+    $restart_line
+
+# perform any cleanup or short post-processing here
