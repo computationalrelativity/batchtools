@@ -4,9 +4,9 @@
 #SBATCH --time=@WALLTIME@
 #SBATCH --nodes=@NODES@
 #SBATCH --ntasks-per-node=4                   # Number of MPI tasks per node (1 per GPU)
-#SBATCH --cpus-per-task=8                     # Number of CPU cores per task
+#SBATCH --cpus-per-task=1                     # Number of CPU cores per task
 #SBATCH --gres=gpu:4                          # Number of GPUs per node
-#SBATCH --mem=
+#SBATCH --mem=0
 #SBATCH --partition=boost_usr_prod
 #SBATCH --qos=@QOS@
 #SBATCH --job-name=@SIMULATION_NAME@
@@ -52,7 +52,9 @@ else
   printf "\nstarting from beginning\n\n"
 fi
 
-@EXECUTABLE@ \
+ln -s ../eos_akmalpr.d .
+
+srun @EXECUTABLE@ \
     -t @TERMINATION_TIME@ \
     -i @PARFILE@ \
     $restart_line
