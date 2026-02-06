@@ -20,7 +20,7 @@ set -e                          # Abort on errors
 cd @RUNDIR@
 
 module purge
-module load cpe/23.12
+module load cpe/24.07
 module load PrgEnv-gnu
 module load craype-x86-milan
 module load xpmem
@@ -49,7 +49,7 @@ fi
 export MPICH_MPIIO_HINTS="*:abort_on_rw_error=enable:romio_cb_write=disable"
 export OMP_PROC_BIND=spread
 export OMP_PLACES=threads
-export OMP_NUM_THREADS=$(@CPUS_PER_TASK@ / 2)
+export OMP_NUM_THREADS=$((@CPUS_PER_TASK@ / 2))
 srun \
     -n $((@NODES@ * @TASKS_PER_NODE@)) \
     @EXECUTABLE@ \
