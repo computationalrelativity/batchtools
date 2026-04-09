@@ -1,0 +1,56 @@
+#!/bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -A @ALLOCATION@
+#SBATCH -N @NODES@
+#SBATCH --gpus-per-task=1
+#SBATCH --cpus-per-task=@NUM_THREADS@
+#SBATCH --ntasks-per-node=@NUM_GPUS@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --partition=ghx4
+#SBATCH --gpu-bind=none
+#SBATCH -t @WALLTIME@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e                          # Abort on errors
+cd @RUNDIR@
+
+export OMP_NUM_THREADS=@NUM_THREADS@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+# Check for restart files
+if [ -d parent/rst ]; then
+  restart_files=$(ls -r parent/rst/*.rst)
+  restart_file=(${restart_files[0]})
+  restart_line="-r $restart_file -i @PARFILE@"
+  printf "\nrestarting from $restart_file\n\n"
+else
+  restart_line="-i @PARFILE@"
+  printf "\nstarting from beginning\n\n"
+fi
+
+# Setup for problem & define any environment variables here
+export MPICH_GPU_SUPPORT_ENABLED=1
+export SLURM_CPU_BIND="cores"
+
+srun \
+    -n $((@NODES@ * @NUM_GPUS@)) \
+    @EXECUTABLE@ \
+    --kokkos-map-device-id-by=mpi_rank \
+    -d @RUNDIR@ \
+    -t @TERMINATION_TIME@ \
+    $restart_line
+
+# perform any cleanup or short post-processing here
