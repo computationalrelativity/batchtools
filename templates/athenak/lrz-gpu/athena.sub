@@ -1,0 +1,55 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -A @ALLOCATION@
+#SBATCH --partition @QUEUE@
+#SBATCH -t @WALLTIME@
+#SBATCH -N @NODES@ 
+#SBATCH --ntasks-per-node=@NUM_PROCS@
+#SBATCH -J @SIMULATION_NAME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH --export=NONE
+#SBATCH --ear=off
+
+echo "Preparing:"
+set -x                          # Output commands
+cd @RUNDIR@
+
+ml sw stack/24.1.1
+ml sw intel-toolkit/latest --force
+ml cmake/3.27.7
+
+export I_MPI_ADJUST_ALLREDUCE=6
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent/rst -name \*.rst | awk '{ print length, $0 }' | sort -n  | cut -d" " -f2- | tail -n 1)
+    RESTART="-r $CHECKPOINT time/tlim=10000"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART="-i parfile.par time/tlim=0"
+    echo "Starting from IC:"
+fi
+
+let TOT_NPROCS=${SLURM_JOB_NUM_NODES}*${SLURM_NTASKS_PER_NODE}
+
+$(which mpirun) -np ${TOT_NPROCS} @EXECUTABLE@ \
+        --kokkos-map-device-id-by=mpi_rank \
+    -t @TERMINATION_TIME@ \
+    -d @RUNDIR@ \
+    $RESTART
+
+
+echo "Stopping:"
+date
+
+echo "Done."
