@@ -8,15 +8,18 @@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
 #SBATCH --gres=gpu:@NUM_GPUS@
-#SBATCH --mem-per-gpu=80G
+#SBATCH --mem-per-gpu=60G
 
 echo "Preparing:"
 set -x                          # Output commands
 set -e                          # Abort on errors
 cd @RUNDIR@
 
-module purge
+
+module load cmake/4.1.0
+module load nvidia/hpc_sdk
 module load nvidia/cuda/12.4.0
+module load nvhpc-openmpi3/24.1
 
 echo "Checking:"
 pwd
@@ -38,12 +41,9 @@ else
     echo "Starting from IC:"
 fi
 
-srun \
+mpirun -np @NUM_GPUS@  \
     @EXECUTABLE@ \
     -i @PARFILE@ \
-    $RESTART \
-    -t @TERMINATION_TIME@
+    $RESTART
 
 date
-
-# perform any cleanup or short post-processing here
