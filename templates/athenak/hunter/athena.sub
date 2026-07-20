@@ -1,0 +1,55 @@
+#!/bin/bash
+@(#PBS -W depend=afterok:@CHAINED_JOB_ID@)@
+#PBS -A @ALLOCATION@
+#PBS -q @QUEUE@
+#PBS -l walltime=@WALLTIME@
+#PBS -l select=@NODES@:node_type=mi300a:mpiprocs=@NUM_GPUS@
+#PBS -N @SIMULATION_NAME@
+#PBS -m abe
+#PBS -k doe
+#PBS -M @EMAIL@
+#PBS -o @RUNDIR@/@SIMULATION_NAME@.out
+#PBS -e @RUNDIR@/@SIMULATION_NAME@.err
+
+echo "Preparing:"
+set -x                          # Output commands
+cd @RUNDIR@
+
+module load cray-fftw
+module load amd/6.4.1
+module load gsl
+
+export I_MPI_ADJUST_ALLREDUCE=6
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo ${PBS_NODEFILE} > NODES
+
+if [ -L parent ]; then
+    CHECKPOINT=$(find -L parent/rst -name \*.rst | awk '{ print length, $0 }' | sort -n | cut -d" " -f2- | tail -n 1)
+    RESTART="-r $CHECKPOINT time/tlim=10000"
+    echo "Restarting from $CHECKPOINT:"
+else
+    RESTART="-i parfile.par time/tlim=0"
+    echo "Starting from IC:"
+fi
+
+ln -s ../BATCH/include/eos_akmalpr.d .
+
+# Count MPI ranks
+TOT_NPROCS=$(wc -l < ${PBS_NODEFILE})
+
+$(which mpirun) -np ${TOT_NPROCS} @EXECUTABLE@ \
+        --kokkos-map-device-id-by=mpi_rank \
+    -t @TERMINATION_TIME@ \
+    -d @RUNDIR@ \
+    $RESTART
+
+echo "Stopping:"
+date
+
+echo "Done."

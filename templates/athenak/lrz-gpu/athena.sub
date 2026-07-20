@@ -4,7 +4,7 @@
 #SBATCH --partition @QUEUE@
 #SBATCH -t @WALLTIME@
 #SBATCH -N @NODES@ 
-#SBATCH --ntasks-per-node=@NUM_PROCS@
+#SBATCH --ntasks-per-node=@NUM_GPUS@
 #SBATCH -J @SIMULATION_NAME@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=@EMAIL@
@@ -39,6 +39,8 @@ else
     RESTART="-i parfile.par time/tlim=0"
     echo "Starting from IC:"
 fi
+
+ln -s ../BATCH/include/eos_akmalpr.d .
 
 let TOT_NPROCS=${SLURM_JOB_NUM_NODES}*${SLURM_NTASKS_PER_NODE}
 

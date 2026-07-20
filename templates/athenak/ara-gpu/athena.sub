@@ -41,6 +41,8 @@ else
     echo "Starting from IC:"
 fi
 
+ln -s ../BATCH/include/eos_akmalpr.d .
+
 mpirun -np @NUM_GPUS@  \
     @EXECUTABLE@ \
     -i @PARFILE@ \
