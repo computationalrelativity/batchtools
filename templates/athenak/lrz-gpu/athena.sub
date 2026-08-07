@@ -46,6 +46,7 @@ let TOT_NPROCS=${SLURM_JOB_NUM_NODES}*${SLURM_NTASKS_PER_NODE}
 
 $(which mpirun) -np ${TOT_NPROCS} @EXECUTABLE@ \
         --kokkos-map-device-id-by=mpi_rank \
+    -w @WATCHDOG_TIMEOUT_SECONDS@ \
     -t @TERMINATION_TIME@ \
     -d @RUNDIR@ \
     $RESTART

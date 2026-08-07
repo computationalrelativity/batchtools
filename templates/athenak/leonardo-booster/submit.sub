@@ -55,6 +55,7 @@ fi
 ln -s ../eos_akmalpr.d .
 
 srun @EXECUTABLE@ \
+    -w @WATCHDOG_TIMEOUT_SECONDS@ \
     -t @TERMINATION_TIME@ \
     -i @PARFILE@ \
     $restart_line

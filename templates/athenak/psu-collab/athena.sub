@@ -42,6 +42,7 @@ else
 fi
 
 @EXECUTABLE@ \
+    -w @WATCHDOG_TIMEOUT_SECONDS@ \
     -t @TERMINATION_TIME@ \
     -i @PARFILE@ \
     $restart_line

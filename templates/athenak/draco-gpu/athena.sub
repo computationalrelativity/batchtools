@@ -45,6 +45,7 @@ fi
 srun \
     @EXECUTABLE@ \
     -i @PARFILE@ \
+    -w @WATCHDOG_TIMEOUT_SECONDS@ \
     -t @TERMINATION_TIME@ \
     $RESTART
 
