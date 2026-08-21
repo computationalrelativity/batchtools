@@ -54,6 +54,14 @@ else
   printf "\nstarting from beginning\n\n"
 fi
 
+# LORENE Bin_NS initial data stores only the EOS *name* in resu.d; the reader looks it
+# up as a bare filename in cwd (see ara-gpu/hunter/lrz-gpu/leonardo-booster templates for
+# the same fix). Only needed for lorene_bns runs, but harmless -- and silent -- otherwise
+# when BATCH/include has no such file.
+if [ -f ../BATCH/include/eos_akmalpr.d ]; then
+  ln -sf ../BATCH/include/eos_akmalpr.d .
+fi
+
 mpiexec -np $((@NUM_GPUS@ * @NODES@)) \
         -ppn $((@NUM_GPUS@)) \
         --cpu-bind=$CPU_BIND /soft/tools/mpi_wrapper_utils/gpu_tile_compact.sh \
