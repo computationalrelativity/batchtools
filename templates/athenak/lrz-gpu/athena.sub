@@ -17,9 +17,9 @@ echo "Preparing:"
 set -x                          # Output commands
 cd @RUNDIR@
 
-ml sw stack/24.1.1
-ml sw intel-toolkit/latest --force
-ml cmake/3.27.7
+ml sw stack/latest
+ml sw intel-toolkit
+ml cmake/4.3.3
 
 export I_MPI_ADJUST_ALLREDUCE=6
 echo "Checking:"

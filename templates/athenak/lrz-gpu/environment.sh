@@ -1,7 +1,7 @@
 #!/bin/bash
 
 module purge
-module load sw stack/24.1.1
-module load sw intel-toolkit/latest --force
-module load cmake/3.27.7
+module load sw stack/latest
+module load sw intel-toolkit
+module load cmake/4.3.3
 
