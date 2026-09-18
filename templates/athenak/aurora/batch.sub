@@ -18,8 +18,15 @@ set -x              # Output commands
 set -e              # Abort on errors
 cd @RUNDIR@
 
+# Must match the build environment (environment-next.sh): the next-eval compute image
+# defaults to PE 26.181.0 / oneAPI 2026.1.0, so without the explicit pin a binary built
+# against 26.26.0 would run on the wrong SYCL and FFTW runtimes. On the old image the
+# pin is the default anyway, so this is a no-op there.
+module load oneapi/release/2025.3.1
 module load boost/1.88.0
 module load fftw/3.3.10                      # MPI-enabled FFTW3 build
+
+unset FI_LOG_LEVEL   # the next-eval image defaults it to `warn`, which floods the job log
 
 # Set environment
 export HOME_KADATH=$HOME/kyoto-initiative/repos/fuka
@@ -28,6 +35,12 @@ NNODES=@NODES@            # Number of Nodes
 NRANKS=@NUM_GPUS@         # Number of MPI ranks per node (assume one per GPU)
 NTOTRANKS=$(( NNODES * NRANKS ))
 
+# AthenaK packs boundary tags into 20 bits (athena.hpp: 6 bits bufid | 14 bits lid), so it
+# needs MPI_TAG_UB >= 1048575. The next-eval compute image defaults to 524287, one bit
+# short, and the job dies in the first boundary exchange with "Invalid tag, value is
+# 524288". TAG_BITS=21 buys exactly 1048575. Do not add MPIR_CVAR_CH4_OFI_RANK_BITS:
+# cxi then rejects the split and every rank aborts in MPI_Init (multi-node only).
+export MPIR_CVAR_CH4_OFI_TAG_BITS=21
 export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128
 export MPICH_GPU_SUPPORT_ENABLED=1
 export OMP_NUM_THREADS=1
