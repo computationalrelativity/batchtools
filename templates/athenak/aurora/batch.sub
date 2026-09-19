@@ -41,6 +41,14 @@ NTOTRANKS=$(( NNODES * NRANKS ))
 # 524288". TAG_BITS=21 buys exactly 1048575. Do not add MPIR_CVAR_CH4_OFI_RANK_BITS:
 # cxi then rejects the split and every rank aborts in MPI_Init (multi-node only).
 export MPIR_CVAR_CH4_OFI_TAG_BITS=21
+
+# The next-eval image sets MPIR_CVAR_PROGRESS_TIMEOUT=600 (the old image left it unset,
+# i.e. disabled), which fatally aborts any rank that waits more than 600 s in a collective.
+# Both ends of a run exceed that: the FUKA per-point interpolation is host-side and badly
+# imbalanced, so early ranks sit in the MPI_Comm_dup after it for far longer than 600 s, and
+# a multi-GB restart read does the same. It fails as "Progress TIMEOUT ... in internal_Comm_dup",
+# naming the collective rather than the imbalance behind it. Hang detection is athena -w's job.
+export MPIR_CVAR_PROGRESS_TIMEOUT=0
 export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128
 export MPICH_GPU_SUPPORT_ENABLED=1
 export OMP_NUM_THREADS=1
