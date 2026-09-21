@@ -24,10 +24,19 @@ NNODES=@NODES@            # Number of Nodes
 NRANKS=@NUM_GPUS@         # Number of MPI ranks per node (assume one per GPU)
 NTOTRANKS=$(( NNODES * NRANKS ))
 
+# Pin the PE to match the build; next-eval defaults to 26.181.0. See CLAUDE.md.
+module load oneapi/release/2025.3.1
 module load mpich/dbg
+
+unset FI_LOG_LEVEL
 
 export MPICH_GPU_SUPPORT_ENABLED=1
 export MPIR_CVAR_CH4_OFI_MAX_EAGAIN_RETRY=-1
+# next-eval MPI settings; see CLAUDE.md for why each is needed.
+export MPIR_CVAR_CH4_OFI_TAG_BITS=21          # MPI_TAG_UB >= 1048575; never set RANK_BITS
+export MPIR_CVAR_PROGRESS_TIMEOUT=0           # image default of 600 s aborts long collectives
+export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128   # old-image name
+export MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE=128          # next-eval name
 export OMP_NUM_THREADS=192
 export OMP_PLACES=threads
 export SplitBcsCopy=0
