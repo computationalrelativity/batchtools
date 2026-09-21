@@ -49,6 +49,11 @@ export MPIR_CVAR_CH4_OFI_TAG_BITS=21
 # a multi-GB restart read does the same. It fails as "Progress TIMEOUT ... in internal_Comm_dup",
 # naming the collective rather than the imbalance behind it. Hang detection is athena -w's job.
 export MPIR_CVAR_PROGRESS_TIMEOUT=0
+# Old-image name only. The 2026-09-17 next-eval image renamed this CVAR to
+# MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE and the site now sets that to 1024 itself, so on
+# next-eval the line below is silently ignored (MPICH drops unknown CVARs) and the site
+# value applies. Kept for the old image, where this is still the live name -- the
+# capacity-queue runs need it.
 export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128
 export MPICH_GPU_SUPPORT_ENABLED=1
 export OMP_NUM_THREADS=1
