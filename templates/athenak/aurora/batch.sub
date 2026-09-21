@@ -18,15 +18,12 @@ set -x              # Output commands
 set -e              # Abort on errors
 cd @RUNDIR@
 
-# Must match the build environment (environment-next.sh): the next-eval compute image
-# defaults to PE 26.181.0 / oneAPI 2026.1.0, so without the explicit pin a binary built
-# against 26.26.0 would run on the wrong SYCL and FFTW runtimes. On the old image the
-# pin is the default anyway, so this is a no-op there.
+# Pin the PE to match the build; next-eval defaults to 26.181.0. See CLAUDE.md.
 module load oneapi/release/2025.3.1
 module load boost/1.88.0
 module load fftw/3.3.10                      # MPI-enabled FFTW3 build
 
-unset FI_LOG_LEVEL   # the next-eval image defaults it to `warn`, which floods the job log
+unset FI_LOG_LEVEL
 
 # Set environment
 export HOME_KADATH=$HOME/kyoto-initiative/repos/fuka
@@ -35,32 +32,11 @@ NNODES=@NODES@            # Number of Nodes
 NRANKS=@NUM_GPUS@         # Number of MPI ranks per node (assume one per GPU)
 NTOTRANKS=$(( NNODES * NRANKS ))
 
-# AthenaK packs boundary tags into 20 bits (athena.hpp: 6 bits bufid | 14 bits lid), so it
-# needs MPI_TAG_UB >= 1048575. The next-eval compute image defaults to 524287, one bit
-# short, and the job dies in the first boundary exchange with "Invalid tag, value is
-# 524288". TAG_BITS=21 buys exactly 1048575. Do not add MPIR_CVAR_CH4_OFI_RANK_BITS:
-# cxi then rejects the split and every rank aborts in MPI_Init (multi-node only).
-export MPIR_CVAR_CH4_OFI_TAG_BITS=21
-
-# The next-eval image sets MPIR_CVAR_PROGRESS_TIMEOUT=600 (the old image left it unset,
-# i.e. disabled), which fatally aborts any rank that waits more than 600 s in a collective.
-# Both ends of a run exceed that: the FUKA per-point interpolation is host-side and badly
-# imbalanced, so early ranks sit in the MPI_Comm_dup after it for far longer than 600 s, and
-# a multi-GB restart read does the same. It fails as "Progress TIMEOUT ... in internal_Comm_dup",
-# naming the collective rather than the imbalance behind it. Hang detection is athena -w's job.
-export MPIR_CVAR_PROGRESS_TIMEOUT=0
-# MPICH's cache of GPU IPC handles, which lives in device memory. The CVAR was renamed
-# between images, so set both names: MAX_CACHE_ENTRIES is the live one on the old image,
-# CACHE_SIZE on next-eval, and each image ignores the other silently.
-#
-# 128 is deliberate. The stock default was too small and thrashed; the next-eval site
-# default of 1024 is 8x what we ever asked for, and the first segment to run under it
-# (job 8842299) died with "SYCLDeviceUSM memory space failed to allocate 34.08 MiB
-# (label=rank_sendbuf_vars)" after three clean hours, on a mesh that was not growing.
-# That is suggestive rather than proven, but 128 is the value every successful segment
-# so far has run with.
-export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128
-export MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE=128
+# next-eval MPI settings; see CLAUDE.md for why each is needed.
+export MPIR_CVAR_CH4_OFI_TAG_BITS=21          # MPI_TAG_UB >= 1048575; never set RANK_BITS
+export MPIR_CVAR_PROGRESS_TIMEOUT=0           # image default of 600 s aborts long collectives
+export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128   # old-image name
+export MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE=128          # next-eval name
 export MPICH_GPU_SUPPORT_ENABLED=1
 export OMP_NUM_THREADS=1
 export OMP_PLACES=threads
