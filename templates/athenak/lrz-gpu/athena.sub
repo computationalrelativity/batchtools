@@ -18,7 +18,7 @@ set -x                          # Output commands
 cd @RUNDIR@
 
 ml sw stack/latest
-ml sw intel-toolkit
+ml sw intel-toolkit/2025.1.0
 ml cmake/4.3.3
 
 export I_MPI_ADJUST_ALLREDUCE=6
