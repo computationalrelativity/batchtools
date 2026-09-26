@@ -35,8 +35,8 @@ NTOTRANKS=$(( NNODES * NRANKS ))
 # next-eval MPI settings; see CLAUDE.md for why each is needed.
 export MPIR_CVAR_CH4_OFI_TAG_BITS=21          # MPI_TAG_UB >= 1048575; never set RANK_BITS
 export MPIR_CVAR_PROGRESS_TIMEOUT=0           # image default of 600 s aborts long collectives
-export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128   # old-image name
-export MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE=128          # next-eval name
+export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128   # caps the GPU IPC handle cache
+# Never set MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE: any value aborts MPI_Init on mpich 87e2045.
 export MPICH_GPU_SUPPORT_ENABLED=1
 export OMP_NUM_THREADS=1
 export OMP_PLACES=threads
