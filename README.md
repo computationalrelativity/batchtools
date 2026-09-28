@@ -58,6 +58,10 @@ specified in the `BATCH/CONFIG` file in the simulation directory. Please take a
 moment to edit that file before creating the first segment of your new
 simulation.
 
+For the AthenaK Perlmutter GPU templates, `GPU_CONSTRAINT` defaults to
+`gpu&hbm40g`. Set it to `gpu&hbm80g` in `BATCH/CONFIG` when the run needs
+80 GB of memory per GPU.
+
 A special field in the `CONFIG` file is `BATCHSYSTEM`. Its value is used by the
 batchtools submit subcommand to handle the interaction with the queueing
 system. Note that using batchtools to submit jobs is optional and you do not
