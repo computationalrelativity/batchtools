@@ -20,8 +20,8 @@
 #module load gcc/13.4.0
 #module load mpich/opt/5.0.0.aurora_test.3c70a61  # MPICH — Aurora's default MPI stack
 # Pin the PE explicitly: it provides MKL, and it must be loaded before boost/fftw/cmake so
-# they resolve in the same 26.26.0 tree. The next-eval compute image defaults to PE 26.181.0
-# (oneAPI 2026.1.0); on the old image this is the default anyway. See environment-next.sh.
+# they resolve in the same 26.26.0 tree. The image defaults to PE 26.181.0
+# (oneAPI 2026.1.0). See environment.sh.
 module load oneapi/release/2025.3.1
 module load boost/1.88.0
 module load fftw/3.3.10                      # MPI-enabled FFTW3 build
@@ -42,9 +42,6 @@ export FFTW_ROOT="${FFTW_ROOT:-/opt/aurora/26.26.0/spack/unified/1.1.1/install/l
 
 # Boost root (set by boost module; fallback to known spack path)
 export BOOST_ROOT="${BOOST_ROOT:-/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/boost-1.88.0-v474wod}"
-
-# MPICH installation prefix
-export MPICH_ROOT="/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk"
 
 # Force mpicxx wrapper to use g++ instead of Intel's icpx.
 # Without this, oneapi sets the default compiler to icpx, which fails to

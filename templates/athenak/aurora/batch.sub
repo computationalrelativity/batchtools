@@ -18,7 +18,7 @@ set -x              # Output commands
 set -e              # Abort on errors
 cd @RUNDIR@
 
-# Pin the PE to match the build; next-eval defaults to 26.181.0. See CLAUDE.md.
+# Pin the PE to match the build; the image defaults to 26.181.0. See CLAUDE.md.
 module load oneapi/release/2025.3.1
 module load boost/1.88.0
 module load fftw/3.3.10                      # MPI-enabled FFTW3 build
@@ -32,7 +32,7 @@ NNODES=@NODES@            # Number of Nodes
 NRANKS=@NUM_GPUS@         # Number of MPI ranks per node (assume one per GPU)
 NTOTRANKS=$(( NNODES * NRANKS ))
 
-# next-eval MPI settings; see CLAUDE.md for why each is needed.
+# MPI settings for the current image; see CLAUDE.md for why each is needed.
 export MPIR_CVAR_CH4_OFI_TAG_BITS=21          # MPI_TAG_UB >= 1048575; never set RANK_BITS
 export MPIR_CVAR_PROGRESS_TIMEOUT=0           # image default of 600 s aborts long collectives
 export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128   # caps the GPU IPC handle cache
