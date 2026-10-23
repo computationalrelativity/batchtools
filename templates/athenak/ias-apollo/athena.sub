@@ -1,0 +1,57 @@
+#!/bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH --job-name=@SIMULATION_NAME@
+#SBATCH --nodes=@NODES@
+#SBATCH --ntasks-per-node=@NUM_GPUS@
+#SBATCH --cpus-per-task=@NUM_THREADS@
+#SBATCH --mem-per-cpu=@MEM_PER_CPU@
+#SBATCH --gpus-per-node=@NUM_GPUS@
+#SBATCH --partition=@PARTITION@
+#SBATCH --time=@WALLTIME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+
+echo "Preparing:"
+set -x              # Output commands
+set -e              # Abort on errors
+cd @RUNDIR@
+
+module purge
+module load nvhpc/24.5
+module load openmpi/cuda-12.4/nvhpc-24.5/4.1.6
+module load cudatoolkit/12.4
+module load hdf5
+#export MPICH_MPIIO_HINTS=“*:romio_cb_write=disable”
+
+export OMP_NUM_THREADS=@NUM_THREADS@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+RESTART="-i @PARFILE@"
+if [ -d parent/rst ]; then
+  restart_files=$(ls -r parent/rst/*.rst)
+  restart_file=(${restart_files[0]})
+  RESTART="-r $restart_file -i @PARFILE@"
+  printf "\nrestarting from $restart_file\n\n"
+else
+  printf "\nstarting from beginning\n\n"
+fi
+
+export SLURM_CPU_BIND="cores"
+
+srun -n @NUM_GPUS@ -u \
+     @EXECUTABLE@ \
+     --kokkos-map-device-id-by=mpi_rank \
+     -d @RUNDIR@ \
+     -w @WATCHDOG_TIMEOUT_SECONDS@ \
+     -t @TERMINATION_TIME@ \
+     $RESTART
