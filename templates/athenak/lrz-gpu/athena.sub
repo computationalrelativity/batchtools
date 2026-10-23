@@ -1,5 +1,5 @@
 #! /bin/bash
-@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+@(#SBATCH -d afterany:@CHAINED_JOB_ID@)@
 #SBATCH -A @ALLOCATION@
 #SBATCH --partition @QUEUE@
 #SBATCH -t @WALLTIME@
@@ -22,6 +22,7 @@ ml sw intel-toolkit/2025.1.0
 ml cmake/4.3.3
 
 export I_MPI_ADJUST_ALLREDUCE=6
+SEGFAULT_LIB=/lib64/libSegFault.so
 echo "Checking:"
 pwd
 hostname
@@ -32,23 +33,32 @@ env | sort > ENVIRONMENT
 echo ${SLURM_NODELIST} > NODES
 
 if [ -L parent ]; then
-    CHECKPOINT=$(find -L parent/rst -name \*.rst | awk '{ print length, $0 }' | sort -n  | cut -d" " -f2- | tail -n 1)
-    RESTART="-r $CHECKPOINT time/tlim=10000"
+    CHECKPOINT=""
+    ANCESTOR=parent
+    while [ -z "$CHECKPOINT" ] && [ -d $ANCESTOR ]; do
+        CHECKPOINT=$(find -L $ANCESTOR/rst -name \*.rst 2>/dev/null | awk '{ print length, $0 }' | sort -n  | cut -d" " -f2- | tail -n 1)
+        ANCESTOR=$ANCESTOR/parent
+    done
+    if [ -z "$CHECKPOINT" ]; then
+        echo "No checkpoint found in any parent segment, aborting."
+        exit 1
+    fi
+    RESTART="-r $CHECKPOINT -i parfile.par"
     echo "Restarting from $CHECKPOINT:"
 else
     RESTART="-i parfile.par time/tlim=0"
     echo "Starting from IC:"
 fi
 
-ln -s ../BATCH/include/eos_akmalpr.d .
-
 let TOT_NPROCS=${SLURM_JOB_NUM_NODES}*${SLURM_NTASKS_PER_NODE}
 
-$(which mpirun) -np ${TOT_NPROCS} @EXECUTABLE@ \
+$(which mpirun) -np ${TOT_NPROCS} \
+    -genv LD_PRELOAD ${SEGFAULT_LIB} -genv SEGFAULT_SIGNALS "segv bus ill fpe abrt" \
+    @EXECUTABLE@ \
         --kokkos-map-device-id-by=mpi_rank \
-    -w @WATCHDOG_TIMEOUT_SECONDS@ \
     -t @TERMINATION_TIME@ \
     -d @RUNDIR@ \
+    -w 180 \
     $RESTART
 
 
