@@ -27,17 +27,6 @@ PROJECT += $(PROJECT_DIR)/Single_NS_Initial_Data
 PROJECT += $(PROJECT_DIR)/Initial_Data_Reader
 PROJECT += $(PROJECT_DIR)/TOV_star
 
-#####################################
-## Project's repositories to clone ##
-#####################################
-## specify any repo that you want to clone by `make git_clone`
-
-PROJECT_REPO += '--depth=1 git@github.com:rashti-alireza/BH_NS_Binary_Initial_Data.git'
-PROJECT_REPO += '--depth=1 git@github.com:rashti-alireza/NS_NS_Binary_Initial_Data.git'
-PROJECT_REPO += '--depth=1 git@github.com:rashti-alireza/BH_BH_Binary_Initial_Data.git'
-PROJECT_REPO += '--depth=1 git@github.com:rashti-alireza/Single_BH_Initial_Data'
-PROJECT_REPO += '--depth=1 git@github.com:rashti-alireza/Single_NS_Initial_Data'
-
 ########################
 ## Modules to compile ##
 ########################
@@ -105,6 +94,7 @@ DFLAGS += -DINLINE_FUNC
 ### special includes for suit-sparse and related (IMPORTANT)
 SPECIAL_INCS += -I/home/fields/software/SuiteSparse/include/suitesparse
 SPECIAL_LIBS += -L/home/fields/software/SuiteSparse/lib/ -lumfpack
+SPECIAL_LIBS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread
 
 
 #############

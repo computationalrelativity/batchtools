@@ -1,5 +1,11 @@
+This template is specific to the CoRe fork of Elliptica
+(github.com/computationalrelativity/Elliptica), which has a dedicated runtime LAPACK
+dependency (which previously was only needed to compile UMFPACK) and includes the separate
+ID projects in source as opposed to being spread across other repos.
+
 Elliptica requires UMFPACK to run, which is part of SuiteSparse. Typhon/Apollo does not
-include this by default.
+include this by default. These instructions may also be helpful for other machines missing
+UMFPACK.
 
 Instructions:
 1. Clone SuiteSparse:
