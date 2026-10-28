@@ -1,0 +1,3 @@
+cmake -B build_typhon -DCMAKE_BUILD_TYPE=Release -DPAR_VERSION=On \
+      -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpicxx \
+      -DMPI_HOME=$MPIHOME -DMKL_VERSION=OFF

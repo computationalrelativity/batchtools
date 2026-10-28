@@ -1,0 +1,13 @@
+diff --git a/include/bco_utilities.hpp b/include/bco_utilities.hpp
+index 5277829..1acfb4b 100644
+--- a/include/bco_utilities.hpp
++++ b/include/bco_utilities.hpp
+@@ -42,7 +42,7 @@ constexpr double psi = 1.55;
+ constexpr double psisq = psi * psi;
+ constexpr double invpsisq = 1. / psisq;
+ 
+-static constexpr double shell_factor =
++static const double shell_factor =
+     std::log(1.855) / (100.0 * std::log(2.0));
+ 
+ #define EQUI -11

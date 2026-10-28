@@ -44,6 +44,7 @@ __patterns__ = [
     ('THREADS', "", "Total number of threads"),
     ('WALLTIME', "", "Walltime HH:MM:SS"),
     ('WALLTIME_HOURS', "", "Walltime in hours HH"),
+    ('WATCHDOG_TIMEOUT_SECONDS', "", "Watchdog timeout in seconds (athena -w)"),
 ]
 patterns = {}
 defaults = {}

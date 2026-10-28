@@ -1,0 +1,30 @@
+#!/bin/bash
+#SBATCH --job-name=elliptica
+#SBATCH --output=slurm-%j.out
+#SBATCH --error=slurm-%j.err
+#SBATCH --partition=long
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --time=14-00:00:00
+#SBATCH --mem=240G
+#SBATCH --exclusive
+
+module purge
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export OMP_PROC_BIND=spread
+export OMP_PLACES=cores
+
+# System OpenBLAS 0.3.15 misdetects Ice Lake (8360Y) as Prescott/SSE3: ~7x slower dgemm
+export OPENBLAS_CORETYPE=SkylakeX
+# ./lib/libopenblas.so.0 -> OpenMP build of OpenBLAS (libopenblaso)
+export LD_LIBRARY_PATH=$SLURM_SUBMIT_DIR/lib:$LD_LIBRARY_PATH
+
+cd $SLURM_SUBMIT_DIR
+echo "solver: new ($(cat BUILT_FROM))"
+echo "node: $(hostname)"
+echo "affinity: $(taskset -cp $$)"
+echo "blas: $(ldd ./elliptica | grep -o 'libopenblas[^ ]* => [^ ]*')"
+
+taskset -c 0-23,48-71 ./elliptica -nt $SLURM_CPUS_PER_TASK parfile.par

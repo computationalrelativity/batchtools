@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH -e elliptica-%j.err
+#SBATCH -o elliptica-%j.out
+#SBATCH --job-name=elliptica
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=24:00:00
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=fields@ias.edu
+
+module load intel-oneapi/2024.2
+module load intel-mkl/2024.2
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/fields/software/SuiteSparse/lib
+export OMP_NUM_THREADS=24
+
+./elliptica parfile.par

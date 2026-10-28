@@ -49,5 +49,6 @@ mpirun -n @NUM_GPUS@ \
      @EXECUTABLE@ \
     --kokkos-map-device-id-by=mpi_rank \
     -d @RUNDIR@ \
+    -w @WATCHDOG_TIMEOUT_SECONDS@ \
     -t @TERMINATION_TIME@ \
     $restart_line

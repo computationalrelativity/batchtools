@@ -18,12 +18,25 @@ set -x              # Output commands
 set -e              # Abort on errors
 cd @RUNDIR@
 
+# Pin the PE to match the build; the image defaults to 26.181.0. See CLAUDE.md.
+module load oneapi/release/2025.3.1
+module load boost/1.88.0
+module load fftw/3.3.10                      # MPI-enabled FFTW3 build
+
+unset FI_LOG_LEVEL
+
 # Set environment
+export HOME_KADATH=$HOME/kyoto-initiative/repos/fuka
 NTHREADS=@NUM_THREADS@    # Number of OMP threads per rank
 NNODES=@NODES@            # Number of Nodes
 NRANKS=@NUM_GPUS@         # Number of MPI ranks per node (assume one per GPU)
 NTOTRANKS=$(( NNODES * NRANKS ))
 
+# MPI settings for the current image; see CLAUDE.md for why each is needed.
+export MPIR_CVAR_CH4_OFI_TAG_BITS=21          # MPI_TAG_UB >= 1048575; never set RANK_BITS
+export MPIR_CVAR_PROGRESS_TIMEOUT=0           # image default of 600 s aborts long collectives
+export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128   # caps the GPU IPC handle cache
+# Never set MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE: any value aborts MPI_Init on mpich 87e2045.
 export MPICH_GPU_SUPPORT_ENABLED=1
 export OMP_NUM_THREADS=1
 export OMP_PLACES=threads
@@ -48,6 +61,14 @@ if [ -d parent/rst ]; then
 else
   restart_line="-i @PARFILE@"
   printf "\nstarting from beginning\n\n"
+fi
+
+# LORENE Bin_NS initial data stores only the EOS *name* in resu.d; the reader looks it
+# up as a bare filename in cwd (see ara-gpu/hunter/lrz-gpu/leonardo-booster templates for
+# the same fix). Only needed for lorene_bns runs, but harmless -- and silent -- otherwise
+# when BATCH/include has no such file.
+if [ -f ../BATCH/include/eos_akmalpr.d ]; then
+  ln -sf ../BATCH/include/eos_akmalpr.d .
 fi
 
 mpiexec -np $((@NUM_GPUS@ * @NODES@)) \
