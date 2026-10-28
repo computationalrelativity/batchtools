@@ -51,6 +51,7 @@ srun \
     --kokkos-map-device-id-by=mpi_rank \
     -d @RUNDIR@ \
     -t @TERMINATION_TIME@ \
+    -w @WATCHDOG_TIMEOUT_SECONDS@ \
     $restart_line
 
 # perform any cleanup or short post-processing here
