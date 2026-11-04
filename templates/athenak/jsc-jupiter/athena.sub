@@ -1,0 +1,69 @@
+#! /bin/bash
+@(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
+#SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
+#SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
+#SBATCH --job-name=@SIMULATION_NAME@
+#SBATCH --nodes=@NODES@
+#SBATCH --ntasks-per-node=@NUM_GPUS@
+#SBATCH --cpus-per-task=@NUM_THREADS@
+#SBATCH --gpus-per-node=@NUM_GPUS@
+#SBATCH --partition=@PARTITION@
+#SBATCH --account=@ALLOCATION@
+#SBATCH --time=@WALLTIME@
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=@EMAIL@
+
+echo "Preparing:"
+set -x                          # Output commands
+set -e													# Abort on errors
+cd @RUNDIR@
+
+module load nvidia-compilers/25.9-CUDA-13
+module load CUDA/13
+module load CMake/4.0.3
+module load OpenMPI/5.0.8
+
+export OMP_NUM_THREADS=@NUM_THREADS@
+
+echo "Checking:"
+pwd
+hostname
+date
+
+echo "Environment:"
+env | sort > ENVIRONMENT
+echo ${SLURM_NODELIST} > NODES
+
+RESTART="-i @PARFILE@"
+if [ -d parent/rst ]; then
+	CHECKPOINT=""
+    ANCESTOR=parent
+    while [ -z "$CHECKPOINT" ] && [ -d $ANCESTOR ]; do
+        CHECKPOINT=$(find -L $ANCESTOR/rst -name \*.rst 2>/dev/null | awk '{ print length, $0 }' | sort -n  | cut -d" " -f2- | tail -n 1)
+        ANCESTOR=$ANCESTOR/parent
+    done
+    if [ -z "$CHECKPOINT" ]; then
+        echo "No checkpoint found in any parent segment, aborting."
+        exit 1
+    fi
+    RESTART="-r $CHECKPOINT -i parfile.par"
+    echo "Restarting from $CHECKPOINT:"
+else
+    echo "Starting from IC:"
+fi
+
+export SLURM_CPU_BIND="cores"
+
+srun -n @NUM_GPUS@ -u \
+     @EXECUTABLE@ \
+     --kokkos-map-device-id-by=mpi_rank \
+    -d @RUNDIR@ \
+    -w @WATCHDOG_TIMEOUT_SECONDS@ \
+    -t @TERMINATION_TIME@ \
+    $RESTART
+
+
+echo "Stopping:"
+date
+
+echo "Done."
