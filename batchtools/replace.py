@@ -32,6 +32,7 @@ __patterns__ = [
     ('NUM_PROCS', "", "Total number of processes"),
     ('NUM_THREADS', "", "Number of threads per process"),
     ('NUM_GPUS', "", "Number of GPUs per node"),
+    ('GPU_CONSTRAINT', "gpu&hbm40g", "Perlmutter GPU node class (gpu&hbm40g or gpu&hbm80g)"),
     ('NUM_CPU_TASK',"","Number of CPUs per MPI task"),
     ('INCLUDE', "../BATCH/include", "Path to extra simulation files"),
     ('PARFILE', "parfile.par", "Name of the parfile to use"),

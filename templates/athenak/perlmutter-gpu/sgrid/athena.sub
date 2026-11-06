@@ -2,7 +2,7 @@
 @(#SBATCH -d afterok:@CHAINED_JOB_ID@)@
 #SBATCH -q @QUEUE@
 #SBATCH -A @ALLOCATION@ 
-#SBATCH -C gpu
+#SBATCH -C @GPU_CONSTRAINT@
 #SBATCH -t @WALLTIME@
 #SBATCH -N @NODES@
 #SBATCH -J @SIMULATION_NAME@
@@ -11,7 +11,6 @@
 #SBATCH -o @RUNDIR@/@SIMULATION_NAME@.out
 #SBATCH -e @RUNDIR@/@SIMULATION_NAME@.err
 #SBATCH --gpus-per-task=1
-#SBATCH --gpu-bind=none
 #SBATCH --ntasks-per-node=@NUM_GPUS@
 
 echo "Preparing:"
@@ -59,9 +58,13 @@ fi
 export MPICH_MPIIO_HINTS_DISPLAY=1
 export MPICH_MPIIO_HINTS="*:abort_on_rw_error=enable:romio_cb_write=disable"
 export MPICH_MPIIO_STATS=1
+export MPICH_GPU_IPC_ENABLED=0
 export SLURM_CPU_BIND="cores"
+gpu_map=$(seq -s, 0 $((@NUM_GPUS@ - 1)))
 srun \
     -n $((@NODES@ * @NUM_GPUS@)) \
+    --gpus-per-node=@NUM_GPUS@ --gpus-per-task=1 \
+    --gpu-bind=map_gpu:${gpu_map} --cpu-bind=cores \
     @EXECUTABLE@ \
     --kokkos-map-device-id-by=mpi_rank \
     -d @RUNDIR@ \
