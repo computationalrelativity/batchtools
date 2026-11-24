@@ -54,7 +54,7 @@ fi
 
 export SLURM_CPU_BIND="cores"
 
-srun -n @NUM_GPUS@ -u \
+srun -n $SLURM_NTASKS -u \
      @EXECUTABLE@ \
      --kokkos-map-device-id-by=mpi_rank \
     -d @RUNDIR@ \
